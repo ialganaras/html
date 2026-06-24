@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
+<html lang="es"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Editor de artifacts HTML sobre GitHub — v0.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
 <style>
   :root{
     --paper:#F6F1E7; --paper-2:#FCFAF4;
@@ -177,13 +176,13 @@
   }
 </style>
 </head>
-<body>
+<body class="">
 <div class="wrap">
 
   <header class="mast">
     <div class="eyebrow">Propuesta de workflow · documento vivo</div>
-    <h1 data-editable>Artifacts HTML que <em>van y vuelven</em> de GitHub</h1>
-    <p class="dek" data-editable>Un destino propio para los HTML que salen del chat: hosteado, versionado en cada guardado, editable a mano en modo gráfico, y siempre al alcance de la IA para volver a tocarlo.</p>
+    <h1 data-editable="">ArtifactsSSSSSSSSSSSS HTML que <em>van y vuelven</em> de GitHub</h1>
+    <p class="dek" data-editable="">Un destino propio para los HTML que salen del chat: hosteado, versionado en cada guardado, editable a mano en modo gráfico, y siempre al alcance de la IA para volver a tocarlo.</p>
     <div class="meta">
       <span>estado: <b>en marcha</b></span>
       <span class="dot">●</span>
@@ -199,52 +198,52 @@
 
     <section>
       <span class="snum">§1 — El problema</span>
-      <h2 data-editable>La necesidad</h2>
-      <p data-editable>Muchos outputs de interacciones complejas con el chat terminan siendo un documento HTML —con secciones e interacciones de distinto tipo— que hoy se comparte como adjunto suelto. Sin permisos, sin comentarios, sin link estable, ni forma cómoda de editarlo o que la IA lo retome.</p>
-      <p data-editable>La meta: darle a esos HTML un lugar donde vivan, con link, edición gráfica y round-trip con el chat.</p>
+      <h2 data-editable="">La necesidad</h2>
+      <p data-editable="">Muchos outputs de interacciones complejas con el chat terminan siendo un documento HTML —con secciones e interacciones de distinto tipo— que hoy se comparte como adjunto suelto. Sin permisos, sin comentarios, sin link estable, ni forma cómoda de editarlo o que la IA lo retome.</p>
+      <p data-editable="">La meta: darle a esos HTML un lugar donde vivan, con link, edición gráfica y round-trip con el chat.</p>
     </section>
 
     <section>
       <span class="snum">§2 — Qué cumple</span>
-      <h2 data-editable>Requisitos</h2>
+      <h2 data-editable="">Requisitos</h2>
       <ul class="req">
-        <li data-editable><b>Hostear</b> el HTML en un repositorio. <em>✓ GitHub.</em></li>
-        <li data-editable><b>Abrir con un link</b> renderizado. <em>✓ htmlpreview.</em></li>
-        <li data-editable><b>Editar el texto en modo gráfico</b>. <em>✓ toggle de modo edición.</em></li>
-        <li data-editable><b>Versionar</b>: cada guardado, una versión. <em>✓ commit automático.</em></li>
-        <li data-editable><b>Round-trip con la IA</b>: el chat lee y reedita. <em>✓ MCP de GitHub.</em></li>
-        <li data-editable><b>Permisos y comentarios</b> para terceros. <em>Por resolver.</em></li>
+        <li data-editable=""><b>Hostear</b> el HTML en un repositorio. <em>✓ GitHub.</em></li>
+        <li data-editable=""><b>Abrir con un link</b> renderizado. <em>✓ htmlpreview.</em></li>
+        <li data-editable=""><b>Editar el texto en modo gráfico</b>. <em>✓ toggle de modo edición.</em></li>
+        <li data-editable=""><b>Versionar</b>: cada guardado, una versión. <em>✓ commit automático.</em></li>
+        <li data-editable=""><b>Round-trip con la IA</b>: el chat lee y reedita. <em>✓ MCP de GitHub.</em></li>
+        <li data-editable=""><b>Permisos y comentarios</b> para terceros. <em>Por resolver.</em></li>
       </ul>
     </section>
 
     <section>
       <span class="snum">§3 — La arquitectura</span>
-      <h2 data-editable>Tres piezas</h2>
+      <h2 data-editable="">Tres piezas</h2>
       <div class="piece">
         <h3>Repo + htmlpreview <span>hosting</span></h3>
-        <p data-editable>Los artifacts viven como <strong>.html</strong> en <strong>ialganaras/html</strong>. htmlpreview los sirve renderizados sin configurar GitHub Pages.</p>
+        <p data-editable="">Los artifacts viven como <strong>.html</strong> en <strong>ialganaras/html</strong>. htmlpreview los sirve renderizados sin configurar GitHub Pages.</p>
       </div>
       <div class="piece">
         <h3>Editor cliente <span>contenteditable</span></h3>
-        <p data-editable>Un script que prende <strong>contenteditable</strong> sobre las regiones marcadas con <strong>data-editable</strong>. Toggle de modo edición.</p>
+        <p data-editable="">Un script que prende <strong>contenteditable</strong> sobre las regiones marcadas con <strong>data-editable</strong>. Toggle de modo edición.</p>
       </div>
       <div class="piece">
         <h3>Cloudflare Worker <span>commit</span></h3>
-        <p data-editable>Un Worker con el token de GitHub como secreto. El botón "Guardar" le manda el HTML, el Worker hace <strong>PUT</strong> a la API de Contents: cada guardado, un commit nuevo.</p>
+        <p data-editable="">Un Worker con el token de GitHub como secreto. El botón "Guardar" le manda el HTML, el Worker hace <strong>PUT</strong> a la API de Contents: cada guardado, un commit nuevo.</p>
       </div>
     </section>
 
     <section>
       <span class="snum">§4 — El ciclo</span>
-      <h2 data-editable>Ida y vuelta</h2>
+      <h2 data-editable="">Ida y vuelta</h2>
       <ol class="flow">
-        <li data-editable>Claude <b>genera</b> el HTML y lo commitea via MCP (o se sube a mano).</li>
-        <li data-editable>Se abre por <b>htmlpreview</b>, se prende modo edición, se edita el texto.</li>
-        <li data-editable><b>Guardar</b> → Worker → commit nuevo en main.</li>
-        <li data-editable>Para retomar, Claude lo lee del repo y reescribe.</li>
-        <li data-editable>El historial queda en GitHub. Rollback gratis.</li>
+        <li data-editable="">Claude <b>genera</b> el HTML y lo commitea via MCP (o se sube a mano).</li>
+        <li data-editable="">Se abre por <b>htmlpreview</b>, se prende modo edición, se edita el texto.</li>
+        <li data-editable=""><b>Guardar</b> → Worker → commit nuevo en main.</li>
+        <li data-editable="">Para retomar, Claude lo lee del repo y reescribe.</li>
+        <li data-editable="">El historial queda en GitHub. Rollback gratis.</li>
       </ol>
-      <div class="callout" data-editable>Esta es la versión v0.2, lista para guardar contra el Worker.</div>
+      <div class="callout" data-editable="">Esta es la versión v0.2, lista para guardar contra el Worker.</div>
     </section>
 
   </main>
@@ -375,5 +374,116 @@
   });
 })();
 </script>
-</body>
-</html>
+
+
+<script>
+(function(){
+  // Reset de estado por si el HTML guardado quedó con clases viejas
+  document.body.classList.remove('editing');
+  document.querySelectorAll('[contenteditable]').forEach(function(el){
+    el.removeAttribute('contenteditable');
+  });
+
+  var bar    = document.getElementById('toolbar');
+  var toggle = document.getElementById('toggle');
+  var save   = document.getElementById('save');
+  var cfg    = document.getElementById('cfg');
+  var mode   = document.getElementById('mode');
+  var editing = false;
+
+  function setStatus(text, cls){
+    mode.textContent = text;
+    bar.classList.remove('saving','ok','err');
+    if (cls) bar.classList.add(cls);
+  }
+
+  toggle.addEventListener('click', function(){
+    editing = !editing;
+    document.body.classList.toggle('editing', editing);
+    bar.classList.toggle('editing', editing);
+    document.querySelectorAll('[data-editable]').forEach(function(el){
+      if (editing) el.setAttribute('contenteditable','true');
+      else el.removeAttribute('contenteditable');
+    });
+    toggle.textContent = editing ? 'Listo' : 'Modo edición';
+    setStatus(editing ? 'editando' : 'solo lectura');
+  });
+
+  function getWorkerUrl(force){
+    var url = !force ? localStorage.getItem('workerUrl') : null;
+    if (!url) {
+      url = prompt('URL del Cloudflare Worker:\n(ej: https://html-commit.tu-subdomain.workers.dev)');
+      if (url) {
+        url = url.trim().replace(/\/$/,'');
+        localStorage.setItem('workerUrl', url);
+      }
+    }
+    return url;
+  }
+
+  cfg.addEventListener('click', function(){
+    var cur = localStorage.getItem('workerUrl') || '';
+    var nu = prompt('URL del Cloudflare Worker:', cur);
+    if (nu !== null) {
+      nu = nu.trim().replace(/\/$/,'');
+      if (nu) localStorage.setItem('workerUrl', nu);
+      else localStorage.removeItem('workerUrl');
+    }
+  });
+
+  // Autodetecta el path desde la URL de htmlpreview, o lo pide.
+  function getFilePath(){
+    var m = location.href.match(/github\.com\/[^/]+\/[^/]+\/blob\/[^/]+\/(.+\.html?)(?:[?#]|$)/i);
+    if (m) return decodeURIComponent(m[1]);
+    var stored = localStorage.getItem('lastPath') || 'editor-artifacts-html.html';
+    var p = prompt('Path del archivo en el repo:', stored);
+    if (p) { p = p.trim().replace(/^\/+/,''); localStorage.setItem('lastPath', p); }
+    return p;
+  }
+
+  save.addEventListener('click', async function(){
+    var workerUrl = getWorkerUrl();
+    if (!workerUrl) return;
+    var path = getFilePath();
+    if (!path) return;
+
+    // Clonar el HTML actual, limpiar atributos de edición y <base> que mete htmlpreview
+    var clone = document.documentElement.cloneNode(true);
+    clone.querySelectorAll('[contenteditable]').forEach(function(n){ n.removeAttribute('contenteditable'); });
+    clone.querySelectorAll('base').forEach(function(n){ n.remove(); });
+    var clonedBody = clone.querySelector('body');
+    if (clonedBody) clonedBody.classList.remove('editing');
+    var html = '<!DOCTYPE html>\n' + clone.outerHTML;
+
+    save.disabled = true;
+    setStatus('guardando…', 'saving');
+
+    try {
+      var resp = await fetch(workerUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          path: path,
+          html: html,
+          message: 'Edición desde el navegador — ' + new Date().toISOString()
+        })
+      });
+      var text = await resp.text();
+      if (resp.ok) {
+        setStatus('✓ guardado', 'ok');
+        setTimeout(function(){ setStatus(editing ? 'editando' : 'solo lectura'); }, 2200);
+      } else {
+        console.error('Worker respondió', resp.status, text);
+        setStatus('✗ error ' + resp.status, 'err');
+        alert('Error al guardar (' + resp.status + ').\n\n' + text.slice(0,300));
+      }
+    } catch (e) {
+      console.error(e);
+      setStatus('✗ error red', 'err');
+      alert('No se pudo conectar al Worker.\n\n' + e.message);
+    } finally {
+      save.disabled = false;
+    }
+  });
+})();
+</script></body></html>

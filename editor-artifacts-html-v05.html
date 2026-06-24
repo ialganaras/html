@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editor de artifacts HTML — v0.5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F1E7; --paper-2:#FCFAF4;
+    --ink:#211D18; --ink-soft:#5C544A; --ink-faint:#8C8475;
+    --accent:#8E3B2E; --accent-2:#C0633F;
+    --line:#DED4C2;
+    --code-bg:#23201B; --code-fg:#EDE6D6; --code-accent:#D89A6A;
+    --ok:#7AA67E; --err:#C26F5A; --warn:#E0A24A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper);color:var(--ink);
+    font-family:"Newsreader",Georgia,serif;
+    font-size:19px;line-height:1.65;font-weight:380;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(192,99,63,.06), transparent 38%),
+      radial-gradient(circle at 88% 92%, rgba(142,59,46,.05), transparent 42%);
+    background-attachment:fixed;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:0 28px 120px}
+
+  header.mast{padding:84px 0 38px;border-bottom:1.5px solid var(--ink)}
+  .eyebrow{
+    font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:22px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .eyebrow::before{content:"";width:26px;height:1.5px;background:var(--accent)}
+  h1{
+    font-family:"Instrument Serif",serif;font-weight:400;
+    font-size:clamp(44px,7.5vw,76px);line-height:.98;
+    letter-spacing:-.01em;margin-bottom:20px;
+  }
+  h1 em{font-style:italic;color:var(--accent)}
+  .dek{font-size:21px;color:var(--ink-soft);max-width:54ch;font-style:italic;line-height:1.5}
+  .meta{
+    display:flex;flex-wrap:wrap;gap:6px 34px;margin-top:34px;
+    font-family:"JetBrains Mono",monospace;font-size:12px;
+    color:var(--ink-faint);letter-spacing:.04em;
+  }
+  .meta b{color:var(--ink);font-weight:500}
+  .meta .dot{color:var(--accent-2)}
+
+  main{position:relative;padding-top:58px}
+  main::before{
+    content:"";position:absolute;left:7px;top:0;bottom:40px;width:1.5px;
+    background:linear-gradient(var(--line),var(--line) 70%,transparent);
+  }
+  section{position:relative;padding:0 0 12px 44px;margin-bottom:56px}
+  section::before{
+    content:"";position:absolute;left:0;top:9px;width:16px;height:16px;
+    border-radius:50%;background:var(--paper);border:2px solid var(--accent);
+  }
+  section::after{
+    content:"";position:absolute;left:5px;top:14px;width:6px;height:6px;
+    border-radius:50%;background:var(--accent);
+  }
+  .snum{
+    font-family:"JetBrains Mono",monospace;font-size:12px;
+    letter-spacing:.18em;text-transform:uppercase;color:var(--accent);
+    margin-bottom:8px;display:block;font-weight:500;
+  }
+  h2{
+    font-family:"Instrument Serif",serif;font-weight:400;
+    font-size:clamp(28px,4.6vw,38px);line-height:1.08;
+    letter-spacing:-.01em;margin-bottom:18px;
+  }
+  p{margin-bottom:17px}p:last-child{margin-bottom:0}
+  strong{font-weight:580;color:var(--ink)}
+
+  ul.req{list-style:none;margin:6px 0 4px}
+  ul.req li{
+    position:relative;padding:13px 0 13px 30px;
+    border-bottom:1px dashed var(--line);font-size:18px;line-height:1.5;
+  }
+  ul.req li:last-child{border-bottom:none}
+  ul.req li::before{
+    content:"›";position:absolute;left:2px;top:11px;color:var(--accent);
+    font-family:"JetBrains Mono",monospace;font-size:18px;font-weight:500;
+  }
+  ul.req li b{font-weight:580}
+
+  .piece{border:1px solid var(--line);border-radius:10px;background:var(--paper-2);padding:20px 22px;margin:14px 0}
+  .piece h3{
+    font-family:"JetBrains Mono",monospace;font-size:13px;font-weight:500;
+    letter-spacing:.04em;text-transform:uppercase;color:var(--accent);
+    margin-bottom:9px;display:flex;align-items:baseline;gap:10px;
+  }
+  .piece h3 span{
+    color:var(--ink-faint);font-size:11px;
+    border:1px solid var(--line);border-radius:20px;padding:2px 9px;
+  }
+  .piece p{font-size:17px;margin-bottom:0;color:var(--ink-soft)}
+  .piece p strong{color:var(--ink)}
+
+  ol.flow{list-style:none;counter-reset:s;margin:6px 0}
+  ol.flow li{
+    counter-increment:s;position:relative;padding:11px 0 11px 42px;
+    font-size:17.5px;color:var(--ink-soft);
+  }
+  ol.flow li::before{
+    content:counter(s);position:absolute;left:0;top:9px;
+    width:26px;height:26px;border-radius:50%;
+    background:var(--ink);color:var(--paper);
+    font-family:"JetBrains Mono",monospace;font-size:13px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  ol.flow li b{color:var(--ink);font-weight:560}
+
+  .callout{
+    border-left:3px solid var(--accent);background:rgba(142,59,46,.05);
+    padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;
+    font-size:17px;color:var(--ink-soft);font-style:italic;
+  }
+
+  footer{
+    margin-top:30px;padding-top:26px;border-top:1.5px solid var(--ink);
+    font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--ink-faint);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
+    letter-spacing:.03em;
+  }
+  footer .commit{color:var(--accent)}
+
+  /* Toolbar */
+  .toolbar{
+    position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+    display:flex;gap:6px;align-items:center;z-index:9999;
+    background:var(--code-bg);color:var(--code-fg);
+    padding:7px 8px 7px 16px;border-radius:40px;
+    box-shadow:0 8px 30px rgba(33,29,24,.28);
+    font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.03em;
+  }
+  .toolbar .status{display:flex;align-items:center;gap:8px;opacity:.85;min-width:160px}
+  .toolbar .led{width:8px;height:8px;border-radius:50%;background:#6b6357;transition:.25s;flex-shrink:0}
+  .toolbar.editing .led{background:var(--code-accent);box-shadow:0 0 10px var(--code-accent)}
+  .toolbar.dirty .led{background:var(--warn);box-shadow:0 0 10px var(--warn)}
+  .toolbar.saving .led{background:#d8c46a}
+  .toolbar.ok .led{background:var(--ok);box-shadow:0 0 10px var(--ok)}
+  .toolbar.err .led{background:var(--err);box-shadow:0 0 10px var(--err)}
+
+  .toolbar button{
+    font-family:inherit;font-size:12px;letter-spacing:.03em;cursor:pointer;
+    border:none;border-radius:30px;padding:9px 16px;font-weight:500;transition:.18s;
+  }
+  .toolbar button:disabled{opacity:.5;cursor:not-allowed}
+  .btn-edit{background:var(--code-accent);color:#241a10}
+  .btn-edit:hover:not(:disabled){filter:brightness(1.08)}
+  .btn-save{background:transparent;color:var(--code-fg);border:1px solid #4a443b !important}
+  .btn-save:hover:not(:disabled){background:#332f28}
+  .toolbar.dirty .btn-save{
+    background:var(--warn);color:#241a10;border-color:var(--warn) !important;
+    animation:pulse-warn 2s ease-in-out infinite;
+  }
+  .toolbar.dirty .btn-save:hover:not(:disabled){filter:brightness(1.08)}
+  @keyframes pulse-warn{
+    0%,100%{box-shadow:0 0 0 0 rgba(224,162,74,.5)}
+    50%{box-shadow:0 0 0 6px rgba(224,162,74,0)}
+  }
+  .btn-icon{background:transparent;color:var(--code-fg);width:34px;padding:9px 0;font-size:14px}
+  .btn-icon:hover{background:#332f28}
+
+  body.editing [data-editable]{
+    outline:1.5px dashed rgba(142,59,46,.45);
+    outline-offset:5px;border-radius:3px;transition:outline-color .2s;
+  }
+  body.editing [data-editable]:hover{outline-color:var(--accent)}
+  body.editing [data-editable]:focus{
+    outline:1.5px solid var(--accent);background:rgba(216,154,106,.10);
+  }
+
+  /* Modo banner (htmlpreview warning) */
+  .mode-banner{
+    position:fixed;top:0;left:0;right:0;z-index:9998;
+    background:var(--warn);color:#241a10;
+    font-family:"JetBrains Mono",monospace;font-size:12px;
+    text-align:center;padding:8px 16px;
+    letter-spacing:.03em;
+  }
+  .mode-banner a{color:#241a10;text-decoration:underline}
+  body.has-banner{padding-top:36px}
+
+  /* History overlay */
+  .overlay{
+    position:fixed;inset:0;background:rgba(33,29,24,.55);
+    backdrop-filter:blur(4px);z-index:10000;
+    display:none;align-items:center;justify-content:center;padding:20px;
+  }
+  .overlay.show{display:flex}
+  .panel{
+    background:var(--paper-2);color:var(--ink);border-radius:14px;
+    width:100%;max-width:520px;max-height:80vh;display:flex;flex-direction:column;
+    box-shadow:0 30px 80px rgba(33,29,24,.5);
+    border:1px solid var(--line);overflow:hidden;
+  }
+  .panel header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 22px;border-bottom:1px solid var(--line);
+  }
+  .panel h3{
+    font-family:"Instrument Serif",serif;font-size:22px;font-weight:400;
+    letter-spacing:-.01em;
+  }
+  .panel .close{
+    background:transparent;border:none;font-size:22px;cursor:pointer;
+    color:var(--ink-faint);line-height:1;padding:4px 8px;border-radius:6px;
+  }
+  .panel .close:hover{background:var(--line);color:var(--ink)}
+  .panel .body{padding:8px 0;overflow-y:auto;flex:1}
+  .panel .empty{padding:40px 22px;text-align:center;color:var(--ink-faint);font-style:italic}
+  .commit{
+    padding:14px 22px;border-bottom:1px dashed var(--line);
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .commit:last-child{border-bottom:none}
+  .commit:hover{background:rgba(216,154,106,.06)}
+  .commit .when{
+    font-family:"JetBrains Mono",monospace;font-size:11px;
+    letter-spacing:.04em;color:var(--ink-faint);text-transform:uppercase;
+  }
+  .commit .when .sha{color:var(--accent);margin-left:6px}
+  .commit .msg{font-size:15px;line-height:1.4;color:var(--ink)}
+  .commit .actions{display:flex;gap:8px;margin-top:2px}
+  .commit .actions button{
+    font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.04em;
+    cursor:pointer;border:1px solid var(--line);background:var(--paper);
+    color:var(--ink);border-radius:20px;padding:6px 12px;transition:.15s;
+  }
+  .commit .actions button:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .commit .actions button.danger:hover{background:var(--err);border-color:var(--err);color:white}
+  .commit.current{background:rgba(142,59,46,.06)}
+  .commit.current .when::after{
+    content:"actual";margin-left:8px;
+    background:var(--accent);color:white;padding:1px 6px;border-radius:8px;font-size:9px;
+  }
+
+  @media(max-width:560px){
+    body{font-size:18px}
+    .wrap{padding:0 20px 110px}
+    header.mast{padding-top:56px}
+    section{padding-left:34px}
+    .toolbar{font-size:11px}
+    .toolbar .status{min-width:120px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="mast">
+    <div class="eyebrow">Propuesta de workflow · documento vivo</div>
+    <h1 data-editable>Artifacts HTML que <em>van y vuelven</em> de GitHub</h1>
+    <p class="dek" data-editable>Hosteado por el Worker, editable en modo gráfico, versionado en cada guardado, al alcance de la IA.</p>
+    <div class="meta">
+      <span>estado: <b>en uso</b></span>
+      <span class="dot">●</span>
+      <span>versión: <b>v0.5</b></span>
+      <span class="dot">●</span>
+      <span>autor: <b>Iñaki</b></span>
+      <span class="dot">●</span>
+      <span>servido por: <b>Cloudflare Worker</b></span>
+    </div>
+  </header>
+
+  <main>
+
+    <section>
+      <span class="snum">§1 — El problema</span>
+      <h2 data-editable>La necesidad</h2>
+      <p data-editable>Muchos outputs de interacciones complejas con el chat terminan siendo un documento HTML que hoy se comparte como adjunto suelto. Sin permisos, sin comentarios, sin link estable, ni forma cómoda de editarlo o que la IA lo retome.</p>
+      <p data-editable>La meta: darle a esos HTML un lugar donde vivan, con link, edición gráfica y round-trip con el chat.</p>
+    </section>
+
+    <section>
+      <span class="snum">§2 — Qué cumple</span>
+      <h2 data-editable>Requisitos</h2>
+      <ul class="req">
+        <li data-editable><b>Hostear</b> el HTML en un repositorio. <em>✓ GitHub.</em></li>
+        <li data-editable><b>Abrir con un link</b> renderizado. <em>✓ Worker propio (sin cache).</em></li>
+        <li data-editable><b>Editar el texto en modo gráfico</b>. <em>✓ toggle de modo edición.</em></li>
+        <li data-editable><b>Versionar</b>: cada guardado, una versión. <em>✓ commit automático.</em></li>
+        <li data-editable><b>Ver y restaurar versiones anteriores</b>. <em>✓ panel de historial.</em></li>
+        <li data-editable><b>Saber si hay cambios sin guardar</b>. <em>✓ indicador dirty.</em></li>
+        <li data-editable><b>Round-trip con la IA</b>: el chat lee y reedita. <em>✓ MCP de GitHub.</em></li>
+        <li data-editable><b>Permisos y comentarios</b> para terceros. <em>Por resolver.</em></li>
+      </ul>
+    </section>
+
+    <section>
+      <span class="snum">§3 — La arquitectura</span>
+      <h2 data-editable>Tres piezas</h2>
+      <div class="piece">
+        <h3>Repo de GitHub <span>storage</span></h3>
+        <p data-editable>Los artifacts viven como <strong>.html</strong> en <strong>ialganaras/html</strong>. GitHub es el storage y el versionado.</p>
+      </div>
+      <div class="piece">
+        <h3>Editor cliente <span>contenteditable</span></h3>
+        <p data-editable>Script embebido que prende <strong>contenteditable</strong> sobre regiones marcadas con <strong>data-editable</strong>. Tracking de cambios, panel de historial.</p>
+      </div>
+      <div class="piece">
+        <h3>Cloudflare Worker <span>serve · save · list · revert</span></h3>
+        <p data-editable>El Worker es <strong>quien sirve el HTML</strong> (vía la API de GitHub con cache 0) y quien recibe los commits. Eliminamos a htmlpreview del medio: el link es ahora directo al Worker.</p>
+      </div>
+    </section>
+
+    <section>
+      <span class="snum">§4 — El ciclo</span>
+      <h2 data-editable>Ida y vuelta</h2>
+      <ol class="flow">
+        <li data-editable>Claude <b>genera</b> el HTML y lo commitea via MCP (o se sube a mano).</li>
+        <li data-editable>Se abre por el <b>Worker</b>: <em>https://html-commit.XXX.workers.dev/archivo.html</em>.</li>
+        <li data-editable>Se prende modo edición, se edita el texto. El LED naranja avisa cambios sin guardar.</li>
+        <li data-editable><b>Guardar</b> → Worker → commit nuevo. El indicador vuelve a verde.</li>
+        <li data-editable>El link compartible muestra siempre lo último, sin cache.</li>
+      </ol>
+      <div class="callout" data-editable>v0.5: el Worker sirve y commitea. htmlpreview deja de hacer falta.</div>
+    </section>
+
+  </main>
+
+  <footer>
+    <span>doc vivo · servido por el Worker</span>
+    <span class="commit">HEAD → main · v0.5</span>
+  </footer>
+
+</div>
+
+<!-- Toolbar -->
+<div class="toolbar" id="toolbar">
+  <div class="status"><span class="led"></span><span id="mode">solo lectura</span></div>
+  <button class="btn-edit" id="toggle">Modo edición</button>
+  <button class="btn-save" id="save">Guardar</button>
+  <button class="btn-icon" id="history" title="Versiones">📜</button>
+  <button class="btn-icon" id="refresh" title="Recargar desde server">↻</button>
+  <button class="btn-icon" id="share" title="Copiar link compartible">🔗</button>
+  <button class="btn-icon" id="cfg" title="Configurar Worker URL (solo en modo htmlpreview)">⚙</button>
+</div>
+
+<!-- Overlay del historial -->
+<div class="overlay" id="overlay">
+  <div class="panel">
+    <header>
+      <h3>Versiones de este archivo</h3>
+      <button class="close" id="closeOverlay" title="Cerrar">✕</button>
+    </header>
+    <div class="body" id="historyBody">
+      <div class="empty">Cargando…</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  document.body.classList.remove('editing');
+  document.querySelectorAll('[contenteditable]').forEach(function(el){ el.removeAttribute('contenteditable'); });
+
+  var bar     = document.getElementById('toolbar');
+  var toggle  = document.getElementById('toggle');
+  var save    = document.getElementById('save');
+  var history = document.getElementById('history');
+  var refresh = document.getElementById('refresh');
+  var share   = document.getElementById('share');
+  var cfg     = document.getElementById('cfg');
+  var mode    = document.getElementById('mode');
+  var overlay = document.getElementById('overlay');
+  var closeOv = document.getElementById('closeOverlay');
+  var hBody   = document.getElementById('historyBody');
+
+  var editing = false;
+  var dirty = false;
+  var lastSavedAt = null;
+
+  /* ---- Modo de hosting: 'worker' (servido por Worker) o 'htmlpreview' ---- */
+  var hostMode = (location.hostname === 'htmlpreview.github.io') ? 'htmlpreview' : 'worker';
+
+  if (hostMode === 'htmlpreview') {
+    var banner = document.createElement('div');
+    banner.className = 'mode-banner';
+    banner.innerHTML = 'Estás abriendo este archivo por htmlpreview. El link recomendado es por el Worker (sin cache).';
+    document.body.classList.add('has-banner');
+    document.body.insertBefore(banner, document.body.firstChild);
+  }
+
+  /* ---- Worker URL: autodetect en modo worker, localStorage en htmlpreview ---- */
+  function getWorkerUrl(){
+    if (hostMode === 'worker') return location.origin;
+    var url = localStorage.getItem('workerUrl');
+    if (!url) {
+      url = prompt('URL del Cloudflare Worker:\n(ej: https://html-commit.tu-subdomain.workers.dev)');
+      if (url) { url = url.trim().replace(/\/$/,''); localStorage.setItem('workerUrl', url); }
+    }
+    return url;
+  }
+  cfg.addEventListener('click', function(){
+    if (hostMode === 'worker') {
+      alert('No hace falta: el Worker URL es el actual (' + location.origin + ').');
+      return;
+    }
+    var cur = localStorage.getItem('workerUrl') || '';
+    var nu = prompt('URL del Cloudflare Worker:', cur);
+    if (nu !== null) {
+      nu = nu.trim().replace(/\/$/,'');
+      if (nu) localStorage.setItem('workerUrl', nu);
+      else localStorage.removeItem('workerUrl');
+    }
+  });
+
+  /* ---- Path del archivo ---- */
+  function getFilePath(){
+    if (hostMode === 'worker') {
+      return location.pathname.replace(/^\/+/,'');
+    }
+    var m = location.href.match(/github\.com\/[^/]+\/[^/]+\/blob\/[^/]+\/(.+?\.html?)(?:[?#&]|$)/i);
+    if (m) return decodeURIComponent(m[1]);
+    var stored = localStorage.getItem('lastPath') || '';
+    var p = prompt('Path del archivo en el repo:', stored);
+    if (p) { p = p.trim().replace(/^\/+/,''); localStorage.setItem('lastPath', p); }
+    return p;
+  }
+
+  /* ---- Status ---- */
+  function classes(){ bar.classList.remove('editing','dirty','saving','ok','err'); }
+  function setStatus(text, cls){
+    mode.textContent = text;
+    classes();
+    if (editing) bar.classList.add('editing');
+    if (dirty) bar.classList.add('dirty');
+    if (cls) { classes(); bar.classList.add(cls); }
+  }
+  function secondsAgo(ts){
+    var s = Math.floor((Date.now() - ts)/1000);
+    if (s < 60) return s + 's';
+    if (s < 3600) return Math.floor(s/60) + ' min';
+    if (s < 86400) return Math.floor(s/3600) + ' h';
+    return Math.floor(s/86400) + ' d';
+  }
+  function statusLine(){
+    if (dirty && editing) return 'editando • sin guardar';
+    if (dirty) return 'sin guardar';
+    if (editing) return 'editando';
+    if (lastSavedAt) return 'guardado hace ' + secondsAgo(lastSavedAt);
+    return 'solo lectura';
+  }
+  function refreshStatus(){ setStatus(statusLine()); }
+  setInterval(function(){ if (!editing && !dirty && lastSavedAt) refreshStatus(); }, 5000);
+
+  /* ---- Dirty tracking ---- */
+  function markDirty(){
+    if (!dirty) { dirty = true; refreshStatus(); }
+  }
+  function hookEditableListeners(){
+    document.querySelectorAll('[data-editable]').forEach(function(el){
+      if (el.dataset.hooked) return;
+      el.dataset.hooked = '1';
+      el.addEventListener('input', markDirty);
+    });
+  }
+
+  /* ---- Modo edición ---- */
+  toggle.addEventListener('click', function(){
+    editing = !editing;
+    document.body.classList.toggle('editing', editing);
+    document.querySelectorAll('[data-editable]').forEach(function(el){
+      if (editing) el.setAttribute('contenteditable','true');
+      else el.removeAttribute('contenteditable');
+    });
+    if (editing) hookEditableListeners();
+    toggle.textContent = editing ? 'Listo' : 'Modo edición';
+    refreshStatus();
+  });
+
+  /* ---- Save ---- */
+  save.addEventListener('click', async function(){
+    var workerUrl = getWorkerUrl();
+    if (!workerUrl) return;
+    var path = getFilePath();
+    if (!path) return;
+
+    var clone = document.documentElement.cloneNode(true);
+    clone.querySelectorAll('[contenteditable]').forEach(function(n){ n.removeAttribute('contenteditable'); });
+    clone.querySelectorAll('[data-hooked]').forEach(function(n){ n.removeAttribute('data-hooked'); });
+    clone.querySelectorAll('base').forEach(function(n){ n.remove(); });
+    clone.querySelectorAll('.mode-banner').forEach(function(n){ n.remove(); });
+    var cb = clone.querySelector('body');
+    if (cb) { cb.classList.remove('editing'); cb.classList.remove('has-banner'); }
+    var html = '<!DOCTYPE html>\n' + clone.outerHTML;
+
+    save.disabled = true;
+    setStatus('guardando…', 'saving');
+
+    try {
+      var resp = await fetch(workerUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ op:'save', path:path, html:html,
+          message:'Edición desde el navegador — ' + new Date().toISOString() })
+      });
+      if (resp.ok) {
+        dirty = false;
+        editing = false;
+        document.body.classList.remove('editing');
+        document.querySelectorAll('[contenteditable]').forEach(function(n){ n.removeAttribute('contenteditable'); });
+        toggle.textContent = 'Modo edición';
+        lastSavedAt = Date.now();
+        setStatus('✓ guardado', 'ok');
+        setTimeout(refreshStatus, 1800);
+      } else {
+        var text = await resp.text();
+        console.error('Worker', resp.status, text);
+        setStatus('✗ error ' + resp.status, 'err');
+        alert('Error al guardar (' + resp.status + ').\n\n' + text.slice(0,300));
+      }
+    } catch (e) {
+      console.error(e);
+      setStatus('✗ error red', 'err');
+      alert('No se pudo conectar al Worker.\n\n' + e.message);
+    } finally {
+      save.disabled = false;
+    }
+  });
+
+  /* ---- Reload ---- */
+  refresh.addEventListener('click', function(){
+    if (dirty) {
+      if (!confirm('Tenés cambios sin guardar. Si recargás, los perdés.\n\n¿Recargar igual?')) return;
+    }
+    if (hostMode === 'worker') {
+      // Worker no cachea, basta con un reload normal
+      location.reload();
+    } else {
+      // En htmlpreview el cache es del CDN, no hay forma 100% confiable
+      var url = location.href.split('#')[0].replace(/(\?|&)_cb=\d+/g, '');
+      var idx = url.toLowerCase().indexOf('.html');
+      if (idx > 0) {
+        var endHtml = idx + (url.charAt(idx+4).toLowerCase()==='l' ? 5 : 4);
+        var head = url.slice(0, endHtml);
+        var tail = url.slice(endHtml);
+        var sep = tail.startsWith('?') ? '&' : '?';
+        location.href = head + tail + sep + '_cb=' + Date.now();
+      } else {
+        var sep2 = url.includes('?') ? '&' : '?';
+        location.href = url + sep2 + '_cb=' + Date.now();
+      }
+    }
+  });
+
+  /* ---- Compartir link ---- */
+  share.addEventListener('click', async function(){
+    var workerUrl = getWorkerUrl();
+    if (!workerUrl) return;
+    var path = getFilePath();
+    if (!path) return;
+    var shareUrl = workerUrl + '/' + path;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      var prev = mode.textContent;
+      setStatus('✓ link copiado', 'ok');
+      setTimeout(function(){ refreshStatus(); }, 1800);
+    } catch (e) {
+      prompt('Link compartible:', shareUrl);
+    }
+  });
+
+  /* ---- Advertencia al cerrar ---- */
+  window.addEventListener('beforeunload', function(e){
+    if (dirty) { e.preventDefault(); e.returnValue = ''; return ''; }
+  });
+
+  /* ---- Historial ---- */
+  function timeAgo(iso){
+    var d = new Date(iso);
+    var s = Math.floor((Date.now() - d.getTime())/1000);
+    if (s < 60) return 'hace ' + s + 's';
+    if (s < 3600) return 'hace ' + Math.floor(s/60) + ' min';
+    if (s < 86400) return 'hace ' + Math.floor(s/3600) + ' h';
+    if (s < 86400*7) return 'hace ' + Math.floor(s/86400) + ' días';
+    return d.toLocaleDateString('es-AR', {day:'numeric', month:'short', year:'numeric'});
+  }
+  function buildPreviewUrl(sha, path){
+    // Para "Ver" versión histórica usamos htmlpreview con SHA (que no cachea esa URL única)
+    var m = location.href.match(/github\.com\/([^/]+)\/([^/]+)\/blob\//);
+    var owner, repo;
+    if (m) { owner = m[1]; repo = m[2]; }
+    else { owner = 'ialganaras'; repo = 'html'; }
+    return 'https://htmlpreview.github.io/?https://github.com/' + owner + '/' + repo + '/blob/' + sha + '/' + path;
+  }
+  function renderHistory(commits, path){
+    if (!commits.length) {
+      hBody.innerHTML = '<div class="empty">Este archivo todavía no tiene historial.</div>';
+      return;
+    }
+    hBody.innerHTML = '';
+    commits.forEach(function(c, idx){
+      var item = document.createElement('div');
+      item.className = 'commit' + (idx === 0 ? ' current' : '');
+      item.innerHTML =
+        '<div class="when">' + timeAgo(c.date) + ' · ' + c.author +
+          '<span class="sha">' + c.short + '</span></div>' +
+        '<div class="msg"></div>' +
+        '<div class="actions">' +
+          '<button class="view">👁 Ver</button>' +
+          (idx === 0 ? '' : '<button class="restore danger">↩ Restaurar</button>') +
+        '</div>';
+      item.querySelector('.msg').textContent = c.message.split('\n')[0];
+      item.querySelector('.view').addEventListener('click', function(){
+        window.open(buildPreviewUrl(c.sha, path), '_blank');
+      });
+      var rb = item.querySelector('.restore');
+      if (rb) {
+        rb.addEventListener('click', async function(){
+          if (dirty && !confirm('Tenés cambios sin guardar. Restaurar igual?')) return;
+          if (!confirm('Restaurar la versión de ' + timeAgo(c.date) + ' (' + c.short + ')?\n\nCrea un commit nuevo con el contenido viejo. El historial se mantiene.')) return;
+          rb.disabled = true;
+          rb.textContent = 'restaurando…';
+          var workerUrl = getWorkerUrl();
+          try {
+            var resp = await fetch(workerUrl, {
+              method:'POST',
+              headers:{'Content-Type':'application/json'},
+              body: JSON.stringify({ op:'revert', path:path, sha:c.sha,
+                message:'Restore from ' + c.short + ' — ' + new Date().toISOString() })
+            });
+            if (resp.ok) {
+              dirty = false;
+              overlay.classList.remove('show');
+              setStatus('✓ restaurado, recargando…', 'ok');
+              setTimeout(function(){ location.reload(); }, 1500);
+            } else {
+              var t = await resp.text();
+              alert('Error al restaurar (' + resp.status + ').\n\n' + t.slice(0,300));
+              rb.disabled = false;
+              rb.textContent = '↩ Restaurar';
+            }
+          } catch (e) {
+            alert('No se pudo conectar al Worker.\n\n' + e.message);
+            rb.disabled = false;
+            rb.textContent = '↩ Restaurar';
+          }
+        });
+      }
+      hBody.appendChild(item);
+    });
+  }
+  history.addEventListener('click', async function(){
+    var workerUrl = getWorkerUrl();
+    if (!workerUrl) return;
+    var path = getFilePath();
+    if (!path) return;
+    overlay.classList.add('show');
+    hBody.innerHTML = '<div class="empty">Cargando…</div>';
+    try {
+      var resp = await fetch(workerUrl, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ op:'list', path:path, limit:20 })
+      });
+      if (!resp.ok) {
+        hBody.innerHTML = '<div class="empty">Error al cargar historial (' + resp.status + ').</div>';
+        return;
+      }
+      var commits = await resp.json();
+      renderHistory(commits, path);
+    } catch (e) {
+      hBody.innerHTML = '<div class="empty">No se pudo conectar al Worker.</div>';
+    }
+  });
+  closeOv.addEventListener('click', function(){ overlay.classList.remove('show'); });
+  overlay.addEventListener('click', function(e){
+    if (e.target === overlay) overlay.classList.remove('show');
+  });
+})();
+</script>
+</body>
+</html>

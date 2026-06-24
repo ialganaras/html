@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
+<html lang="es"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Editor de artifacts HTML — v0.5</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
 <style>
   :root{
     --paper:#F6F1E7; --paper-2:#FCFAF4;
@@ -254,13 +253,13 @@
   }
 </style>
 </head>
-<body>
+<body class="">
 <div class="wrap">
 
   <header class="mast">
     <div class="eyebrow">Propuesta de workflow · documento vivo</div>
-    <h1 data-editable>Artifacts HTML que <em>van y vuelven</em> de GitHub</h1>
-    <p class="dek" data-editable>Hosteado por el Worker, editable en modo gráfico, versionado en cada guardado, al alcance de la IA.</p>
+    <h1 data-editable="">v1<br>Artifacts HTML que <em>van y vuelven</em> de GitHub</h1>
+    <p class="dek" data-editable="">Hosteado por el Worker, editable en modo gráfico, versionado en cada guardado, al alcance de la IA.</p>
     <div class="meta">
       <span>estado: <b>en uso</b></span>
       <span class="dot">●</span>
@@ -276,54 +275,54 @@
 
     <section>
       <span class="snum">§1 — El problema</span>
-      <h2 data-editable>La necesidad</h2>
-      <p data-editable>Muchos outputs de interacciones complejas con el chat terminan siendo un documento HTML que hoy se comparte como adjunto suelto. Sin permisos, sin comentarios, sin link estable, ni forma cómoda de editarlo o que la IA lo retome.</p>
-      <p data-editable>La meta: darle a esos HTML un lugar donde vivan, con link, edición gráfica y round-trip con el chat.</p>
+      <h2 data-editable="">La necesidad</h2>
+      <p data-editable="">Muchos outputs de interacciones complejas con el chat terminan siendo un documento HTML que hoy se comparte como adjunto suelto. Sin permisos, sin comentarios, sin link estable, ni forma cómoda de editarlo o que la IA lo retome.</p>
+      <p data-editable="">La meta: darle a esos HTML un lugar donde vivan, con link, edición gráfica y round-trip con el chat.</p>
     </section>
 
     <section>
       <span class="snum">§2 — Qué cumple</span>
-      <h2 data-editable>Requisitos</h2>
+      <h2 data-editable="">Requisitos</h2>
       <ul class="req">
-        <li data-editable><b>Hostear</b> el HTML en un repositorio. <em>✓ GitHub.</em></li>
-        <li data-editable><b>Abrir con un link</b> renderizado. <em>✓ Worker propio (sin cache).</em></li>
-        <li data-editable><b>Editar el texto en modo gráfico</b>. <em>✓ toggle de modo edición.</em></li>
-        <li data-editable><b>Versionar</b>: cada guardado, una versión. <em>✓ commit automático.</em></li>
-        <li data-editable><b>Ver y restaurar versiones anteriores</b>. <em>✓ panel de historial.</em></li>
-        <li data-editable><b>Saber si hay cambios sin guardar</b>. <em>✓ indicador dirty.</em></li>
-        <li data-editable><b>Round-trip con la IA</b>: el chat lee y reedita. <em>✓ MCP de GitHub.</em></li>
-        <li data-editable><b>Permisos y comentarios</b> para terceros. <em>Por resolver.</em></li>
+        <li data-editable=""><b>Hostear</b> el HTML en un repositorio. <em>✓ GitHub.</em></li>
+        <li data-editable=""><b>Abrir con un link</b> renderizado. <em>✓ Worker propio (sin cache).</em></li>
+        <li data-editable=""><b>Editar el texto en modo gráfico</b>. <em>✓ toggle de modo edición.</em></li>
+        <li data-editable=""><b>Versionar</b>: cada guardado, una versión. <em>✓ commit automático.</em></li>
+        <li data-editable=""><b>Ver y restaurar versiones anteriores</b>. <em>✓ panel de historial.</em></li>
+        <li data-editable=""><b>Saber si hay cambios sin guardar</b>. <em>✓ indicador dirty.</em></li>
+        <li data-editable=""><b>Round-trip con la IA</b>: el chat lee y reedita. <em>✓ MCP de GitHub.</em></li>
+        <li data-editable=""><b>Permisos y comentarios</b> para terceros. <em>Por resolver.</em></li>
       </ul>
     </section>
 
     <section>
       <span class="snum">§3 — La arquitectura</span>
-      <h2 data-editable>Tres piezas</h2>
+      <h2 data-editable="">Tres piezas</h2>
       <div class="piece">
         <h3>Repo de GitHub <span>storage</span></h3>
-        <p data-editable>Los artifacts viven como <strong>.html</strong> en <strong>ialganaras/html</strong>. GitHub es el storage y el versionado.</p>
+        <p data-editable="">Los artifacts viven como <strong>.html</strong> en <strong>ialganaras/html</strong>. GitHub es el storage y el versionado.</p>
       </div>
       <div class="piece">
         <h3>Editor cliente <span>contenteditable</span></h3>
-        <p data-editable>Script embebido que prende <strong>contenteditable</strong> sobre regiones marcadas con <strong>data-editable</strong>. Tracking de cambios, panel de historial.</p>
+        <p data-editable="">Script embebido que prende <strong>contenteditable</strong> sobre regiones marcadas con <strong>data-editable</strong>. Tracking de cambios, panel de historial.</p>
       </div>
       <div class="piece">
         <h3>Cloudflare Worker <span>serve · save · list · revert</span></h3>
-        <p data-editable>El Worker es <strong>quien sirve el HTML</strong> (vía la API de GitHub con cache 0) y quien recibe los commits. Eliminamos a htmlpreview del medio: el link es ahora directo al Worker.</p>
+        <p data-editable="">El Worker es <strong>quien sirve el HTML</strong> (vía la API de GitHub con cache 0) y quien recibe los commits. Eliminamos a htmlpreview del medio: el link es ahora directo al Worker.</p>
       </div>
     </section>
 
     <section>
       <span class="snum">§4 — El ciclo</span>
-      <h2 data-editable>Ida y vuelta</h2>
+      <h2 data-editable="">Ida y vuelta</h2>
       <ol class="flow">
-        <li data-editable>Claude <b>genera</b> el HTML y lo commitea via MCP (o se sube a mano).</li>
-        <li data-editable>Se abre por el <b>Worker</b>: <em>https://html-commit.XXX.workers.dev/archivo.html</em>.</li>
-        <li data-editable>Se prende modo edición, se edita el texto. El LED naranja avisa cambios sin guardar.</li>
-        <li data-editable><b>Guardar</b> → Worker → commit nuevo. El indicador vuelve a verde.</li>
-        <li data-editable>El link compartible muestra siempre lo último, sin cache.</li>
+        <li data-editable="">Claude <b>genera</b> el HTML y lo commitea via MCP (o se sube a mano).</li>
+        <li data-editable="">Se abre por el <b>Worker</b>: <em>https://html-commit.XXX.workers.dev/archivo.html</em>.</li>
+        <li data-editable="">Se prende modo edición, se edita el texto. El LED naranja avisa cambios sin guardar.</li>
+        <li data-editable=""><b>Guardar</b> → Worker → commit nuevo. El indicador vuelve a verde.</li>
+        <li data-editable="">El link compartible muestra siempre lo último, sin cache.</li>
       </ol>
-      <div class="callout" data-editable>v0.5: el Worker sirve y commitea. htmlpreview deja de hacer falta.</div>
+      <div class="callout" data-editable="">v0.5: el Worker sirve y commitea. htmlpreview deja de hacer falta.</div>
     </section>
 
   </main>
@@ -336,9 +335,9 @@
 </div>
 
 <!-- Toolbar -->
-<div class="toolbar" id="toolbar">
-  <div class="status"><span class="led"></span><span id="mode">solo lectura</span></div>
-  <button class="btn-edit" id="toggle">Modo edición</button>
+<div class="toolbar editing dirty" id="toolbar">
+  <div class="status"><span class="led"></span><span id="mode">editando • sin guardar</span></div>
+  <button class="btn-edit" id="toggle">Listo</button>
   <button class="btn-save" id="save">Guardar</button>
   <button class="btn-icon" id="history" title="Versiones">📜</button>
   <button class="btn-icon" id="refresh" title="Recargar desde server">↻</button>
@@ -680,5 +679,6 @@
   });
 })();
 </script>
-</body>
-</html>
+
+
+</body></html>

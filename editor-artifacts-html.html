@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editor de artifacts HTML sobre GitHub — Propuesta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F1E7;
+    --paper-2:#FCFAF4;
+    --ink:#211D18;
+    --ink-soft:#5C544A;
+    --ink-faint:#8C8475;
+    --accent:#8E3B2E;
+    --accent-2:#C0633F;
+    --line:#DED4C2;
+    --code-bg:#23201B;
+    --code-fg:#EDE6D6;
+    --code-accent:#D89A6A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Newsreader",Georgia,serif;
+    font-size:19px;
+    line-height:1.65;
+    font-weight:380;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(192,99,63,.06), transparent 38%),
+      radial-gradient(circle at 88% 92%, rgba(142,59,46,.05), transparent 42%);
+    background-attachment:fixed;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:0 28px 120px}
+
+  /* ---------- Masthead ---------- */
+  header.mast{
+    padding:84px 0 38px;
+    border-bottom:1.5px solid var(--ink);
+    margin-bottom:0;
+  }
+  .eyebrow{
+    font-family:"JetBrains Mono",monospace;
+    font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--accent);font-weight:500;margin-bottom:22px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .eyebrow::before{content:"";width:26px;height:1.5px;background:var(--accent)}
+  h1{
+    font-family:"Instrument Serif",serif;
+    font-weight:400;
+    font-size:clamp(44px,7.5vw,76px);
+    line-height:.98;
+    letter-spacing:-.01em;
+    margin-bottom:20px;
+  }
+  h1 em{font-style:italic;color:var(--accent)}
+  .dek{
+    font-size:21px;color:var(--ink-soft);max-width:54ch;
+    font-style:italic;line-height:1.5;
+  }
+  .meta{
+    display:flex;flex-wrap:wrap;gap:6px 34px;margin-top:34px;
+    font-family:"JetBrains Mono",monospace;font-size:12px;
+    color:var(--ink-faint);letter-spacing:.04em;
+  }
+  .meta b{color:var(--ink);font-weight:500}
+  .meta .dot{color:var(--accent-2)}
+
+  /* ---------- Git-graph section spine ---------- */
+  main{position:relative;padding-top:58px}
+  main::before{
+    content:"";position:absolute;left:7px;top:0;bottom:40px;width:1.5px;
+    background:linear-gradient(var(--line),var(--line) 70%,transparent);
+  }
+  section{position:relative;padding:0 0 12px 44px;margin-bottom:56px}
+  section::before{
+    content:"";position:absolute;left:0;top:9px;width:16px;height:16px;
+    border-radius:50%;background:var(--paper);
+    border:2px solid var(--accent);
+  }
+  section::after{
+    content:"";position:absolute;left:5px;top:14px;width:6px;height:6px;
+    border-radius:50%;background:var(--accent);
+  }
+  .snum{
+    font-family:"JetBrains Mono",monospace;font-size:12px;
+    letter-spacing:.18em;text-transform:uppercase;color:var(--accent);
+    margin-bottom:8px;display:block;font-weight:500;
+  }
+  h2{
+    font-family:"Instrument Serif",serif;font-weight:400;
+    font-size:clamp(28px,4.6vw,38px);line-height:1.08;
+    letter-spacing:-.01em;margin-bottom:18px;
+  }
+  p{margin-bottom:17px}
+  p:last-child{margin-bottom:0}
+  strong{font-weight:580;color:var(--ink)}
+  a{color:var(--accent);text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
+
+  ul.req{list-style:none;margin:6px 0 4px}
+  ul.req li{
+    position:relative;padding:13px 0 13px 30px;
+    border-bottom:1px dashed var(--line);font-size:18px;line-height:1.5;
+  }
+  ul.req li:last-child{border-bottom:none}
+  ul.req li::before{
+    content:"›";position:absolute;left:2px;top:11px;color:var(--accent);
+    font-family:"JetBrains Mono",monospace;font-size:18px;font-weight:500;
+  }
+  ul.req li b{font-weight:580}
+
+  /* pieces */
+  .piece{
+    border:1px solid var(--line);border-radius:10px;background:var(--paper-2);
+    padding:20px 22px;margin:14px 0;
+  }
+  .piece h3{
+    font-family:"JetBrains Mono",monospace;font-size:13px;font-weight:500;
+    letter-spacing:.04em;text-transform:uppercase;color:var(--accent);
+    margin-bottom:9px;display:flex;align-items:baseline;gap:10px;
+  }
+  .piece h3 span{
+    color:var(--ink-faint);font-size:11px;
+    border:1px solid var(--line);border-radius:20px;padding:2px 9px;
+  }
+  .piece p{font-size:17px;margin-bottom:0;color:var(--ink-soft)}
+  .piece p strong{color:var(--ink)}
+
+  /* flow */
+  ol.flow{list-style:none;counter-reset:s;margin:6px 0}
+  ol.flow li{
+    counter-increment:s;position:relative;padding:11px 0 11px 42px;
+    font-size:17.5px;color:var(--ink-soft);
+  }
+  ol.flow li::before{
+    content:counter(s);position:absolute;left:0;top:9px;
+    width:26px;height:26px;border-radius:50%;
+    background:var(--ink);color:var(--paper);
+    font-family:"JetBrains Mono",monospace;font-size:13px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  ol.flow li b{color:var(--ink);font-weight:560}
+
+  .callout{
+    border-left:3px solid var(--accent);background:rgba(142,59,46,.05);
+    padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;
+    font-size:17px;color:var(--ink-soft);font-style:italic;
+  }
+
+  /* footer */
+  footer{
+    margin-top:30px;padding-top:26px;border-top:1.5px solid var(--ink);
+    font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--ink-faint);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
+    letter-spacing:.03em;
+  }
+  footer .commit{color:var(--accent)}
+
+  /* ---------- Floating edit toolbar ---------- */
+  .toolbar{
+    position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+    display:flex;gap:8px;align-items:center;z-index:9999;
+    background:var(--code-bg);color:var(--code-fg);
+    padding:8px 8px 8px 16px;border-radius:40px;
+    box-shadow:0 8px 30px rgba(33,29,24,.28);
+    font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.03em;
+  }
+  .toolbar .status{display:flex;align-items:center;gap:8px;opacity:.85}
+  .toolbar .led{width:8px;height:8px;border-radius:50%;background:#6b6357;transition:.25s}
+  .toolbar.editing .led{background:var(--code-accent);box-shadow:0 0 10px var(--code-accent)}
+  .toolbar button{
+    font-family:inherit;font-size:12px;letter-spacing:.03em;cursor:pointer;
+    border:none;border-radius:30px;padding:9px 16px;font-weight:500;transition:.18s;
+  }
+  .btn-edit{background:var(--code-accent);color:#241a10}
+  .btn-edit:hover{filter:brightness(1.08)}
+  .btn-save{background:transparent;color:var(--code-fg);border:1px solid #4a443b !important}
+  .btn-save:hover{background:#332f28}
+
+  /* editable affordance */
+  body.editing [data-editable]{
+    outline:1.5px dashed rgba(142,59,46,.45);
+    outline-offset:5px;border-radius:3px;transition:outline-color .2s;
+  }
+  body.editing [data-editable]:hover{outline-color:var(--accent)}
+  body.editing [data-editable]:focus{
+    outline:1.5px solid var(--accent);background:rgba(216,154,106,.10);
+  }
+
+  /* load animation */
+  .reveal{opacity:0;transform:translateY(14px);animation:rise .7s cubic-bezier(.2,.7,.2,1) forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+  header.mast .reveal:nth-child(1){animation-delay:.05s}
+  header.mast .reveal:nth-child(2){animation-delay:.13s}
+  header.mast .reveal:nth-child(3){animation-delay:.22s}
+  header.mast .reveal:nth-child(4){animation-delay:.31s}
+  section{opacity:0;transform:translateY(16px);animation:rise .7s cubic-bezier(.2,.7,.2,1) forwards}
+  section:nth-of-type(1){animation-delay:.34s}
+  section:nth-of-type(2){animation-delay:.42s}
+  section:nth-of-type(3){animation-delay:.50s}
+  section:nth-of-type(4){animation-delay:.58s}
+  section:nth-of-type(5){animation-delay:.66s}
+  @media (prefers-reduced-motion:reduce){.reveal,section{animation:none;opacity:1;transform:none}}
+
+  @media(max-width:560px){
+    body{font-size:18px}
+    .wrap{padding:0 20px 110px}
+    header.mast{padding-top:56px}
+    section{padding-left:34px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="mast">
+    <div class="eyebrow reveal">Propuesta de workflow · documento vivo</div>
+    <h1 class="reveal" data-editable>Artifacts HTML que <em>van y vuelven</em> de GitHub</h1>
+    <p class="dek reveal" data-editable>Un destino propio para los HTML que salen del chat: hosteado, versionado en cada guardado, editable a mano en modo gráfico, y siempre al alcance de la IA para volver a tocarlo.</p>
+    <div class="meta reveal">
+      <span>estado: <b>propuesta</b></span>
+      <span class="dot">●</span>
+      <span>versión: <b>v0.1</b></span>
+      <span class="dot">●</span>
+      <span>autor: <b>Iñaki</b></span>
+      <span class="dot">●</span>
+      <span>origen: <b>chat → GitHub</b></span>
+    </div>
+  </header>
+
+  <main>
+
+    <section>
+      <span class="snum">§1 — El problema</span>
+      <h2 data-editable>La necesidad</h2>
+      <p data-editable>Muchos de los outputs de interacciones complejas con el chat terminan siendo un documento HTML —con secciones e interacciones de distinto tipo— que hoy se comparte como adjunto suelto. Eso significa: nada de permisos, nada de comentarios, nada de un link estable, y ninguna forma cómoda de editarlo después ni de que la IA lo retome.</p>
+      <p data-editable>La meta es darle a esos HTML un lugar donde vivan: que se suban a un repositorio, se abran con un link, se editen directo en modo gráfico, y que el chat los tenga a mano para leer y volver a editar.</p>
+    </section>
+
+    <section>
+      <span class="snum">§2 — Qué tiene que cumplir</span>
+      <h2 data-editable>Requisitos</h2>
+      <ul class="req">
+        <li data-editable><b>Hostear</b> el HTML en un repositorio, no como adjunto.</li>
+        <li data-editable><b>Abrir con un link</b> renderizado, como una página viva.</li>
+        <li data-editable><b>Permisos</b> sobre quién ve y quién edita.</li>
+        <li data-editable><b>Editar el texto en modo gráfico</b> (WYSIWYG), sin tocar código.</li>
+        <li data-editable><b>Versionar</b>: que cada guardado genere una versión nueva.</li>
+        <li data-editable><b>Round-trip con la IA</b>: que el chat lo lea y lo reedite fácil.</li>
+      </ul>
+    </section>
+
+    <section>
+      <span class="snum">§3 — La solución</span>
+      <h2 data-editable>El mini-build propio</h2>
+      <p data-editable>En lugar de pagar un CMS de terceros, una arquitectura liviana de tres piezas, toda apoyada en GitHub. El HTML sigue siendo HTML y queda 100% bajo control propio.</p>
+
+      <div class="piece">
+        <h3>Repo + Pages <span>hosting</span></h3>
+        <p data-editable>Los artifacts viven como archivos <strong>docs/*.html</strong>. GitHub Pages los sirve en una URL pública. El conector de GitHub de Claude los lee sin mover nada.</p>
+      </div>
+
+      <div class="piece">
+        <h3>Editor cliente <span>contenteditable</span></h3>
+        <p data-editable>Un pequeño script que, en modo edición, prende <strong>contenteditable</strong> sobre las regiones marcadas y muestra un botón de guardar. Es lo que estás usando ahora mismo en este documento.</p>
+      </div>
+
+      <div class="piece">
+        <h3>Proxy de commit <span>serverless</span></h3>
+        <p data-editable>Una función (Cloudflare Worker o val) con el token de GitHub como secreto. Al guardar, escribe el HTML vía la API de GitHub — y cada escritura <strong>es un commit</strong>, o sea una versión nueva con historial y rollback.</p>
+      </div>
+    </section>
+
+    <section>
+      <span class="snum">§4 — El ciclo</span>
+      <h2 data-editable>Ida y vuelta</h2>
+      <ol class="flow">
+        <li data-editable>Claude <b>genera</b> el HTML en el chat.</li>
+        <li data-editable>Se <b>sube al repo</b> de GitHub (este paso lo estamos probando ahora).</li>
+        <li data-editable>Se <b>abre y edita</b> en modo gráfico; cada guardado deja un commit.</li>
+        <li data-editable>Para retomarlo, se le pasa el <b>link raw</b> a Claude y lo lee de GitHub.</li>
+        <li data-editable>Claude lo <b>reedita</b> y se vuelve a guardar. El círculo se cierra.</li>
+      </ol>
+      <div class="callout" data-editable>Este mismo archivo es la primera prueba del ciclo: nació en el chat y ahora va camino al repo.</div>
+    </section>
+
+    <section>
+      <span class="snum">§5 — Dónde estamos</span>
+      <h2 data-editable>Estado y próximos pasos</h2>
+      <p data-editable>Primera etapa: confirmar que un HTML generado en el chat sube limpio a GitHub y vuelve legible para la IA. Después se suma el editor cliente con guardado real, y por último el proxy de commit para cerrar el versionado automático.</p>
+    </section>
+
+  </main>
+
+  <footer>
+    <span>doc generado en el chat · listo para commit</span>
+    <span class="commit">HEAD → main · v0.1</span>
+  </footer>
+
+</div>
+
+<!-- Barra de edición (demo del editor cliente integrado) -->
+<div class="toolbar" id="toolbar">
+  <div class="status"><span class="led"></span><span id="mode">solo lectura</span></div>
+  <button class="btn-edit" id="toggle">Modo edición</button>
+  <button class="btn-save" id="save">Descargar versión</button>
+</div>
+
+<script>
+(function(){
+  var body = document.body;
+  var bar = document.getElementById('toolbar');
+  var toggle = document.getElementById('toggle');
+  var save = document.getElementById('save');
+  var mode = document.getElementById('mode');
+  var editing = false;
+
+  toggle.addEventListener('click', function(){
+    editing = !editing;
+    body.classList.toggle('editing', editing);
+    bar.classList.toggle('editing', editing);
+    document.querySelectorAll('[data-editable]').forEach(function(el){
+      if(editing){ el.setAttribute('contenteditable','true'); }
+      else { el.removeAttribute('contenteditable'); }
+    });
+    toggle.textContent = editing ? 'Listo' : 'Modo edición';
+    mode.textContent = editing ? 'editando' : 'solo lectura';
+  });
+
+  // Descarga el HTML actual (limpio), como anticipo del "guardar = commit"
+  save.addEventListener('click', function(){
+    var clone = document.documentElement.cloneNode(true);
+    clone.querySelectorAll('[contenteditable]').forEach(function(n){ n.removeAttribute('contenteditable'); });
+    var ui = clone.querySelector('#toolbar'); if(ui) ui.remove();
+    body.classList.remove('editing'); // por las dudas en el clon
+    var html = '<!DOCTYPE html>\n' + clone.outerHTML;
+    var blob = new Blob([html], {type:'text/html'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'editor-artifacts-html.html';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+})();
+</script>
+</body>
+</html>

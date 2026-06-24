@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
+<html lang="es"><head><base href="https://raw.githubusercontent.com/ialganaras/html/main/editor-artifacts-html.html">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Editor de artifacts HTML sobre GitHub — Propuesta</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
 <style>
   :root{
     --paper:#F6F1E7;
@@ -216,13 +215,13 @@
   }
 </style>
 </head>
-<body>
+<body class="editing">
 <div class="wrap">
 
   <header class="mast">
     <div class="eyebrow reveal">Propuesta de workflow · documento vivo</div>
-    <h1 class="reveal" data-editable>Artifacts HTML que <em>van y vuelven</em> de GitHub</h1>
-    <p class="dek reveal" data-editable>Un destino propio para los HTML que salen del chat: hosteado, versionado en cada guardado, editable a mano en modo gráfico, y siempre al alcance de la IA para volver a tocarlo.</p>
+    <h1 class="reveal" data-editable="">Artifactsssss HTMLXXXXXXX que <em>van y vuelven</em> de GitHubbbb</h1>
+    <p class="dek reveal" data-editable="">Un destino propio para los HTML que salen del chat: hosteado, versionado en cada guardado, editable a mano en modo gráfico, y siempre al alcance de la IA para volver a tocarlo.</p>
     <div class="meta reveal">
       <span>estado: <b>propuesta</b></span>
       <span class="dot">●</span>
@@ -238,62 +237,62 @@
 
     <section>
       <span class="snum">§1 — El problema</span>
-      <h2 data-editable>La necesidad</h2>
-      <p data-editable>Muchos de los outputs de interacciones complejas con el chat terminan siendo un documento HTML —con secciones e interacciones de distinto tipo— que hoy se comparte como adjunto suelto. Eso significa: nada de permisos, nada de comentarios, nada de un link estable, y ninguna forma cómoda de editarlo después ni de que la IA lo retome.</p>
-      <p data-editable>La meta es darle a esos HTML un lugar donde vivan: que se suban a un repositorio, se abran con un link, se editen directo en modo gráfico, y que el chat los tenga a mano para leer y volver a editar.</p>
+      <h2 data-editable="">La necesidad</h2>
+      <p data-editable="">Muchos de los outputs de interacciones complejas con el chat terminan siendo un documento HTML —con secciones e interacciones de distinto tipo— que hoy se comparte como adjunto suelto. Eso significa: nada de permisos, nada de comentarios, nada de un link estable, y ninguna forma cómoda de editarlo después ni de que la IA lo retome.</p>
+      <p data-editable="">La meta es darle a esos HTML un lugar donde vivan: que se suban a un repositorio, se abran con un link, se editen directo en modo gráfico, y que el chat los tenga a mano para leer y volver a editar.</p>
     </section>
 
     <section>
       <span class="snum">§2 — Qué tiene que cumplir</span>
-      <h2 data-editable>Requisitos</h2>
+      <h2 data-editable="">Requisitos</h2>
       <ul class="req">
-        <li data-editable><b>Hostear</b> el HTML en un repositorio, no como adjunto.</li>
-        <li data-editable><b>Abrir con un link</b> renderizado, como una página viva.</li>
-        <li data-editable><b>Permisos</b> sobre quién ve y quién edita.</li>
-        <li data-editable><b>Editar el texto en modo gráfico</b> (WYSIWYG), sin tocar código.</li>
-        <li data-editable><b>Versionar</b>: que cada guardado genere una versión nueva.</li>
-        <li data-editable><b>Round-trip con la IA</b>: que el chat lo lea y lo reedite fácil.</li>
+        <li data-editable=""><b>Hostear</b> el HTML en un repositorio, no como adjunto.</li>
+        <li data-editable=""><b>Abrir con un link</b> renderizado, como una página viva.</li>
+        <li data-editable=""><b>Permisos</b> sobre quién ve y quién edita.</li>
+        <li data-editable=""><b>Editar el texto en modo gráfico</b> (WYSIWYG), sin tocar código.</li>
+        <li data-editable=""><b>Versionar</b>: que cada guardado genere una versión nueva.</li>
+        <li data-editable=""><b>Round-trip con la IA</b>: que el chat lo lea y lo reedite fácil.</li>
       </ul>
     </section>
 
     <section>
       <span class="snum">§3 — La solución</span>
-      <h2 data-editable>El mini-build propio</h2>
-      <p data-editable>En lugar de pagar un CMS de terceros, una arquitectura liviana de tres piezas, toda apoyada en GitHub. El HTML sigue siendo HTML y queda 100% bajo control propio.</p>
+      <h2 data-editable="">El mini-build propio</h2>
+      <p data-editable="">En lugar de pagar un CMS de terceros, una arquitectura liviana de tres piezas, toda apoyada en GitHub. El HTML sigue siendo HTML y queda 100% bajo control propio.</p>
 
       <div class="piece">
         <h3>Repo + Pages <span>hosting</span></h3>
-        <p data-editable>Los artifacts viven como archivos <strong>docs/*.html</strong>. GitHub Pages los sirve en una URL pública. El conector de GitHub de Claude los lee sin mover nada.</p>
+        <p data-editable="">Los artifacts viven como archivos <strong>docs/*.html</strong>. GitHub Pages los sirve en una URL pública. El conector de GitHub de Claude los lee sin mover nada.</p>
       </div>
 
       <div class="piece">
         <h3>Editor cliente <span>contenteditable</span></h3>
-        <p data-editable>Un pequeño script que, en modo edición, prende <strong>contenteditable</strong> sobre las regiones marcadas y muestra un botón de guardar. Es lo que estás usando ahora mismo en este documento.</p>
+        <p data-editable="">Un pequeño script que, en modo edición, prende <strong>contenteditable</strong> sobre las regiones marcadas y muestra un botón de guardar. Es lo que estás usando ahora mismo en este documento.</p>
       </div>
 
       <div class="piece">
         <h3>Proxy de commit <span>serverless</span></h3>
-        <p data-editable>Una función (Cloudflare Worker o val) con el token de GitHub como secreto. Al guardar, escribe el HTML vía la API de GitHub — y cada escritura <strong>es un commit</strong>, o sea una versión nueva con historial y rollback.</p>
+        <p data-editable="">Una función (Cloudflare Worker o val) con el token de GitHub como secreto. Al guardar, escribe el HTML vía la API de GitHub — y cada escritura <strong>es un commit</strong>, o sea una versión nueva con historial y rollback.</p>
       </div>
     </section>
 
     <section>
       <span class="snum">§4 — El ciclo</span>
-      <h2 data-editable>Ida y vuelta</h2>
+      <h2 data-editable="">Ida y vuelta</h2>
       <ol class="flow">
-        <li data-editable>Claude <b>genera</b> el HTML en el chat.</li>
-        <li data-editable>Se <b>sube al repo</b> de GitHub (este paso lo estamos probando ahora).</li>
-        <li data-editable>Se <b>abre y edita</b> en modo gráfico; cada guardado deja un commit.</li>
-        <li data-editable>Para retomarlo, se le pasa el <b>link raw</b> a Claude y lo lee de GitHub.</li>
-        <li data-editable>Claude lo <b>reedita</b> y se vuelve a guardar. El círculo se cierra.</li>
+        <li data-editable="">Claude <b>genera</b> el HTML en el chat.</li>
+        <li data-editable="">Se <b>sube al repo</b> de GitHub (este paso lo estamos probando ahora).</li>
+        <li data-editable="">Se <b>abre y edita</b> en modo gráfico; cada guardado deja un commit.</li>
+        <li data-editable="">Para retomarlo, se le pasa el <b>link raw</b> a Claude y lo lee de GitHub.</li>
+        <li data-editable="">Claude lo <b>reedita</b> y se vuelve a guardar. El círculo se cierra.</li>
       </ol>
-      <div class="callout" data-editable>Este mismo archivo es la primera prueba del ciclo: nació en el chat y ahora va camino al repo.</div>
+      <div class="callout" data-editable="">Este mismo archivo es la primera prueba del ciclo: nació en el chat y ahora va camino al repo.</div>
     </section>
 
     <section>
       <span class="snum">§5 — Dónde estamos</span>
-      <h2 data-editable>Estado y próximos pasos</h2>
-      <p data-editable>Primera etapa: confirmar que un HTML generado en el chat sube limpio a GitHub y vuelve legible para la IA. Después se suma el editor cliente con guardado real, y por último el proxy de commit para cerrar el versionado automático.</p>
+      <h2 data-editable="">Estado y próximos pasos</h2>
+      <p data-editable="">Primera etapa: confirmar que un HTML generado en el chat sube limpio a GitHub y vuelve legible para la IA. Después se suma el editor cliente con guardado real, y por último el proxy de commit para cerrar el versionado automático.</p>
     </section>
 
   </main>
@@ -306,11 +305,7 @@
 </div>
 
 <!-- Barra de edición (demo del editor cliente integrado) -->
-<div class="toolbar" id="toolbar">
-  <div class="status"><span class="led"></span><span id="mode">solo lectura</span></div>
-  <button class="btn-edit" id="toggle">Modo edición</button>
-  <button class="btn-save" id="save">Descargar versión</button>
-</div>
+
 
 <script>
 (function(){
@@ -349,5 +344,42 @@
   });
 })();
 </script>
-</body>
-</html>
+
+
+<script>
+(function(){
+  var body = document.body;
+  var bar = document.getElementById('toolbar');
+  var toggle = document.getElementById('toggle');
+  var save = document.getElementById('save');
+  var mode = document.getElementById('mode');
+  var editing = false;
+
+  toggle.addEventListener('click', function(){
+    editing = !editing;
+    body.classList.toggle('editing', editing);
+    bar.classList.toggle('editing', editing);
+    document.querySelectorAll('[data-editable]').forEach(function(el){
+      if(editing){ el.setAttribute('contenteditable','true'); }
+      else { el.removeAttribute('contenteditable'); }
+    });
+    toggle.textContent = editing ? 'Listo' : 'Modo edición';
+    mode.textContent = editing ? 'editando' : 'solo lectura';
+  });
+
+  // Descarga el HTML actual (limpio), como anticipo del "guardar = commit"
+  save.addEventListener('click', function(){
+    var clone = document.documentElement.cloneNode(true);
+    clone.querySelectorAll('[contenteditable]').forEach(function(n){ n.removeAttribute('contenteditable'); });
+    var ui = clone.querySelector('#toolbar'); if(ui) ui.remove();
+    body.classList.remove('editing'); // por las dudas en el clon
+    var html = '<!DOCTYPE html>\n' + clone.outerHTML;
+    var blob = new Blob([html], {type:'text/html'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'editor-artifacts-html.html';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+})();
+</script></body></html>

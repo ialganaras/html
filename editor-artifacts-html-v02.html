@@ -181,7 +181,7 @@
 
   <header class="mast">
     <div class="eyebrow">Propuesta de workflow · documento vivo</div>
-    <h1 data-editable="">ArtifactsSSSSSSSSSSSS HTML que <em>van y vuelven</em> de GitHub</h1>
+    <h1 data-editable="">Artifacts XXXXX<br>HTML que <em>van y vuelven</em> de GitHub</h1>
     <p class="dek" data-editable="">Un destino propio para los HTML que salen del chat: hosteado, versionado en cada guardado, editable a mano en modo gráfico, y siempre al alcance de la IA para volver a tocarlo.</p>
     <div class="meta">
       <span>estado: <b>en marcha</b></span>
@@ -377,6 +377,226 @@
 
 
 <script>
+(function(){
+  // Reset de estado por si el HTML guardado quedó con clases viejas
+  document.body.classList.remove('editing');
+  document.querySelectorAll('[contenteditable]').forEach(function(el){
+    el.removeAttribute('contenteditable');
+  });
+
+  var bar    = document.getElementById('toolbar');
+  var toggle = document.getElementById('toggle');
+  var save   = document.getElementById('save');
+  var cfg    = document.getElementById('cfg');
+  var mode   = document.getElementById('mode');
+  var editing = false;
+
+  function setStatus(text, cls){
+    mode.textContent = text;
+    bar.classList.remove('saving','ok','err');
+    if (cls) bar.classList.add(cls);
+  }
+
+  toggle.addEventListener('click', function(){
+    editing = !editing;
+    document.body.classList.toggle('editing', editing);
+    bar.classList.toggle('editing', editing);
+    document.querySelectorAll('[data-editable]').forEach(function(el){
+      if (editing) el.setAttribute('contenteditable','true');
+      else el.removeAttribute('contenteditable');
+    });
+    toggle.textContent = editing ? 'Listo' : 'Modo edición';
+    setStatus(editing ? 'editando' : 'solo lectura');
+  });
+
+  function getWorkerUrl(force){
+    var url = !force ? localStorage.getItem('workerUrl') : null;
+    if (!url) {
+      url = prompt('URL del Cloudflare Worker:\n(ej: https://html-commit.tu-subdomain.workers.dev)');
+      if (url) {
+        url = url.trim().replace(/\/$/,'');
+        localStorage.setItem('workerUrl', url);
+      }
+    }
+    return url;
+  }
+
+  cfg.addEventListener('click', function(){
+    var cur = localStorage.getItem('workerUrl') || '';
+    var nu = prompt('URL del Cloudflare Worker:', cur);
+    if (nu !== null) {
+      nu = nu.trim().replace(/\/$/,'');
+      if (nu) localStorage.setItem('workerUrl', nu);
+      else localStorage.removeItem('workerUrl');
+    }
+  });
+
+  // Autodetecta el path desde la URL de htmlpreview, o lo pide.
+  function getFilePath(){
+    var m = location.href.match(/github\.com\/[^/]+\/[^/]+\/blob\/[^/]+\/(.+\.html?)(?:[?#]|$)/i);
+    if (m) return decodeURIComponent(m[1]);
+    var stored = localStorage.getItem('lastPath') || 'editor-artifacts-html.html';
+    var p = prompt('Path del archivo en el repo:', stored);
+    if (p) { p = p.trim().replace(/^\/+/,''); localStorage.setItem('lastPath', p); }
+    return p;
+  }
+
+  save.addEventListener('click', async function(){
+    var workerUrl = getWorkerUrl();
+    if (!workerUrl) return;
+    var path = getFilePath();
+    if (!path) return;
+
+    // Clonar el HTML actual, limpiar atributos de edición y <base> que mete htmlpreview
+    var clone = document.documentElement.cloneNode(true);
+    clone.querySelectorAll('[contenteditable]').forEach(function(n){ n.removeAttribute('contenteditable'); });
+    clone.querySelectorAll('base').forEach(function(n){ n.remove(); });
+    var clonedBody = clone.querySelector('body');
+    if (clonedBody) clonedBody.classList.remove('editing');
+    var html = '<!DOCTYPE html>\n' + clone.outerHTML;
+
+    save.disabled = true;
+    setStatus('guardando…', 'saving');
+
+    try {
+      var resp = await fetch(workerUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          path: path,
+          html: html,
+          message: 'Edición desde el navegador — ' + new Date().toISOString()
+        })
+      });
+      var text = await resp.text();
+      if (resp.ok) {
+        setStatus('✓ guardado', 'ok');
+        setTimeout(function(){ setStatus(editing ? 'editando' : 'solo lectura'); }, 2200);
+      } else {
+        console.error('Worker respondió', resp.status, text);
+        setStatus('✗ error ' + resp.status, 'err');
+        alert('Error al guardar (' + resp.status + ').\n\n' + text.slice(0,300));
+      }
+    } catch (e) {
+      console.error(e);
+      setStatus('✗ error red', 'err');
+      alert('No se pudo conectar al Worker.\n\n' + e.message);
+    } finally {
+      save.disabled = false;
+    }
+  });
+})();
+</script><script>
+(function(){
+  // Reset de estado por si el HTML guardado quedó con clases viejas
+  document.body.classList.remove('editing');
+  document.querySelectorAll('[contenteditable]').forEach(function(el){
+    el.removeAttribute('contenteditable');
+  });
+
+  var bar    = document.getElementById('toolbar');
+  var toggle = document.getElementById('toggle');
+  var save   = document.getElementById('save');
+  var cfg    = document.getElementById('cfg');
+  var mode   = document.getElementById('mode');
+  var editing = false;
+
+  function setStatus(text, cls){
+    mode.textContent = text;
+    bar.classList.remove('saving','ok','err');
+    if (cls) bar.classList.add(cls);
+  }
+
+  toggle.addEventListener('click', function(){
+    editing = !editing;
+    document.body.classList.toggle('editing', editing);
+    bar.classList.toggle('editing', editing);
+    document.querySelectorAll('[data-editable]').forEach(function(el){
+      if (editing) el.setAttribute('contenteditable','true');
+      else el.removeAttribute('contenteditable');
+    });
+    toggle.textContent = editing ? 'Listo' : 'Modo edición';
+    setStatus(editing ? 'editando' : 'solo lectura');
+  });
+
+  function getWorkerUrl(force){
+    var url = !force ? localStorage.getItem('workerUrl') : null;
+    if (!url) {
+      url = prompt('URL del Cloudflare Worker:\n(ej: https://html-commit.tu-subdomain.workers.dev)');
+      if (url) {
+        url = url.trim().replace(/\/$/,'');
+        localStorage.setItem('workerUrl', url);
+      }
+    }
+    return url;
+  }
+
+  cfg.addEventListener('click', function(){
+    var cur = localStorage.getItem('workerUrl') || '';
+    var nu = prompt('URL del Cloudflare Worker:', cur);
+    if (nu !== null) {
+      nu = nu.trim().replace(/\/$/,'');
+      if (nu) localStorage.setItem('workerUrl', nu);
+      else localStorage.removeItem('workerUrl');
+    }
+  });
+
+  // Autodetecta el path desde la URL de htmlpreview, o lo pide.
+  function getFilePath(){
+    var m = location.href.match(/github\.com\/[^/]+\/[^/]+\/blob\/[^/]+\/(.+\.html?)(?:[?#]|$)/i);
+    if (m) return decodeURIComponent(m[1]);
+    var stored = localStorage.getItem('lastPath') || 'editor-artifacts-html.html';
+    var p = prompt('Path del archivo en el repo:', stored);
+    if (p) { p = p.trim().replace(/^\/+/,''); localStorage.setItem('lastPath', p); }
+    return p;
+  }
+
+  save.addEventListener('click', async function(){
+    var workerUrl = getWorkerUrl();
+    if (!workerUrl) return;
+    var path = getFilePath();
+    if (!path) return;
+
+    // Clonar el HTML actual, limpiar atributos de edición y <base> que mete htmlpreview
+    var clone = document.documentElement.cloneNode(true);
+    clone.querySelectorAll('[contenteditable]').forEach(function(n){ n.removeAttribute('contenteditable'); });
+    clone.querySelectorAll('base').forEach(function(n){ n.remove(); });
+    var clonedBody = clone.querySelector('body');
+    if (clonedBody) clonedBody.classList.remove('editing');
+    var html = '<!DOCTYPE html>\n' + clone.outerHTML;
+
+    save.disabled = true;
+    setStatus('guardando…', 'saving');
+
+    try {
+      var resp = await fetch(workerUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          path: path,
+          html: html,
+          message: 'Edición desde el navegador — ' + new Date().toISOString()
+        })
+      });
+      var text = await resp.text();
+      if (resp.ok) {
+        setStatus('✓ guardado', 'ok');
+        setTimeout(function(){ setStatus(editing ? 'editando' : 'solo lectura'); }, 2200);
+      } else {
+        console.error('Worker respondió', resp.status, text);
+        setStatus('✗ error ' + resp.status, 'err');
+        alert('Error al guardar (' + resp.status + ').\n\n' + text.slice(0,300));
+      }
+    } catch (e) {
+      console.error(e);
+      setStatus('✗ error red', 'err');
+      alert('No se pudo conectar al Worker.\n\n' + e.message);
+    } finally {
+      save.disabled = false;
+    }
+  });
+})();
+</script><script>
 (function(){
   // Reset de estado por si el HTML guardado quedó con clases viejas
   document.body.classList.remove('editing');

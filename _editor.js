@@ -243,6 +243,20 @@
   var snapshot = null;       // foto del contenido editable al entrar en edición
   var lastSavedAt = null;
   var currentCommentTarget = null;
+  var TEXT_BLOCK_SELECTOR = '[data-editable],h1,h2,h3,h4,h5,h6,p,li,blockquote,figcaption,dt,dd';
+
+  function isEditableBlock(el) {
+    return !!(el && el.matches && el.matches(TEXT_BLOCK_SELECTOR) && !el.closest('[data-editor-ui]') && el.textContent.trim());
+  }
+  function getEditableBlocks() {
+    return Array.prototype.filter.call(document.querySelectorAll(TEXT_BLOCK_SELECTOR), isEditableBlock);
+  }
+  function closestEditableBlock(node) {
+    if (!node) return null;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    el = el && el.closest && el.closest(TEXT_BLOCK_SELECTOR);
+    return isEditableBlock(el) ? el : null;
+  }
 
   /* ---- Modo de hosting: 'worker' o 'htmlpreview' ---- */
   var hostMode = (location.hostname === 'htmlpreview.github.io') ? 'htmlpreview' : 'worker';
@@ -325,7 +339,7 @@
    * sucio. Evita los falsos positivos de marcar dirty a ciegas. ---- */
   function getSnapshot() {
     var parts = [];
-    document.querySelectorAll('[data-editable]').forEach(function (el) {
+    getEditableBlocks().forEach(function (el) {
       parts.push(el.innerHTML);
       parts.push(el.getAttribute('data-comments') || '');
     });
@@ -336,7 +350,7 @@
     if (now !== dirty) { dirty = now; refreshStatus(); }
   }
   function hookEditableListeners() {
-    document.querySelectorAll('[data-editable]').forEach(function (el) {
+    getEditableBlocks().forEach(function (el) {
       if (el.dataset.edHooked) return;
       el.dataset.edHooked = '1';
       el.addEventListener('input', function () {
@@ -385,6 +399,19 @@
     if (!el.contains(range.commonAncestorContainer)) return '';
     return sel.toString().replace(/\s+/g, ' ').trim().slice(0, 220);
   }
+  function activateBlockEditing(el) {
+    if (!el) return;
+    if (snapshot === null) snapshot = getSnapshot();
+    editing = true;
+    document.body.classList.add('ed-editing');
+    getEditableBlocks().forEach(function (n) {
+      if (n === el) n.setAttribute('contenteditable', 'true');
+      else n.removeAttribute('contenteditable');
+    });
+    hookEditableListeners();
+    toggle.textContent = 'Listo';
+    refreshStatus();
+  }
   function setCurrentCommentTarget(el) {
     if (currentCommentTarget && currentCommentTarget !== el) currentCommentTarget.classList.remove('ed-comment-target');
     currentCommentTarget = el || null;
@@ -392,19 +419,18 @@
       currentCommentTarget.classList.add('ed-comment-target');
       positionCommentAction(currentCommentTarget);
       commentAction.classList.add('show');
+      activateBlockEditing(currentCommentTarget);
     } else {
       commentAction.classList.remove('show');
     }
   }
   function hookCommentListeners() {
-    document.querySelectorAll('[data-editable]').forEach(function (el) {
+    getEditableBlocks().forEach(function (el) {
       if (el.dataset.edCommentHooked) return;
       el.dataset.edCommentHooked = '1';
+      el.addEventListener('mousedown', function () { setCurrentCommentTarget(el); });
       el.addEventListener('click', function () { setCurrentCommentTarget(el); });
       el.addEventListener('focus', function () { setCurrentCommentTarget(el); });
-      el.addEventListener('mouseenter', function () {
-        if (!commentsPop.classList.contains('show')) setCurrentCommentTarget(el);
-      });
     });
   }
   function removeCommentBadges() {
@@ -412,7 +438,7 @@
   }
   function renderCommentBadges() {
     removeCommentBadges();
-    document.querySelectorAll('[data-editable]').forEach(function (el) {
+    getEditableBlocks().forEach(function (el) {
       var comments = parseComments(el);
       if (!comments.length) return;
       var rect = el.getBoundingClientRect();
@@ -512,7 +538,7 @@
   }
   commentsBtn.addEventListener('click', function () {
     var target = currentCommentTarget;
-    if (!target && document.activeElement) target = document.activeElement.closest && document.activeElement.closest('[data-editable]');
+    if (!target && document.activeElement) target = closestEditableBlock(document.activeElement);
     if (!target) {
       alert('Clickeá primero el bloque que querés comentar.');
       return;
@@ -557,18 +583,19 @@
 
   /* ---- Modo edición ---- */
   toggle.addEventListener('click', function () {
-    editing = !editing;
-    document.body.classList.toggle('ed-editing', editing);
-    document.querySelectorAll('[data-editable]').forEach(function (el) {
-      if (editing) el.setAttribute('contenteditable', 'true');
-      else el.removeAttribute('contenteditable');
-    });
     if (editing) {
-      snapshot = getSnapshot();   // foto base para comparar
-      hookEditableListeners();
+      editing = false;
+      document.body.classList.remove('ed-editing');
+      getEditableBlocks().forEach(function (el) { el.removeAttribute('contenteditable'); });
+      toggle.textContent = 'Modo edición';
+      refreshStatus();
+      return;
     }
-    toggle.textContent = editing ? 'Listo' : 'Modo edición';
-    refreshStatus();
+    if (currentCommentTarget) {
+      activateBlockEditing(currentCommentTarget);
+    } else {
+      alert('Clickeá el texto que querés editar o comentar.');
+    }
   });
 
   /* ---- Save ---- */

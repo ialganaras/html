@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Duplas embebidas · modelo para fyo · piloto fyoCapital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#f3f2ee;
+    --paper-2:#eceae4;
+    --card:#ffffff;
+    --ink:#111110;
+    --ink-2:#2c2b27;
+    --muted:#56544f;
+    --faint:#78756f;
+    --rule:#d6d4ce;
+    --rule-2:#cbc8c0;
+    --accent:#e22b16; --accent-soft:#e22b160e; --accent-line:#e22b1642; --accent-deep:#c0220f;
+    --disp:'Space Grotesk', system-ui, sans-serif;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--paper);
+    color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--accent); color:#fff; }
+  .lbl{ font-family:var(--mono); font-size:11px; font-weight:500; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--muted); }
+
+  .doc{ max-width:1120px; margin:0 auto; padding:0 0 130px; }
+  .sheet{ background:var(--paper); padding:0 52px; position:relative; }
+  @media (max-width:760px){ .sheet{ padding:0 20px; } }
+
+  /* ── Title block (cabecera tipo carátula de plano) ─────── */
+  .titleblock{ display:grid; grid-template-columns:1fr auto; align-items:stretch;
+    border-bottom:1px solid var(--ink); }
+  .titleblock .tb-l{ padding:16px 0; font-family:var(--mono); font-size:11px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--ink-2); display:flex; align-items:center; gap:14px; }
+  .titleblock .tb-l .sq{ width:8px; height:8px; background:var(--accent); }
+  .titleblock .tb-r{ font-family:var(--mono); font-size:11px; letter-spacing:.06em; color:var(--muted);
+    text-transform:uppercase; display:flex; align-items:center; padding:16px 0 16px 22px;
+    border-left:1px solid var(--rule); }
+  .titleblock .tb-r b{ color:var(--accent-deep); font-weight:600; }
+
+  /* ── Cover (portada) ─────────────────────────── */
+  .cover{ padding:70px 0 0; }
+  .cover .ref{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); margin-bottom:30px; display:flex; gap:18px; }
+  .cover .ref span{ position:relative; padding-left:16px; }
+  .cover .ref span::before{ content:''; position:absolute; left:0; top:50%; width:8px; height:8px;
+    border:1px solid var(--accent); transform:translateY(-50%); }
+  h1.title{ font-family:var(--disp); font-weight:600; font-size:clamp(40px,6.4vw,82px);
+    line-height:1.0; letter-spacing:-.03em; margin:0; max-width:15ch; color:var(--ink); }
+  h1.title .hl{ color:var(--accent); }
+  .lede{ font-size:clamp(17px,1.8vw,21px); line-height:1.55; color:var(--ink-2); max-width:62ch;
+    margin:30px 0 0; }
+  .specsheet{ margin-top:48px; border:1px solid var(--rule-2); background:var(--card);
+    display:grid; grid-template-columns:repeat(3,1fr); }
+  @media (max-width:680px){ .specsheet{ grid-template-columns:1fr; } }
+  .specsheet .sc{ padding:18px 20px; border-right:1px solid var(--rule); }
+  .specsheet .sc:last-child{ border-right:none; }
+  .specsheet .sc .k{ display:block; margin-bottom:8px; }
+  .specsheet .sc .v{ font-family:var(--disp); font-weight:500; font-size:16px; color:var(--ink);
+    line-height:1.35; }
+
+  /* ── Index (índice) ──────────────────────────── */
+  .contents{ margin:72px 0 0; border-top:1px solid var(--ink); padding-top:26px; }
+  .contents .ct{ color:var(--accent); margin-bottom:18px; }
+  .toc{ list-style:none; margin:0; padding:0; }
+  .toc li{ display:grid; grid-template-columns:70px 1fr auto; align-items:center; gap:18px;
+    padding:15px 0; border-bottom:1px solid var(--rule); }
+  .toc .n{ font-family:var(--mono); font-size:12px; color:var(--accent); }
+  .toc a{ color:var(--ink); text-decoration:none; font-family:var(--disp); font-weight:500;
+    font-size:19px; letter-spacing:-.01em; }
+  .toc li:hover a{ color:var(--accent); }
+  .toc .ar{ font-family:var(--mono); color:var(--faint); font-size:12px; }
+
+  /* ── Chapter (capítulo / sección) ────────────── */
+  .chapter{ margin-top:96px; scroll-margin-top:24px; }
+  .ch-head{ border-bottom:1px solid var(--ink); padding-bottom:26px; }
+  .ch-marker{ display:flex; align-items:center; gap:14px; margin-bottom:20px; }
+  .ch-marker .mn{ font-family:var(--mono); font-size:12px; color:#fff; background:var(--accent);
+    padding:4px 9px; font-weight:600; letter-spacing:.06em; }
+  h2.ch-title{ font-family:var(--disp); font-weight:600; font-size:clamp(28px,4.2vw,52px);
+    line-height:1.02; letter-spacing:-.03em; margin:0; max-width:18ch; }
+  h2.ch-title .hl{ color:var(--accent); }
+  .ch-lede{ font-size:19px; line-height:1.5; color:var(--ink-2); margin:20px 0 0; max-width:64ch; }
+
+  /* ── Prose (cuerpo de texto) ─────────────────── */
+  .prose{ max-width:70ch; margin-top:32px; font-size:16.5px; line-height:1.62; color:var(--ink-2); }
+  .prose p{ margin:0 0 18px; }
+  .prose strong{ color:var(--ink); font-weight:600; }
+  .prose em{ font-style:normal; color:var(--accent); font-weight:500; }
+
+  /* ── Note (callout / nota al margen) ─────────── */
+  .note{ margin:32px 0; border:1px solid var(--rule-2); border-left:3px solid var(--accent);
+    background:var(--card); padding:22px 26px; max-width:78ch; position:relative; }
+  .note .lbl{ color:var(--accent); display:block; margin-bottom:11px; }
+  .note p{ margin:0; font-size:15.5px; line-height:1.58; color:var(--ink-2); }
+  .note strong{ color:var(--ink); font-weight:600; }
+  .note.warn{ border-left-color:var(--accent-deep); }
+
+  /* ── Stack (diagrama por niveles / jerarquía) ── */
+  .stack{ margin:36px 0 8px; border:1px solid var(--ink); background:var(--card); }
+  .tier{ display:grid; grid-template-columns:158px 1fr; border-bottom:1px solid var(--rule); }
+  .tier:last-child{ border-bottom:none; }
+  @media (max-width:680px){ .tier{ grid-template-columns:1fr; } }
+  .tier .t-lbl{ padding:18px 20px; border-right:1px solid var(--rule); display:flex; align-items:center;
+    background:var(--paper-2); }
+  .tier .t-items{ display:flex; }
+  @media (max-width:560px){ .tier .t-items{ flex-direction:column; } }
+  .cell{ flex:1; padding:18px 20px; border-left:1px solid var(--rule); }
+  .cell:first-child{ border-left:none; }
+  .cell .cn{ font-family:var(--disp); font-weight:600; font-size:18px; color:var(--ink); display:block;
+    letter-spacing:-.01em; }
+  .cell .cs{ font-family:var(--mono); font-size:11px; color:var(--muted); display:block; margin-top:7px;
+    line-height:1.45; }
+  .cell.x .cn{ color:var(--accent); }
+  .flowmark{ font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; color:var(--faint);
+    text-transform:uppercase; padding:7px 20px; text-align:center; border-bottom:1px solid var(--rule);
+    background:var(--paper-2); }
+
+  /* ── Entity (ficha de un elemento: persona, módulo, fase…) ── */
+  .entity{ margin:38px 0; border:1px solid var(--ink); background:var(--card); }
+  .entity-head{ padding:26px 30px 22px; border-bottom:1px solid var(--rule); border-top:3px solid var(--accent); }
+  .entity-head .lbl{ color:var(--accent); display:block; margin-bottom:12px; }
+  .entity-name{ font-family:var(--disp); font-weight:600; font-size:28px; line-height:1.05;
+    letter-spacing:-.02em; margin:0 0 11px; }
+  .entity-name .hl{ color:var(--accent); }
+  .entity-purpose{ font-size:16px; line-height:1.55; color:var(--ink-2); margin:0; max-width:72ch; }
+  .entity-purpose strong{ color:var(--ink); font-weight:600; }
+  .entity-body{ padding:4px 30px; }
+  .fn{ display:grid; grid-template-columns:36px 1fr; gap:18px; padding:16px 0; border-bottom:1px solid var(--rule); }
+  .fn:last-child{ border-bottom:none; }
+  .fn .fi{ font-family:var(--mono); font-size:12px; color:var(--accent); border:1px solid var(--accent-line);
+    width:30px; height:30px; display:flex; align-items:center; justify-content:center; }
+  .fn .ft strong{ color:var(--ink); font-weight:600; }
+  .fn .ft .d{ color:var(--ink-2); }
+  .fn .ft .sub{ display:block; margin-top:6px; font-size:14px; color:var(--muted); line-height:1.5;
+    padding-left:12px; border-left:2px solid var(--rule-2); }
+  .entity-foot{ display:flex; flex-wrap:wrap; gap:9px; padding:18px 30px 22px; border-top:1px solid var(--rule);
+    background:var(--paper-2); }
+  .tag{ font-family:var(--mono); font-size:11px; color:var(--ink-2); padding:7px 12px; border:1px solid var(--rule-2);
+    background:var(--card); }
+  .tag strong{ color:var(--ink); font-weight:600; }
+  .tag.key{ border-color:var(--accent-line); color:var(--accent); background:var(--accent-soft); }
+  .tag.key strong{ color:var(--accent-deep); }
+  .tag.lnk{ border-color:var(--accent); color:var(--accent); }
+  .tag.lnk strong{ color:var(--accent-deep); }
+
+  /* ── Grid2 (grilla de tarjetas, p. ej. principios) ── */
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; margin-top:36px; border:1px solid var(--ink);
+    background:var(--card); }
+  @media (max-width:680px){ .grid2{ grid-template-columns:1fr; } }
+  .card{ padding:26px 28px 28px; border-bottom:1px solid var(--rule); }
+  .card:nth-child(odd){ border-right:1px solid var(--rule); }
+  @media (max-width:680px){ .card:nth-child(odd){ border-right:none; } }
+  .card:nth-last-child(-n+2){ border-bottom:none; }
+  @media (max-width:680px){ .card:nth-last-child(-n+2){ border-bottom:1px solid var(--rule); } .card:last-child{ border-bottom:none; } }
+  .card .cnum{ font-family:var(--mono); font-size:11px; color:var(--accent); display:block; margin-bottom:14px; }
+  .card h4{ font-family:var(--disp); font-weight:600; font-size:21px; letter-spacing:-.015em; margin:0 0 9px; color:var(--ink); }
+  .card p{ font-size:15px; line-height:1.55; color:var(--ink-2); margin:0; }
+
+  /* ── Statement (frase de cierre / pull-quote) ── */
+  .statement{ margin:88px 0 0; padding:56px 44px; border:1px solid var(--ink); background:var(--card);
+    position:relative; }
+  .statement::before{ content:''; position:absolute; top:0; left:0; width:6px; height:100%; background:var(--accent); }
+  .statement .lbl{ color:var(--accent); margin-bottom:22px; display:block; }
+  .statement p{ font-family:var(--disp); font-weight:500; font-size:clamp(24px,3.4vw,42px); line-height:1.18;
+    letter-spacing:-.025em; margin:0; max-width:22ch; color:var(--ink); }
+  .statement .hl{ color:var(--accent); }
+
+  /* ── Footer (colofón) ────────────────────────── */
+  .colophon{ margin-top:50px; padding-top:18px; border-top:1px solid var(--ink); display:flex;
+    justify-content:space-between; flex-wrap:wrap; gap:12px; font-family:var(--mono); font-size:11px;
+    color:var(--muted); letter-spacing:.05em; text-transform:uppercase; }
+
+  /* contenedor de diagrama (carátula técnica) */
+  .plan{ margin:38px 0 8px; border:1px solid var(--ink); background:var(--card); padding:30px 26px 20px; overflow-x:auto; }
+  .plan svg{ display:block; margin:0 auto; max-width:100%; height:auto; }
+  .plan .cap{ font-family:var(--mono); font-size:11px; line-height:1.5; color:var(--muted); letter-spacing:.02em;
+    margin:18px auto 0; max-width:74ch; text-align:center; }
+</style>
+</head>
+<body>
+
+<div class="doc"><div class="sheet">
+
+  <!-- CABECERA -->
+  <div class="titleblock">
+    <div class="tb-l"><span class="sq"></span>Iñaki · Consultoría<span style="color:var(--muted)">inaki@alganaras.com.ar</span></div>
+    <div class="tb-r">DOC. <b>FYO·DUPLAS</b> · REV. <b>v3</b> · DISEÑO ORGANIZACIONAL</div>
+  </div>
+
+  <!-- PORTADA -->
+  <header class="cover">
+    <div class="ref"><span>fyo · Transformación e IA</span><span>Para Facundo</span></div>
+    <h1 class="title">Duplas embebidas para construir con <span class="hl">agentes</span>.</h1>
+    <p class="lede">Un modelo organizacional para fyo: una dupla por área de negocio —inspirada en los Forward Deployed Engineers de Palantir— que vive el problema del negocio y lo resuelve con agentes. Arranca probándose en fyoCapital, para calibrar el modelo antes de escalarlo al grupo.</p>
+    <div class="specsheet">
+      <div class="sc"><span class="lbl k">Alcance</span><span class="v">Modelo fyo · piloto Capital</span></div>
+      <div class="sc"><span class="lbl k">Sponsor</span><span class="v">Ale · respaldo ejecutivo</span></div>
+      <div class="sc"><span class="lbl k">Principio rector</span><span class="v">Calibrar, no replicar</span></div>
+    </div>
+  </header>
+
+  <!-- ÍNDICE -->
+  <nav class="contents">
+    <span class="lbl ct">Contenido</span>
+    <ol class="toc">
+      <li><span class="n">01</span><a href="#s1">Por qué estos roles</a><span class="ar">→</span></li>
+      <li><span class="n">02</span><a href="#s2">Hub &amp; Spoke y el CoE</a><span class="ar">→</span></li>
+      <li><span class="n">03</span><a href="#s3">El reparto del trabajo: 5 funciones</a><span class="ar">→</span></li>
+      <li><span class="n">04</span><a href="#s4">Los dos roles</a><span class="ar">→</span></li>
+      <li><span class="n">05</span><a href="#s5">El linaje: FDE y la dupla Echo &amp; Delta</a><span class="ar">→</span></li>
+      <li><span class="n">06</span><a href="#s6">Condiciones de éxito</a><span class="ar">→</span></li>
+      <li><span class="n">07</span><a href="#s7">El kit de la dupla</a><span class="ar">→</span></li>
+      <li><span class="n">08</span><a href="#s8">Riesgos</a><span class="ar">→</span></li>
+      <li><span class="n">09</span><a href="#s9">Métricas</a><span class="ar">→</span></li>
+      <li><span class="n">10</span><a href="#s10">Cómo se arranca</a><span class="ar">→</span></li>
+      <li><span class="n">11</span><a href="#s11">Fundamento y fuentes</a><span class="ar">→</span></li>
+    </ol>
+  </nav>
+
+  <!-- 01 POR QUE -->
+  <section class="chapter" id="s1">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">01</span><span class="lbl">Encuadre</span></div>
+      <h2 class="ch-title">Tecnología es un desafío del negocio. Y los <span class="hl">resultados</span> del negocio, un desafío de tecnología.</h2>
+      <p class="ch-lede">El punto de partida no es un problema de comunicación: es de encuadre.</p>
+    </div>
+    <div class="prose">
+      <p>Cuando el negocio trata a la tecnología como algo externo —un proveedor al que se le tira un pedido y se espera— resigna velocidad y diferenciación. Y cuando tecnología se mide por features entregadas en vez de por resultados del negocio, también. La dupla disuelve esa frontera: hace de la tecnología un asunto <strong>propio</strong> del negocio, y de los resultados del negocio el <strong>norte</strong> de tecnología. Es un modelo para todo fyo; lo probamos primero en Capital.</p>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <span class="cnum">La mirada que cambia</span>
+        <h4>Tecnología no es externa al negocio</h4>
+        <p>No es un proveedor al que se le delega un requerimiento y se aguarda. Es una palanca central de lo que el área logra. Tratarla como algo de afuera es la forma más cara de quedarse atrás.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">Su contracara</span>
+        <h4>Los resultados del negocio son el norte de tecnología</h4>
+        <p>Tecnología no entrega tickets cerrados ni features: entrega resultados de negocio. La dupla encarna esa co-propiedad y elimina los handoffs entre quien entiende el problema y quien lo construye.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 HUB & SPOKE -->
+  <section class="chapter" id="s2">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">02</span><span class="lbl">Encaje organizacional</span></div>
+      <h2 class="ch-title">Hub &amp; Spoke: duplas en el borde, estándares en el <span class="hl">centro</span></h2>
+      <p class="ch-lede">Un Centro de Excelencia (CoE) sostiene la plataforma y los estándares; las duplas viven en cada área y ejecutan. Es el patrón que usan hoy las organizaciones que escalan IA sin que el centro se vuelva cuello de botella.</p>
+    </div>
+
+    <div class="plan">
+      <svg viewBox="0 0 700 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Modelo Hub and Spoke: Centro de Excelencia en el núcleo y áreas de negocio como spokes">
+        <g stroke="#111110" stroke-width="1">
+          <line x1="350" y1="170" x2="350" y2="44"/>
+          <line x1="350" y1="170" x2="486" y2="128"/>
+          <line x1="350" y1="170" x2="434" y2="282"/>
+          <line x1="350" y1="170" x2="266" y2="282"/>
+          <line x1="350" y1="170" x2="214" y2="128"/>
+        </g>
+        <g fill="#ffffff" stroke="#111110" stroke-width="1">
+          <rect x="428" y="106" width="116" height="44"/>
+          <rect x="376" y="260" width="116" height="44"/>
+          <rect x="208" y="260" width="116" height="44"/>
+          <rect x="156" y="106" width="116" height="44"/>
+        </g>
+        <g font-family="'Space Grotesk',sans-serif" font-size="14" font-weight="500" fill="#111110" text-anchor="middle">
+          <text x="486" y="133">Agro</text>
+          <text x="434" y="287">Credits</text>
+          <text x="266" y="287">BackOffice</text>
+          <text x="214" y="133">+ áreas</text>
+        </g>
+        <rect x="292" y="22" width="116" height="44" fill="#ffffff" stroke="#111110" stroke-width="1"/>
+        <text x="350" y="41" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-size="14" font-weight="600" fill="#111110">fyoCapital</text>
+        <text x="350" y="57" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" letter-spacing="1.5" fill="#e22b16">PILOTO</text>
+        <rect x="296" y="128" width="108" height="84" fill="#ffffff" stroke="#e22b16" stroke-width="2"/>
+        <text x="350" y="162" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-size="16" font-weight="700" fill="#e22b16">CoE · Hub</text>
+        <text x="350" y="180" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8.5" letter-spacing="1" fill="#56544f">CENTER OF</text>
+        <text x="350" y="192" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8.5" letter-spacing="1" fill="#56544f">EXCELLENCE</text>
+      </svg>
+      <p class="cap">Un Centro de Excelencia en el núcleo; las áreas de negocio como spokes. Cada área aloja una dupla — fyoCapital es el piloto.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <span class="cnum">El Hub · CoE</span>
+        <h4>Habilita y cuida la consistencia</h4>
+        <p>Mantiene el stack común (MCP, runtime, biblioteca de schemas), define los estándares técnicos y de datos, y organiza a la gente de las duplas en chapters por oficio. No construye las soluciones: habilita a quienes las construyen.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">Los Spokes · las duplas</span>
+        <h4>Descubren y construyen en el área</h4>
+        <p>Cada dupla —un Agents Manager y un Agents Engineer— reporta a su área para prioridades y presupuesto, y pertenece a los chapters del CoE que comparten estándares, herramientas y aprendizajes. Doble pertenencia: al negocio y al oficio.</p>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>Dentro del CoE, la gente se organiza en <strong>chapters de oficio</strong>, cada uno con su lead: <strong>Agents Managers</strong> (cuida cómo se descubren y priorizan los problemas), <strong>Agents Engineers</strong> (cómo se construyen y operan los agentes) y <strong>Data</strong>, transversal, que cuida el activo más crítico —los contratos de datos y el MCP server sobre fyoDigital—. Las duplas reportan a su área por lo funcional y a estos chapters por lo técnico.</p>
+    </div>
+
+    <div class="plan">
+      <svg viewBox="0 0 720 285" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Matriz de doble pertenencia: cada dupla pertenece a su área (columna) y a su chapter de oficio (banda)">
+        <text x="14" y="18" font-family="'IBM Plex Mono',monospace" font-size="10" letter-spacing="1.5" fill="#56544f">CHAPTERS DEL CoE</text>
+        <text x="430" y="18" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" letter-spacing="1.5" fill="#56544f">ÁREAS · SQUADS</text>
+        <g text-anchor="middle">
+          <text x="290" y="46" font-family="'Space Grotesk',sans-serif" font-size="13" font-weight="600" fill="#e22b16">fyoCapital</text>
+          <text x="290" y="60" font-family="'IBM Plex Mono',monospace" font-size="8.5" letter-spacing="1" fill="#e22b16">PILOTO</text>
+          <text x="450" y="46" font-family="'Space Grotesk',sans-serif" font-size="13" font-weight="600" fill="#111110">Agro</text>
+          <text x="610" y="46" font-family="'Space Grotesk',sans-serif" font-size="13" font-weight="600" fill="#111110">Credits</text>
+        </g>
+        <g fill="#eceae4">
+          <rect x="160" y="76" width="540" height="50"/>
+          <rect x="160" y="142" width="540" height="50"/>
+          <rect x="160" y="208" width="540" height="50"/>
+        </g>
+        <g font-family="'Space Grotesk',sans-serif">
+          <rect x="14" y="76" width="132" height="50" fill="#ffffff" stroke="#111110" stroke-width="1"/>
+          <text x="24" y="98" font-family="'IBM Plex Mono',monospace" font-size="8" letter-spacing="1" fill="#56544f">CHAPTER LEAD</text>
+          <text x="24" y="114" font-size="12" font-weight="600" fill="#111110">Agents Managers</text>
+          <rect x="14" y="142" width="132" height="50" fill="#ffffff" stroke="#111110" stroke-width="1"/>
+          <text x="24" y="164" font-family="'IBM Plex Mono',monospace" font-size="8" letter-spacing="1" fill="#56544f">CHAPTER LEAD</text>
+          <text x="24" y="180" font-size="12" font-weight="600" fill="#111110">Agents Engineers</text>
+          <rect x="14" y="208" width="132" height="50" fill="#ffffff" stroke="#111110" stroke-width="1"/>
+          <text x="24" y="230" font-family="'IBM Plex Mono',monospace" font-size="8" letter-spacing="1" fill="#56544f">CHAPTER LEAD</text>
+          <text x="24" y="246" font-size="12" font-weight="600" fill="#111110">Data · transversal</text>
+        </g>
+        <g stroke="#78756f" stroke-width="1" stroke-dasharray="2 3">
+          <line x1="146" y1="101" x2="636" y2="101"/>
+          <line x1="146" y1="167" x2="636" y2="167"/>
+          <line x1="146" y1="233" x2="636" y2="233"/>
+        </g>
+        <g stroke="#111110" stroke-width="1">
+          <line x1="290" y1="117" x2="290" y2="151"/>
+          <line x1="450" y1="117" x2="450" y2="151"/>
+          <line x1="610" y1="117" x2="610" y2="151"/>
+        </g>
+        <g font-family="'Space Grotesk',sans-serif" text-anchor="middle">
+          <rect x="274" y="85" width="32" height="32" fill="#111110"/><text x="290" y="106" fill="#ffffff" font-size="13" font-weight="700">M</text>
+          <rect x="434" y="85" width="32" height="32" fill="#111110"/><text x="450" y="106" fill="#ffffff" font-size="13" font-weight="700">M</text>
+          <rect x="594" y="85" width="32" height="32" fill="#111110"/><text x="610" y="106" fill="#ffffff" font-size="13" font-weight="700">M</text>
+          <rect x="274" y="151" width="32" height="32" fill="#ffffff" stroke="#111110" stroke-width="1.4"/><text x="290" y="172" fill="#111110" font-size="13" font-weight="700">E</text>
+          <rect x="434" y="151" width="32" height="32" fill="#ffffff" stroke="#111110" stroke-width="1.4"/><text x="450" y="172" fill="#111110" font-size="13" font-weight="700">E</text>
+          <rect x="594" y="151" width="32" height="32" fill="#ffffff" stroke="#111110" stroke-width="1.4"/><text x="610" y="172" fill="#111110" font-size="13" font-weight="700">E</text>
+          <rect x="283" y="225" width="14" height="14" fill="#111110"/>
+          <rect x="443" y="225" width="14" height="14" fill="#111110"/>
+          <rect x="603" y="225" width="14" height="14" fill="#111110"/>
+        </g>
+      </svg>
+      <p class="cap">Cada dupla pertenece a su área (columna · reporte funcional) y a su chapter de oficio (banda · reporte técnico). Línea vertical sólida = la dupla; punteadas = pertenencia al chapter. Los chapter leads generan los espacios cross.</p>
+    </div>
+
+    <div class="prose">
+      <p>Esa doble pertenencia es la <em>mitigación directa del riesgo de heterogeneidad</em>: los chapter leads propagan lo que cada dupla aprende y sostienen la calidad del oficio. Y la matriz no se vuelve la trampa de Spotify porque los derechos de decisión están escritos:</p>
+    </div>
+
+    <div class="stack">
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Decide el negocio</span></div>
+        <div class="t-items">
+          <div class="cell"><span class="cn">Prioridades y orden</span><span class="cs">qué problemas se atacan</span></div>
+          <div class="cell"><span class="cn">Presupuesto</span><span class="cs">asignación de recursos</span></div>
+        </div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Decide el CoE</span></div>
+        <div class="t-items">
+          <div class="cell"><span class="cn">Estándares y plataforma</span><span class="cs">arquitectura · MCP · runtime</span></div>
+          <div class="cell"><span class="cn">Seguridad y datos</span><span class="cs">gobernanza · compliance</span></div>
+        </div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Decide la dupla</span></div>
+        <div class="t-items">
+          <div class="cell"><span class="cn">Diseño del agente</span><span class="cs">qué hace, qué decide</span></div>
+          <div class="cell"><span class="cn">Adopción y operación</span><span class="cs">en el día a día</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 REPARTO DEL TRABAJO -->
+  <section class="chapter" id="s3">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">03</span><span class="lbl">Reparto del trabajo</span></div>
+      <h2 class="ch-title">Cinco funciones del ciclo de vida, repartidas en <span class="hl">dos planos</span></h2>
+      <p class="ch-lede">Boris Cherny (creador de Claude Code) describe cinco arquetipos que emergen cuando ingeniería, producto y diseño se funden en un rol nuevo. Los tomamos como <strong>funciones</strong> —no como puestos— para que se repartan limpio entre la dupla y el centro, en línea con cómo trabaja un FDE.</p>
+    </div>
+    <div class="prose">
+      <p>Cherny aclara que una persona suele cubrir dos o tres de estos arquetipos y que no están atados a la función. Por eso los leemos como <em>actividades del ciclo de vida de un agente</em>: descubrir y construir se descentralizan en la dupla, dentro de cada área de negocio y backend; pulir, crecer y mantener se centralizan en el CoE para escalar. Es la frontera de "graduación": lo que la dupla prototipa y construye, el centro lo sostiene a escala.</p>
+    </div>
+
+    <div class="stack">
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Descentralizado · la dupla</span></div>
+        <div class="t-items">
+          <div class="cell x"><span class="cn">1 · Prototyping</span><span class="cs">ideas nuevas; muchas no shippean</span></div>
+          <div class="cell x"><span class="cn">2 · Building</span><span class="cs">prototipo &#8594; produccion, rapido</span></div>
+        </div>
+      </div>
+      <div class="flowmark">&#8212; gradua al centro para escalar &#8212;</div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Centralizado · CoE + Tech</span></div>
+        <div class="t-items">
+          <div class="cell"><span class="cn">3 · Sweeping</span><span class="cs">limpia, simplifica, optimiza</span></div>
+          <div class="cell"><span class="cn">4 · Growing</span><span class="cs">itera para mejorar el fit</span></div>
+          <div class="cell"><span class="cn">5 · Maintaining</span><span class="cs">seguro, confiable, a escala</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>El plano central no tiene que construirse todo de adentro. <strong>Se resuelve junto con Tech, de dos maneras combinables:</strong> con equipo interno, o desarrollando y disponibilizando proveedores especializados —con sus contratos, procesos y permisos— para sostener Sweeping, Growing y Maintaining a medida que crece el número de agentes.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <span class="cnum">Opcion A</span>
+        <h4>Equipo interno</h4>
+        <p>Tech y el CoE asumen Sweeping, Growing y Maintaining. Maximo control y conocimiento propio; requiere dotar y sostener la capacidad a medida que escala.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">Opcion B</span>
+        <h4>Proveedores especializados</h4>
+        <p>Se contrata y habilita a terceros para el plano central, con contratos, procesos y permisos definidos. Escala mas rapido sin inflar estructura; el CoE gobierna estandares y calidad.</p>
+      </div>
+    </div>
+
+    <div class="note">
+      <span class="lbl">Un matiz a decidir</span>
+      <p><strong>Growing (4) es la funcion fronteriza.</strong> Mejorar el product-market-fit de un agente exige cercania al negocio y a sus usuarios &#8212; territorio natural de la dupla. Vale evaluar si vive del todo en el centro o se comparte con el area; Sweeping (3) y Maintaining (5), en cambio, son funciones de plataforma claramente centrales.</p>
+    </div>
+  </section>
+
+  <!-- 04 LOS DOS ROLES -->
+  <section class="chapter" id="s4">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">04</span><span class="lbl">Los roles</span></div>
+      <h2 class="ch-title">Agents Manager y Agents Engineer: la unidad mínima <span class="hl">irreductible</span></h2>
+      <p class="ch-lede">El error clásico es juntar dos perfiles iguales. Si los dos son técnicos, falta negocio; si los dos son de negocio, falta ejecución. El binomio es complementario por diseño.</p>
+    </div>
+
+    <div class="entity">
+      <div class="entity-head">
+        <span class="lbl">Rol · el qué y para qué</span>
+        <h3 class="entity-name">Agents <span class="hl">Manager</span></h3>
+        <p class="entity-purpose"><strong>Misión.</strong> Traduce los desafíos del negocio y del cliente en una cartera de agentes priorizada por impacto, y garantiza que se adopten y muevan la aguja.</p>
+      </div>
+      <div class="entity-body">
+        <div class="fn"><div class="fi">01</div><div class="ft" data-editable><strong>Relevar y entender. </strong><span class="d">Los problemas del negocio y del cliente, codo a codo con comerciales, asesores y trading.</span></div></div>
+        <div class="fn"><div class="fi">02</div><div class="ft" data-editable><strong>Priorizar por impacto. </strong><span class="d">La cartera de agentes, no por departamento de origen.</span></div></div>
+        <div class="fn"><div class="fi">03</div><div class="ft" data-editable><strong>Especificar. </strong><span class="d">Qué hace el agente, qué decide por sí mismo y qué escala, qué datos necesita.</span></div></div>
+        <div class="fn"><div class="fi">04</div><div class="ft" data-editable><strong>Definir autonomía. </strong><span class="d">El nivel de cada agente —propone o actúa— según el riesgo y la regulación aplicable.</span><span class="sub">Y custodiar ese límite a lo largo del ciclo.</span></div></div>
+      </div>
+      <div class="entity-foot">
+        <span class="tag key"><strong>Competencia #1:</strong> dominio del negocio</span>
+        <span class="tag">Símil PM + analytics translator</span>
+        <span class="tag lnk"><strong>Fuente:</strong> interno con dominio fuerte</span>
+      </div>
+    </div>
+
+    <div class="entity">
+      <div class="entity-head">
+        <span class="lbl">Rol · el cómo se construye</span>
+        <h3 class="entity-name">Agents <span class="hl">Engineer</span></h3>
+        <p class="entity-purpose"><strong>Misión.</strong> Construye, despliega y opera los agentes junto al equipo, bajo las restricciones reales del negocio y sobre la plataforma de fyo.</p>
+      </div>
+      <div class="entity-body">
+        <div class="fn"><div class="fi">01</div><div class="ft" data-editable><strong>Construir end-to-end. </strong><span class="d">Sobre la plataforma (MCP / fyoDigital / runtime), no prototipos de laboratorio.</span></div></div>
+        <div class="fn"><div class="fi">02</div><div class="ft" data-editable><strong>Empotrarse. </strong><span class="d">Prototipar rápido, iterar en días, ver el agente en acción con el equipo.</span></div></div>
+        <div class="fn"><div class="fi">03</div><div class="ft" data-editable><strong>Integrar y operar. </strong><span class="d">Datos y sistemas con gobernanza; monitoreo, calidad y evals. No "lanzar y olvidar".</span></div></div>
+        <div class="fn"><div class="fi">04</div><div class="ft" data-editable><strong>Capitalizar. </strong><span class="d">Convertir lo aprendido en campo en capacidad reutilizable.</span><span class="sub">De "camino de grava" a "autopista".</span></div></div>
+      </div>
+      <div class="entity-foot">
+        <span class="tag key"><strong>Competencia #1:</strong> filo técnico real</span>
+        <span class="tag">Símil Forward Deployed Engineer</span>
+        <span class="tag lnk"><strong>Fuente:</strong> técnico fuerte, interno o externo</span>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="card"><span class="cnum">Principio 01</span><h4>Vivir el problema</h4><p>Empotrados con el equipo, comparten sus desafíos. No asesoran desde afuera: construyen desde adentro.</p></div>
+      <div class="card"><span class="cnum">Principio 02</span><h4>Construir, no recomendar</h4><p>El entregable es una solución en uso, no un diagnóstico ni una presentación.</p></div>
+      <div class="card"><span class="cnum">Principio 03</span><h4>Iterar en días</h4><p>Prototipan rápido bajo condiciones reales; el uso afina la solución, no el diseño perfecto.</p></div>
+      <div class="card"><span class="cnum">Principio 04</span><h4>Fundado y auditable</h4><p>Toda salida del agente —proponga o actúe por su cuenta— es trazable a su dato y su lógica.</p></div>
+    </div>
+  </section>
+
+  <!-- 05 EL LINAJE -->
+  <section class="chapter" id="s5">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">05</span><span class="lbl">De dónde viene</span></div>
+      <h2 class="ch-title">El Forward Deployed Engineer y la dupla <span class="hl">Echo &amp; Delta</span></h2>
+      <p class="ch-lede">Los dos roles que acabamos de ver tienen linaje: el modelo Forward Deployed Engineer, que Palantir inventó para clientes cuyos problemas no se podían especificar de antemano —en vez de relevar desde afuera, empotró gente adentro.</p>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <span class="cnum">Echo · Palantir → Agents Manager</span>
+        <h4>El que descubre</h4>
+        <p>Experto de dominio, del propio campo del cliente. Identifica los problemas de mayor valor y hace de puente con quien construye. Más cercano a Product que a la ingeniería.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">Delta · Palantir → Agents Engineer</span>
+        <h4>El que construye</h4>
+        <p>Ingeniero de prototipado rápido. Escribe la solución bajo condiciones imperfectas —datos sucios, requisitos cambiantes— priorizando velocidad e impacto sobre el diseño perfecto.</p>
+      </div>
+    </div>
+    <div class="note warn">
+      <span class="lbl">Cómo encuadrarlo frente a directores</span>
+      <p><strong>El modelo FDE se volvió el término más caliente de tech y, en el camino, se meme-ificó:</strong> una idea que se propaga sin que su significado sobreviva intacto. Muchas empresas le pegan el título a un equipo sin darle el calibre ni el mandato que lo hacen funcionar. Por eso este piloto no es replicar Palantir ni Anthropic —esos FDEs son ingenieros de calibre extremo con autonomía total—: es <em>calibrar el modelo a la realidad de fyo</em> antes de escalarlo.</p>
+    </div>
+  </section>
+
+  <!-- 06 CONDICIONES -->
+  <section class="chapter" id="s6">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">06</span><span class="lbl">Condiciones de éxito</span></div>
+      <h2 class="ch-title">Lo que separa el modelo transformador del <span class="hl">squad con nombre lindo</span></h2>
+      <p class="ch-lede">Si estas condiciones no se dan, la dupla se degrada a un equipo de IT embebido con beneficios marginales. Son no negociables.</p>
+    </div>
+    <div class="grid2">
+      <div class="card"><span class="cnum">01</span><h4>Mandato escrito y blindado</h4><p>Firmado por el líder del área y el sponsor: qué decide sola, qué escala, qué presupuesto maneja, contra qué se mide. Sin esto, en seis meses la tratan como un equipo de IT más.</p></div>
+      <div class="card"><span class="cnum">02</span><h4>Stack y permisos desde el día uno</h4><p>El CoE pre-aprovisiona herramientas, datos y permisos antes del embedding. Si pasa los primeros meses peleando accesos, se perdió la apuesta.</p></div>
+      <div class="card"><span class="cnum">03</span><h4>Cultura de outcome, no de output</h4><p>Se mide por valor generado, no por features. Story points, velocity y OKRs tradicionales convierten a la dupla en un equipo de Scrum disfrazado.</p></div>
+      <div class="card"><span class="cnum">04</span><h4>Sponsor ejecutivo que lo sostenga</h4><p>Alguien con peso real —para fyo, Ale— que defienda el modelo cuando una dupla falle o un área se queje. Sin eso, no sobrevive el primer año.</p></div>
+    </div>
+  </section>
+
+  <!-- 07 KIT -->
+  <section class="chapter" id="s7">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">07</span><span class="lbl">Habilitadores</span></div>
+      <h2 class="ch-title">Stack, licencias, entornos y políticas: provistos el <span class="hl">día uno</span></h2>
+      <p class="ch-lede">El detalle de la condición #2, visto desde la dupla: qué necesita a mano para avanzar con autonomía y sin trabas. El cómo se provee es de Sistemas; esto es la lista de habilitadores.</p>
+    </div>
+
+    <div class="stack">
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">A · Stack</span></div>
+        <div class="t-items">
+          <div class="cell"><span class="cn">Agentes</span><span class="cs">Anthropic Team · Claude Code · CMA</span></div>
+          <div class="cell x"><span class="cn">Datos</span><span class="cs">MCP sobre fyoDigital · Postgres</span></div>
+          <div class="cell"><span class="cn">Canales</span><span class="cs">LibreChat · Teams · Vercel</span></div>
+        </div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">B · Licencias</span></div>
+        <div class="t-items">
+          <div class="cell"><span class="cn">Seats y créditos</span><span class="cs">asignados, no en trámite</span></div>
+          <div class="cell"><span class="cn">Presupuesto autónomo</span><span class="cs">acotado, sin aprobación caso a caso</span></div>
+        </div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">C · Entornos</span></div>
+        <div class="t-items">
+          <div class="cell"><span class="cn">Sandbox</span><span class="cs">datos representativos · permiso de romper</span></div>
+          <div class="cell"><span class="cn">Staging</span><span class="cs">validar con usuarios reales</span></div>
+          <div class="cell"><span class="cn">Producción</span><span class="cs">solo vía graduación al CoE</span></div>
+        </div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">D · Políticas</span></div>
+        <div class="t-items">
+          <div class="cell"><span class="cn">Datos y compliance</span><span class="cs">autonomía calibrada al riesgo</span></div>
+          <div class="cell"><span class="cn">Identidad y secrets</span><span class="cs">Entra ID · auditabilidad</span></div>
+          <div class="cell"><span class="cn">Decisiones pre-delegadas</span><span class="cs">por mandato, no por iteración</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note warn">
+      <span class="lbl">A cerrar antes de tocar datos reales de clientes</span>
+      <p><strong>CMA no es elegible para Zero Data Retention.</strong> Para datos regulados de clientes hay que definir explícitamente qué corre en CMA y qué necesita otra ruta. Es una decisión de arquitectura y compliance que conviene resolver con el CoE <em>antes</em> del primer caso productivo, no después.</p>
+    </div>
+
+    <div class="prose">
+      <p><strong>El principio que ata todo:</strong> "sin trabas" no es "sin control" — es <em>control movido hacia adelante</em>. Todo lo pre-aprobable se aprueba una vez, por mandato, para que la dupla no pida permiso en cada paso. La gobernanza vive en los límites del entorno, no en la velocidad del día a día.</p>
+    </div>
+  </section>
+
+  <!-- 08 RIESGOS -->
+  <section class="chapter" id="s8">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">08</span><span class="lbl">Riesgos</span></div>
+      <h2 class="ch-title">Tres riesgos que el diseño tiene que <span class="hl">anticipar</span></h2>
+      <p class="ch-lede">No los obvios —falta de talento o presupuesto, ya cubiertos en condiciones—, sino los que aparecen cuando el modelo empieza a andar.</p>
+    </div>
+    <div class="entity">
+      <div class="entity-head">
+        <span class="lbl">Riesgos · a vigilar desde el diseño</span>
+        <h3 class="entity-name">Tres modos de <span class="hl">falla</span></h3>
+        <p class="entity-purpose"><strong>Cada uno tiene su mitigacion.</strong> Conviene tenerla lista desde el diseño, no improvisarla cuando ya duele.</p>
+      </div>
+      <div class="entity-body">
+        <div class="fn"><div class="fi">01</div><div class="ft" data-editable><strong>Captura por lo tactico. </strong><span class="d">El area tira a la dupla a automatizaciones de back-office —quick wins— y el trabajo transformador nunca pasa. Es la trampa del 90/10.</span><span class="sub">Mitigacion: el mandato fija el foco, las metricas miden impacto y no cantidad de bots, y el Manager protege la cartera priorizada.</span></div></div>
+        <div class="fn"><div class="fi">02</div><div class="ft" data-editable><strong>Muere de exito: no gradua. </strong><span class="d">Si el plano central (Sweeping/Maintaining) no esta listo, lo que funciona en la dupla no escala: se vuelve shadow-IT y deuda, y el area pierde confianza.</span><span class="sub">Mitigacion: el CoE pre-dimensiona el plano central —interno o proveedores— antes de que el piloto genere demanda, con criterios de graduacion escritos.</span></div></div>
+        <div class="fn"><div class="fi">03</div><div class="ft" data-editable><strong>Dependencia de proveedores. </strong><span class="d">Tercerizar el plano central crea lock-in y fuga de conocimiento hacia afuera.</span><span class="sub">Mitigacion: el activo —MCP server, contratos de datos, estandares— vive en el CoE; los proveedores son intercambiables. Soberania arquitectonica.</span></div></div>
+      </div>
+      <div class="entity-foot">
+        <span class="tag key"><strong>Hilo comun:</strong> el CoE sostiene foco, plataforma y soberania</span>
+        <span class="tag">Mandato · graduacion · MCP propio</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 METRICAS -->
+  <section class="chapter" id="s9">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">09</span><span class="lbl">Métricas</span></div>
+      <h2 class="ch-title">Se mide por impacto y adopción, no por <span class="hl">cantidad de bots</span></h2>
+      <p class="ch-lede">Tres métricas de outcome, medidas trimestralmente. El piloto se evalúa como una mini-startup dentro del área.</p>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <span class="cnum">Las tres que importan</span>
+        <h4>Outcome del área</h4>
+        <p><strong>Valor generado:</strong> tiempo ahorrado / impacto, atestiguado por el líder del área. <strong>Velocidad de iteración:</strong> de problema a solución en uso, en días/semanas. <strong>Adopción real:</strong> cuántos usan las soluciones de forma recurrente.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">Salud del modelo</span>
+        <h4>Lo que habilita escalar</h4>
+        <p><strong>Reutilización:</strong> cuántas capacidades del piloto quedan como plataforma. <strong>Loop de aprendizaje:</strong> cuánto del feedback de campo vuelve al diseño. Más, por rol, agentes en producción y problemas priorizados con impacto.</p>
+      </div>
+    </div>
+    <div class="note warn">
+      <span class="lbl">Trampa a evitar</span>
+      <p>No medir por <strong>cantidad de automatizaciones</strong>. Es el modo en que las iniciativas de hoy se quedan en lo táctico. Veinte bots que nadie usa valen menos que un agente adoptado que cambia cómo trabaja el área.</p>
+    </div>
+  </section>
+
+  <!-- 10 ARRANQUE -->
+  <section class="chapter" id="s10">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">10</span><span class="lbl">Arranque</span></div>
+      <h2 class="ch-title">Una dupla, un área, en tres fases. Probar, calibrar, <span class="hl">escalar</span>.</h2>
+      <p class="ch-lede">Nada de rollout amplio y simultáneo. Una dupla excelente en un área excelente, un caso de éxito incontestable, y recién ahí se escala con criterio.</p>
+    </div>
+
+    <div class="entity">
+      <div class="entity-head">
+        <span class="lbl">Piloto en marcha · fyoCapital</span>
+        <h3 class="entity-name">Juli + Gero, en <span class="hl">fyoCapital</span></h3>
+        <p class="entity-purpose"><strong>No arranca de cero ni espera un reclutamiento de meses.</strong> Se apoya en el trabajo que ya está pasando en Capital, con dos personas de adentro que calzan en cada lado de la dupla. La elección de menor riesgo para calibrar el modelo.</p>
+      </div>
+      <div class="entity-body">
+        <div class="fn"><div class="fi">E</div><div class="ft" data-editable><strong>Juli — Echo → Agents Manager. </strong><span class="d">Embajadora de IA, cercana al negocio. El lado que descubre, prioriza y traduce a producto.</span></div></div>
+        <div class="fn"><div class="fi">D</div><div class="ft" data-editable><strong>Gero — Delta → Agents Engineer. </strong><span class="d">Mejora Continua / automatizaciones. El lado que construye, integra y despliega bajo restricción real.</span></div></div>
+      </div>
+      <div class="entity-foot">
+        <span class="tag key"><strong>Apuesta:</strong> bajo riesgo, gente comprometida</span>
+        <span class="tag">Área conocida desde adentro</span>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Fase 1 · ahora</span></div>
+        <div class="t-items"><div class="cell x"><span class="cn">Dupla piloto única</span><span class="cs">3–6 meses · Gero + Juli en Capital · caso de éxito incontestable</span></div></div>
+      </div>
+      <div class="flowmark">— con el caso de éxito —</div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Fase 2</span></div>
+        <div class="t-items"><div class="cell"><span class="cn">3 a 5 duplas</span><span class="cs">6–12 meses · nuevas áreas · nace la comunidad de chapters</span></div></div>
+      </div>
+      <div class="flowmark">— con evidencia de qué funciona —</div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Fase 3</span></div>
+        <div class="t-items"><div class="cell"><span class="cn">Escala con criterio</span><span class="cs">12–24 meses · solo áreas con fit · no tiene que ser uniforme</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 FUNDAMENTO -->
+  <section class="chapter" id="s11">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">11</span><span class="lbl">Fundamento</span></div>
+      <h2 class="ch-title">Cuatro modelos probados lo <span class="hl">sostienen</span></h2>
+      <p class="ch-lede">El diseño combina referencias probadas, adaptadas a la realidad de fyo.</p>
+    </div>
+    <div class="grid2">
+      <div class="card"><span class="cnum">Palantir · FDE / Echo &amp; Delta</span><h4>La dupla</h4><p>Un experto de dominio (Echo) que descubre + un ingeniero empotrado (Delta) que construye. Adoptado por OpenAI, Anthropic, Salesforce.</p></div>
+      <div class="card"><span class="cnum">Boris Cherny · Claude Code</span><h4>Las cinco funciones</h4><p>Los arquetipos del ciclo de vida (prototyping &#8594; maintaining) que usamos para repartir el trabajo entre la dupla y el centro.</p></div>
+      <div class="card"><span class="cnum">McKinsey · Analytics translator</span><h4>El lado Manager</h4><p>El puente negocio&#8596;tecnologia, donde el dominio es la competencia #1 — y por eso conviene desarrollarlo desde adentro.</p></div>
+      <div class="card"><span class="cnum">Hub &amp; Spoke · IBM / Spotify</span><h4>El encaje</h4><p>Centro que pone estandares + talento embebido (IBM: ~36% mas ROI). Y la leccion de Spotify: la matriz funciona si los derechos de decision estan escritos.</p></div>
+    </div>
+    <div class="prose">
+      <p><strong>Referencias.</strong>
+        <a href="https://blog.palantir.com" style="color:var(--ink-2);border-bottom:1px solid var(--rule-2);text-decoration:none">Palantir Blog &#8212; Dev vs Delta</a> ·
+        <a href="https://fde.academy/blog/how-palantir-invented-the-forward-deployed-engineer-model" style="color:var(--ink-2);border-bottom:1px solid var(--rule-2);text-decoration:none">FDE Academy &#8212; How Palantir invented the FDE model</a> ·
+        <a href="https://x.com/bcherny/status/2071379474277613732" style="color:var(--ink-2);border-bottom:1px solid var(--rule-2);text-decoration:none">Boris Cherny &#8212; Five archetypes (X)</a> ·
+        <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/analytics-translator" style="color:var(--ink-2);border-bottom:1px solid var(--rule-2);text-decoration:none">McKinsey &#8212; The analytics translator</a> ·
+        <a href="https://aiassemblylines.com" style="color:var(--ink-2);border-bottom:1px solid var(--rule-2);text-decoration:none">AI Assembly Lines &#8212; AI operating model</a> ·
+        <a href="https://www.jeremiahlee.com/posts/failed-squad-goals/" style="color:var(--ink-2);border-bottom:1px solid var(--rule-2);text-decoration:none">Jeremiah Lee &#8212; Failed #SquadGoals</a> ·
+        <a href="https://peraspera.us" style="color:var(--ink-2);border-bottom:1px solid var(--rule-2);text-decoration:none">Per Aspera &#8212; Build your first FDE team</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="chapter" id="cierre" style="margin-top:0">
+    <div class="statement">
+      <span class="lbl">La idea, en una frase</span>
+      <p>No es replicar Palantir. Es <span class="hl">calibrar el modelo a fyo</span> antes de escalarlo.</p>
+    </div>
+  </section>
+
+  <!-- COLOFÓN -->
+  <div class="colophon">
+    <span>Iñaki · Consultoría</span>
+    <span>inaki@alganaras.com.ar · estilo «Plano»</span>
+  </div>
+
+</div></div>
+
+
+<script src="https://docs.alganaras.com.ar/_editor.js"></script>
+</body></html>

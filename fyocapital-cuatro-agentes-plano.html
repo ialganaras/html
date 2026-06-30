@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuatro agentes fyoCapital · Definición, arquitectura, faltantes y proceso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#f3f2ee;
+    --paper-2:#eceae4;
+    --card:#ffffff;
+    --ink:#111110;
+    --ink-2:#2c2b27;
+    --muted:#56544f;
+    --faint:#78756f;
+    --rule:#d6d4ce;
+    --rule-2:#cbc8c0;
+    --accent:#e22b16; --accent-soft:#e22b160e; --accent-line:#e22b1642; --accent-deep:#c0220f;
+    --disp:'Space Grotesk', system-ui, sans-serif;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--paper);
+    color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--accent); color:#fff; }
+  .lbl{ font-family:var(--mono); font-size:11px; font-weight:500; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--muted); }
+
+  .doc{ max-width:1120px; margin:0 auto; padding:0 0 130px; }
+  .sheet{ background:var(--paper); padding:0 52px; position:relative; }
+  @media (max-width:760px){ .sheet{ padding:0 20px; } }
+
+  .titleblock{ display:grid; grid-template-columns:1fr auto; align-items:stretch;
+    border-bottom:1px solid var(--ink); }
+  .titleblock .tb-l{ padding:16px 0; font-family:var(--mono); font-size:11px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--ink-2); display:flex; align-items:center; gap:14px; }
+  .titleblock .tb-l .sq{ width:8px; height:8px; background:var(--accent); }
+  .titleblock .tb-r{ font-family:var(--mono); font-size:11px; letter-spacing:.06em; color:var(--muted);
+    text-transform:uppercase; display:flex; align-items:center; padding:16px 0 16px 22px;
+    border-left:1px solid var(--rule); }
+  .titleblock .tb-r b{ color:var(--accent-deep); font-weight:600; }
+
+  .cover{ padding:70px 0 0; }
+  .cover .ref{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); margin-bottom:30px; display:flex; gap:18px; }
+  .cover .ref span{ position:relative; padding-left:16px; }
+  .cover .ref span::before{ content:''; position:absolute; left:0; top:50%; width:8px; height:8px;
+    border:1px solid var(--accent); transform:translateY(-50%); }
+  h1.title{ font-family:var(--disp); font-weight:600; font-size:clamp(40px,6.4vw,82px);
+    line-height:1.0; letter-spacing:-.03em; margin:0; max-width:15ch; color:var(--ink); }
+  h1.title .hl{ color:var(--accent); }
+  .lede{ font-size:clamp(17px,1.8vw,21px); line-height:1.55; color:var(--ink-2); max-width:62ch;
+    margin:30px 0 0; }
+  .specsheet{ margin-top:48px; border:1px solid var(--rule-2); background:var(--card);
+    display:grid; grid-template-columns:repeat(3,1fr); }
+  @media (max-width:680px){ .specsheet{ grid-template-columns:1fr; } }
+  .specsheet .sc{ padding:18px 20px; border-right:1px solid var(--rule); }
+  .specsheet .sc:last-child{ border-right:none; }
+  .specsheet .sc .k{ display:block; margin-bottom:8px; }
+  .specsheet .sc .v{ font-family:var(--disp); font-weight:500; font-size:16px; color:var(--ink);
+    line-height:1.35; }
+
+  .contents{ margin:72px 0 0; border-top:1px solid var(--ink); padding-top:26px; }
+  .contents .ct{ color:var(--accent); margin-bottom:18px; }
+  .toc{ list-style:none; margin:0; padding:0; }
+  .toc li{ display:grid; grid-template-columns:70px 1fr auto; align-items:center; gap:18px;
+    padding:15px 0; border-bottom:1px solid var(--rule); }
+  .toc .n{ font-family:var(--mono); font-size:12px; color:var(--accent); }
+  .toc a{ color:var(--ink); text-decoration:none; font-family:var(--disp); font-weight:500;
+    font-size:19px; letter-spacing:-.01em; }
+  .toc li:hover a{ color:var(--accent); }
+  .toc .ar{ font-family:var(--mono); color:var(--faint); font-size:12px; }
+
+  .chapter{ margin-top:96px; scroll-margin-top:24px; }
+  .ch-head{ border-bottom:1px solid var(--ink); padding-bottom:26px; }
+  .ch-marker{ display:flex; align-items:center; gap:14px; margin-bottom:20px; }
+  .ch-marker .mn{ font-family:var(--mono); font-size:12px; color:#fff; background:var(--accent);
+    padding:4px 9px; font-weight:600; letter-spacing:.06em; }
+  h2.ch-title{ font-family:var(--disp); font-weight:600; font-size:clamp(28px,4.2vw,52px);
+    line-height:1.02; letter-spacing:-.03em; margin:0; max-width:18ch; }
+  h2.ch-title .hl{ color:var(--accent); }
+  .ch-lede{ font-size:19px; line-height:1.5; color:var(--ink-2); margin:20px 0 0; max-width:64ch; }
+
+  .prose{ max-width:70ch; margin-top:32px; font-size:16.5px; line-height:1.62; color:var(--ink-2); }
+  .prose p{ margin:0 0 18px; }
+  .prose strong{ color:var(--ink); font-weight:600; }
+  .prose em{ font-style:normal; color:var(--accent); font-weight:500; }
+
+  .note{ margin:32px 0; border:1px solid var(--rule-2); border-left:3px solid var(--accent);
+    background:var(--card); padding:22px 26px; max-width:78ch; position:relative; }
+  .note .lbl{ color:var(--accent); display:block; margin-bottom:11px; }
+  .note p{ margin:0; font-size:15.5px; line-height:1.58; color:var(--ink-2); }
+  .note strong{ color:var(--ink); font-weight:600; }
+  .note.warn{ border-left-color:var(--accent-deep); }
+
+  .stack{ margin:36px 0 8px; border:1px solid var(--ink); background:var(--card); }
+  .tier{ display:grid; grid-template-columns:158px 1fr; border-bottom:1px solid var(--rule); }
+  .tier:last-child{ border-bottom:none; }
+  @media (max-width:680px){ .tier{ grid-template-columns:1fr; } }
+  .tier .t-lbl{ padding:18px 20px; border-right:1px solid var(--rule); display:flex; align-items:center;
+    background:var(--paper-2); }
+  .tier .t-items{ display:flex; }
+  @media (max-width:560px){ .tier .t-items{ flex-direction:column; } }
+  .cell{ flex:1; padding:18px 20px; border-left:1px solid var(--rule); }
+  .cell:first-child{ border-left:none; }
+  .cell .cn{ font-family:var(--disp); font-weight:600; font-size:18px; color:var(--ink); display:block;
+    letter-spacing:-.01em; }
+  .cell .cs{ font-family:var(--mono); font-size:11px; color:var(--muted); display:block; margin-top:7px;
+    line-height:1.45; }
+  .cell.x .cn{ color:var(--accent); }
+  .flowmark{ font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; color:var(--faint);
+    text-transform:uppercase; padding:7px 20px; text-align:center; border-bottom:1px solid var(--rule);
+    background:var(--paper-2); }
+
+  .entity{ margin:38px 0; border:1px solid var(--ink); background:var(--card); }
+  .entity-head{ padding:26px 30px 22px; border-bottom:1px solid var(--rule); border-top:3px solid var(--accent); }
+  .entity-head .lbl{ color:var(--accent); display:block; margin-bottom:12px; }
+  .entity-name{ font-family:var(--disp); font-weight:600; font-size:28px; line-height:1.05;
+    letter-spacing:-.02em; margin:0 0 11px; }
+  .entity-name .hl{ color:var(--accent); }
+  .entity-purpose{ font-size:16px; line-height:1.55; color:var(--ink-2); margin:0; max-width:72ch; }
+  .entity-purpose strong{ color:var(--ink); font-weight:600; }
+  .entity-body{ padding:4px 30px; }
+  .fn{ display:grid; grid-template-columns:36px 1fr; gap:18px; padding:16px 0; border-bottom:1px solid var(--rule); }
+  .fn:last-child{ border-bottom:none; }
+  .fn .fi{ font-family:var(--mono); font-size:12px; color:var(--accent); border:1px solid var(--accent-line);
+    width:30px; height:30px; display:flex; align-items:center; justify-content:center; }
+  .fn .ft strong{ color:var(--ink); font-weight:600; }
+  .fn .ft .d{ color:var(--ink-2); }
+  .fn .ft .sub{ display:block; margin-top:6px; font-size:14px; color:var(--muted); line-height:1.5;
+    padding-left:12px; border-left:2px solid var(--rule-2); }
+  .entity-foot{ display:flex; flex-wrap:wrap; gap:9px; padding:18px 30px 22px; border-top:1px solid var(--rule);
+    background:var(--paper-2); }
+  .tag{ font-family:var(--mono); font-size:11px; color:var(--ink-2); padding:7px 12px; border:1px solid var(--rule-2);
+    background:var(--card); }
+  .tag strong{ color:var(--ink); font-weight:600; }
+  .tag.key{ border-color:var(--accent-line); color:var(--accent); background:var(--accent-soft); }
+  .tag.key strong{ color:var(--accent-deep); }
+  .tag.lnk{ border-color:var(--accent); color:var(--accent); }
+  .tag.lnk strong{ color:var(--accent-deep); }
+
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; margin-top:36px; border:1px solid var(--ink);
+    background:var(--card); }
+  @media (max-width:680px){ .grid2{ grid-template-columns:1fr; } }
+  .card{ padding:26px 28px 28px; border-bottom:1px solid var(--rule); }
+  .card:nth-child(odd){ border-right:1px solid var(--rule); }
+  @media (max-width:680px){ .card:nth-child(odd){ border-right:none; } }
+  .card:nth-last-child(-n+2){ border-bottom:none; }
+  @media (max-width:680px){ .card:nth-last-child(-n+2){ border-bottom:1px solid var(--rule); } .card:last-child{ border-bottom:none; } }
+  .card .cnum{ font-family:var(--mono); font-size:11px; color:var(--accent); display:block; margin-bottom:14px; }
+  .card h4{ font-family:var(--disp); font-weight:600; font-size:21px; letter-spacing:-.015em; margin:0 0 9px; color:var(--ink); }
+  .card p{ font-size:15px; line-height:1.55; color:var(--ink-2); margin:0; }
+
+  .statement{ margin:88px 0 0; padding:56px 44px; border:1px solid var(--ink); background:var(--card);
+    position:relative; }
+  .statement::before{ content:''; position:absolute; top:0; left:0; width:6px; height:100%; background:var(--accent); }
+  .statement .lbl{ color:var(--accent); margin-bottom:22px; display:block; }
+  .statement p{ font-family:var(--disp); font-weight:500; font-size:clamp(24px,3.4vw,42px); line-height:1.18;
+    letter-spacing:-.025em; margin:0; max-width:22ch; color:var(--ink); }
+  .statement .hl{ color:var(--accent); }
+
+  .colophon{ margin-top:50px; padding-top:18px; border-top:1px solid var(--ink); display:flex;
+    justify-content:space-between; flex-wrap:wrap; gap:12px; font-family:var(--mono); font-size:11px;
+    color:var(--muted); letter-spacing:.05em; text-transform:uppercase; }
+</style>
+</head>
+<body>
+
+<div class="doc"><div class="sheet">
+
+  <!-- CABECERA -->
+  <div class="titleblock">
+    <div class="tb-l"><span class="sq"></span>Iñaki · Consultoría<span style="color:var(--muted)">inaki@alganaras.com.ar</span></div>
+    <div class="tb-r">DOC. <b>FYO-04</b> · REV. <b>v2</b> · IA APLICADA</div>
+  </div>
+
+  <!-- PORTADA -->
+  <header class="cover">
+    <div class="ref"><span>fyoCapital</span><span>Definición de agentes</span></div>
+    <h1 class="title">Cuatro agentes, dos audiencias, una sola <span class="hl">línea</span>.</h1>
+    <p class="lede">La definición reagrupada en cuatro agentes: tres que trabajan adentro —Research, Comercial y Portafolio— y uno que es la cara al cliente. Qué es cada uno, cómo se conectan, qué les falta y en qué orden encenderlos.</p>
+    <div class="specsheet">
+      <div class="sc"><span class="lbl k">Los cuatro</span><span class="v">Research · Comercial · Portafolio · fyoCapital AI</span></div>
+      <div class="sc"><span class="lbl k">Estado</span><span class="v">Definición v2 — para pelotear</span></div>
+      <div class="sc"><span class="lbl k">Principio rector</span><span class="v">Extender la relación, no reemplazarla</span></div>
+    </div>
+  </header>
+
+  <!-- ÍNDICE -->
+  <nav class="contents">
+    <div class="lbl ct">Índice del documento</div>
+    <ol class="toc">
+      <li><span class="n">00</span><a href="#s0">La arquitectura: cómo se conectan los cuatro</a><span class="ar">[↗]</span></li>
+      <li><span class="n">01</span><a href="#s1">Los tres agentes internos</a><span class="ar">[↗]</span></li>
+      <li><span class="n">02</span><a href="#s2">El agente del cliente · fyoCapital AI</a><span class="ar">[↗]</span></li>
+      <li><span class="n">03</span><a href="#s3">Cuatro principios, para los cuatro</a><span class="ar">[↗]</span></li>
+      <li><span class="n">04</span><a href="#s4">Los faltantes</a><span class="ar">[↗]</span></li>
+      <li><span class="n">05</span><a href="#s5">El proceso para encenderlos</a><span class="ar">[↗]</span></li>
+    </ol>
+  </nav>
+
+  <!-- 00 ARQUITECTURA -->
+  <section class="chapter" id="s0">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">00</span><span class="lbl">Arquitectura</span></div>
+      <h2 class="ch-title">Cuatro agentes que se <span class="hl">alimentan</span> entre sí</h2>
+      <p class="ch-lede">No son cuatro islas. Hay un cerebro que produce inteligencia, dos agentes que la aplican al negocio y una cara que la lleva al cliente. Todo sobre un mismo contrato de datos.</p>
+    </div>
+
+    <div class="prose">
+      <p>El reordenamiento clave de esta versión: <strong>el research deja de ser un cimiento y pasa a ser un agente</strong>. Es el cerebro de mercado que produce la inteligencia que todos los demás consumen. Debajo de él, dos agentes la bajan a tierra —uno mira al cliente, otro mira el portafolio— y un cuarto agente la expone al cliente final. Los une un mismo activo: el MCP de posiciones.</p>
+    </div>
+
+    <div class="stack">
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Activos y datos</span></div>
+        <div class="t-items">
+          <div class="cell"><span class="cn">MCP de posiciones</span><span class="cs">tenencias · un contrato, todas las audiencias</span></div>
+          <div class="cell"><span class="cn">Mesas y mercado</span><span class="cs">Capitales · Granos · consultoras</span></div>
+          <div class="cell"><span class="cn">CRM y minutas</span><span class="cs">la relación y el vínculo</span></div>
+        </div>
+      </div>
+      <div class="flowmark">▼ alimentan al cerebro</div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Cerebro</span></div>
+        <div class="t-items">
+          <div class="cell x"><span class="cn">Agente de Research</span><span class="cs">la house view, viva y consultable</span></div>
+        </div>
+      </div>
+      <div class="flowmark">▼ produce la inteligencia que ellos aplican</div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Agentes de negocio</span></div>
+        <div class="t-items">
+          <div class="cell"><span class="cn">Agente Comercial</span><span class="cs">a quién y por qué · cartera clientes</span></div>
+          <div class="cell"><span class="cn">Agente de Portafolio</span><span class="cs">qué hacer · portafolio y posición</span></div>
+        </div>
+      </div>
+      <div class="flowmark">▼ se expone al cliente, con el humano en el centro</div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Cara al cliente</span></div>
+        <div class="t-items">
+          <div class="cell x"><span class="cn">fyoCapital AI</span><span class="cs">habla con el cliente · extiende al comercial</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">
+      <span class="lbl">La línea que atraviesa los cuatro</span>
+      <p><strong>Informar vs. asesorar.</strong> "Tu cartera está compuesta así y rindió esto" es información. "Vendé esto y comprá aquello" es asesoramiento financiero regulado. Con CNV de por medio define qué puede decir cada agente — sobre todo fyoCapital AI. Se diseña desde el lado seguro de la línea y se avanza de manera deliberada, nunca por accidente.</p>
+    </div>
+  </section>
+
+  <!-- 01 INTERNOS -->
+  <section class="chapter" id="s1">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">01</span><span class="lbl">Definición</span></div>
+      <h2 class="ch-title">Los tres agentes <span class="hl">internos</span></h2>
+      <p class="ch-lede">Le laburan al equipo de fyoCapital, no lo reemplazan. Uno produce inteligencia; los otros dos la convierten en acción comercial.</p>
+    </div>
+
+    <!-- RESEARCH -->
+    <div class="entity">
+      <div class="entity-head">
+        <span class="lbl">Interno · nivel mercado / instrumento · el cerebro</span>
+        <h3 class="entity-name">Agente de <span class="hl">Research</span></h3>
+        <p class="entity-purpose">Para que la inteligencia de mercado de fyo deje de ser un PDF que no lee nadie y se vuelva <strong>el cerebro vivo que alimenta a todos los demás agentes</strong> — y la fuente contra la que todo lo que se recomienda se verifica.</p>
+      </div>
+      <div class="entity-body">
+        <div class="fn"><div class="fi">01</div><div class="ft"><strong>Pulso de mercado.</strong> <span class="d">Consolida y sintetiza la visión de las mesas (Capitales y Granos) y de las consultoras en un estado de situación diario, consultable.</span></div></div>
+        <div class="fn"><div class="fi">02</div><div class="ft"><strong>Detección de eventos.</strong> <span class="d">Identifica qué pasó que importa —subió la tasa, salió una ON, se movió el dólar o el grano, hay licitación— y qué implica para cada instrumento o familia.</span></div></div>
+        <div class="fn"><div class="fi">03</div><div class="ft"><strong>House view estructurada.</strong> <span class="d">El research deja de ser PDF: queda como base viva que cualquier agente —y cualquier persona— puede consultar y citar. La fuente de verdad de "qué piensa fyo".</span></div></div>
+        <div class="fn"><div class="fi">04</div><div class="ft"><strong>Señal accionable.</strong> <span class="d">Por cada evento, arma el "qué significa y para qué instrumentos sirve", listo para que el Agente de Portafolio lo cruce con los clientes.</span><span class="sub">Es la primera mitad del "research al revés": el research genera la señal, el de Portafolio la baja a la lista de clientes.</span></div></div>
+        <div class="fn"><div class="fi">05</div><div class="ft"><strong>Respuesta a consultas.</strong> <span class="d">Contesta preguntas de mercado de los otros agentes y del comercial ("¿qué opina fyo de este emisor?"), siempre con trazabilidad a la fuente.</span></div></div>
+      </div>
+      <div class="entity-foot">
+        <span class="tag lnk"><strong>Alimenta a:</strong> Comercial · Portafolio · fyoCapital AI</span>
+        <span class="tag key"><strong>MVP:</strong> house view estructurada + señal accionable</span>
+      </div>
+    </div>
+
+    <!-- COMERCIAL -->
+    <div class="entity">
+      <div class="entity-head">
+        <span class="lbl">Interno · nivel cartera clientes</span>
+        <h3 class="entity-name">Agente <span class="hl">Comercial</span></h3>
+        <p class="entity-purpose">Para que el comercial le dedique su tiempo a los clientes correctos: que <strong>no pierda los que tiene y capture lo que hoy no está capturando</strong>. Las dos cosas, no solo la primera.</p>
+      </div>
+      <div class="entity-body">
+        <div class="fn"><div class="fi">01</div><div class="ft"><strong>Debrief automático.</strong> <span class="d">Escucha la reunión, la resume, extrae los próximos pasos y carga el CRM solo.</span><span class="sub">Resuelve el problema de raíz: el "cliente sin minuta" no existe si cargar la minuta deja de ser un plomo. Es la función con mayor adopción comprobada del mundo — el equivalente en Morgan Stanley lo usa el 98% de los asesores.</span></div></div>
+        <div class="fn"><div class="fi">02</div><div class="ft"><strong>Radar de relación (defensivo).</strong> <span class="d">Detecta clientes que se enfrían —sin contacto, sin operar, caída de actividad— antes de que se vayan.</span></div></div>
+        <div class="fn"><div class="fi">03</div><div class="ft"><strong>Radar de potencial (ofensivo).</strong> <span class="d">Detecta la plata sin capturar: clientes sub-penetrados respecto de su segmento, brecha de familias de producto, señales de caja ociosa.</span><span class="sub">No es retener, es crecer. La mitad que faltaba en el borrador original.</span></div></div>
+        <div class="fn"><div class="fi">04</div><div class="ft"><strong>Próxima mejor acción.</strong> <span class="d">Combina los dos radares —enriquecidos con la señal del Agente de Research— y prioriza: la lista del día, ordenada por impacto.</span></div></div>
+        <div class="fn"><div class="fi">05</div><div class="ft"><strong>Briefing y logística.</strong> <span class="d">Arma el briefing 360 y, cuando hay visita física, la gira y la agenda.</span></div></div>
+      </div>
+      <div class="entity-foot">
+        <span class="tag"><strong>Vista de líder:</strong> la salud de las 5 carteras del equipo</span>
+        <span class="tag key"><strong>MVP:</strong> Debrief + briefing / próxima acción</span>
+      </div>
+    </div>
+
+    <!-- PORTAFOLIO -->
+    <div class="entity">
+      <div class="entity-head">
+        <span class="lbl">Interno · nivel portafolio y posición</span>
+        <h3 class="entity-name">Agente de <span class="hl">Portafolio</span></h3>
+        <p class="entity-purpose">Para que cada portafolio esté bien parado —según el cliente y según el mercado— y que <strong>ninguna oportunidad de mercado se pierda por no llegarle al cliente a tiempo</strong>.</p>
+      </div>
+      <div class="entity-body">
+        <div class="fn"><div class="fi">01</div><div class="ft"><strong>Diagnóstico de portafolio.</strong> <span class="d">Lee el portafolio contra el arquetipo/perfil: concentración, calce, caja ociosa, rendimiento posible.</span></div></div>
+        <div class="fn"><div class="fi">02</div><div class="ft"><strong>Cruce señal–portafolio (research al revés).</strong> <span class="d">Toma la señal del Agente de Research y la baja a tierra: a qué clientes les pega ese evento y qué conviene hacer en cada portafolio. La lista accionable en minutos.</span><span class="sub">Acá se completa el "research al revés": el cerebro detecta el qué; este agente resuelve el a quién.</span></div></div>
+        <div class="fn"><div class="fi">03</div><div class="ft"><strong>Recomendación con argumento.</strong> <span class="d">Qué mantener, rotar o sumar, con el porqué y con trazabilidad a la house view del Agente de Research. El argumento sin la fuente no sirve acá.</span></div></div>
+        <div class="fn"><div class="fi">04</div><div class="ft"><strong>Mensaje listo.</strong> <span class="d">Baja el argumento a un mensaje en el tono de ese cliente, que el comercial revisa y manda.</span><span class="sub">El último centímetro: lo que deja atender a muchos sin perder cercanía.</span></div></div>
+        <div class="fn"><div class="fi">05</div><div class="ft"><strong>Priorización.</strong> <span class="d">Ordena qué acciones son más urgentes y relevantes por impacto y ventana de oportunidad.</span></div></div>
+      </div>
+      <div class="entity-foot">
+        <span class="tag lnk"><strong>Consume de:</strong> Agente de Research</span>
+        <span class="tag"><strong>Entrega:</strong> el briefing accionable — handoff con el Comercial</span>
+        <span class="tag key"><strong>MVP:</strong> cruce señal–portafolio</span>
+      </div>
+    </div>
+
+    <div class="note">
+      <span class="lbl">El briefing 360, ahora a tres manos</span>
+      <p>La foto que el comercial lleva a la llamada combina los tres internos: <strong>quién</strong> y por qué (Comercial), <strong>qué hacer</strong> con su portafolio (Portafolio) y <strong>qué dice el mercado</strong> (Research). No es de ninguno: lo compone un orquestador por encima de los tres. Esa pieza es uno de los faltantes.</p>
+    </div>
+  </section>
+
+  <!-- 02 fyoCapital AI -->
+  <section class="chapter" id="s2">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">02</span><span class="lbl">Definición</span></div>
+      <h2 class="ch-title">El agente del cliente · <span class="hl">fyoCapital AI</span></h2>
+      <p class="ch-lede">Un solo agente, no tres. Crece en modos —de informar a conversar— acercándose a la línea regulatoria de forma deliberada. Extiende al comercial; nunca lo reemplaza.</p>
+    </div>
+
+    <div class="entity">
+      <div class="entity-head">
+        <span class="lbl">Cliente · nivel directo · la cara visible</span>
+        <h3 class="entity-name"><span class="hl">fyoCapital AI</span></h3>
+        <p class="entity-purpose">La cara al cliente del sistema. Se para sobre el MCP de posiciones y el Agente de Research, y <strong>crece en cuatro modos</strong> de menos a más riesgo. Cuando aparece una decisión, el camino es siempre <strong>hacia el comercial</strong>, no lejos de él.</p>
+      </div>
+      <div class="entity-body">
+        <div class="fn"><div class="fi">M1</div><div class="ft"><strong>Informar — "el ChatGPT de tu cartera".</strong> <span class="d">El cliente pregunta en criollo sobre su plata (cómo viene, cuánto en dólares, qué es esta ON, cuánto cobró de cupones) y el agente contesta con los datos reales de sus posiciones. No opina: describe, explica y traduce. Ante "¿me conviene vender?", deriva al asesor.</span><span class="sub">Riesgo bajo. Necesita el MCP de posiciones, control de identidad férreo y catálogo de instrumentos. Resuelve al cliente que no entiende sus estados, transparencia 24/7.</span></div></div>
+        <div class="fn"><div class="fi">M2</div><div class="ft"><strong>Avisar — sin que le pregunten.</strong> <span class="d">De reactivo a proactivo: avisa que se venció la letra y hay caja sin invertir, que mañana cobra un cupón, que salió una licitación. Avisar de la caja ociosa es informar; decir <em>dónde</em> ponerla ya es asesorar. El agente abre la puerta al humano, no recomienda él.</span><span class="sub">Riesgo medio-bajo. Suma motor de eventos y reglas anti-spam. Resuelve la caja ociosa que hoy queda muerta; antesala del float y del embedded.</span></div></div>
+        <div class="fn"><div class="fi">M3</div><div class="ft"><strong>Conversar con research.</strong> <span class="d">El cliente pregunta de mercado y el agente responde con la house view del Agente de Research, contextualizada a su portafolio. Acá se pisa zona regulada: transmitir y explicar el research de fyo está libre; recomendar comprar/vender para ese cliente es asesoramiento y requiere perfil, suitability, disclaimers e idóneo. La derivación es regulatoria, no cortesía.</span><span class="sub">Riesgo alto. La frontera se codifica en el sistema, no se deja al criterio del modelo en cada respuesta.</span></div></div>
+        <div class="fn"><div class="fi">M4</div><div class="ft"><strong>Ejecutar.</strong> <span class="d">El cliente dice "comprá esto" y el agente opera. Máxima desintermediación — justo lo que hace el bot de Cocos.</span><span class="sub">Fuera de alcance hoy. No por incapacidad técnica: ahí jugamos a ser Cocos y tiramos el diferencial a la basura.</span></div></div>
+      </div>
+      <div class="entity-foot">
+        <span class="tag lnk"><strong>Se para sobre:</strong> MCP de posiciones + Agente de Research</span>
+        <span class="tag key"><strong>MVP:</strong> Modo 1 — informar</span>
+      </div>
+    </div>
+
+    <div class="note">
+      <span class="lbl">No es el mismo fyoCapital AI para todos</span>
+      <p>El cliente que autogestiona vive en los modos 1 y 2 y ama el self-service; el que delega quiere que el agente sea una <strong>extensión de su asesor</strong>, no un reemplazo. La segmentación define qué modo se le ofrece a quién y en qué tono.</p>
+    </div>
+  </section>
+
+  <!-- 03 PRINCIPIOS -->
+  <section class="chapter" id="s3">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">03</span><span class="lbl">Reglas</span></div>
+      <h2 class="ch-title">Cuatro principios, para los <span class="hl">cuatro</span></h2>
+      <p class="ch-lede">Se dejan escritos desde el día uno, porque definen si los agentes se adoptan o quedan en el cajón.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card"><span class="cnum">Principio 01</span><h4>Propone, no ejecuta</h4><p>Ningún agente mueve un peso ni contacta solo: propone, el humano decide. Por CNV, sí, pero sobre todo porque es lo que genera confianza y adopción. La autonomía se gana después, con historial.</p></div>
+      <div class="card"><span class="cnum">Principio 02</span><h4>Grounded y auditable</h4><p>Nunca se inventa un número; todo lo que se recomienda se traza al Agente de Research, que es la fuente de verdad. Nada se suelta sin un framework de evaluación. En Portafolio y en el modo 3 de fyoCapital AI es la licencia para operar.</p></div>
+      <div class="card"><span class="cnum">Principio 03</span><h4>Ayudar nunca es evaluar</h4><p>El agente que ayuda al comercial no puede ser el que lo mide para sacarle o darle clientes. Si huele a vigilancia, no lo usa nadie. Esa función vive aparte, en un agente de reasignación de nivel gerencial.</p></div>
+      <div class="card"><span class="cnum">Principio 04</span><h4>Que aprenda</h4><p>Cada agente registra qué propuso, qué se hizo y qué resultó. Sin eso es un generador de sugerencias; con eso, en seis meses prioriza cada vez mejor. Las listas con el doble de conversión no nacen perfectas: se afinan.</p></div>
+    </div>
+  </section>
+
+  <!-- 04 FALTANTES -->
+  <section class="chapter" id="s4">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">04</span><span class="lbl">Faltantes</span></div>
+      <h2 class="ch-title">Qué falta para que sean <span class="hl">esos cuatro</span></h2>
+      <p class="ch-lede">No es código: es cimiento, dato y decisión. Y con la nueva estructura aparece un faltante propio — el contrato entre agentes, que es lo que los vuelve un sistema y no cuatro demos sueltos.</p>
+    </div>
+
+    <div class="prose">
+      <p><strong>A · Cimientos técnicos.</strong> Sin esto, ningún agente funciona. <em>MCP de posiciones</em>, el contrato estable entre cualquier agente y las tenencias reales — un activo, todas las audiencias. <em>Control de identidad</em>, lo primero que hay que blindar en fyoCapital AI antes que cualquier conversación. <em>Estructurar el research</em>: hoy es un PDF; estructurarlo —las dos mesas, Capitales y Granos— es lo que da de comer al Agente de Research. <em>Framework de evals + grounding</em>: la regla de oro hecha sistema, evaluación antes de soltar cada función. En Portafolio y en el modo 3, es la licencia para operar.</p>
+
+      <p><strong>B · Datos.</strong> El combustible. Los agentes con buena base de datos rinden hasta 65% mejor (Gartner). <em>Clusters y segmentos bien definidos</em>: el idioma común de los cuatro. <em>CRM y minutas cargadas</em>: la data cualitativa que hoy no está — el Debrief la resuelve en el origen, pero es a la vez requisito y resultado. <em>Perfil de inversor del cliente</em>: para contextualizar en el modo 3 y para la suitability que exige CNV cuando se pisa asesoramiento.</p>
+
+      <p><strong>C · Arquitectura de los cuatro.</strong> Lo que los vuelve un sistema. <em>El contrato entre agentes</em> es el faltante nuevo y más importante de esta estructura: qué entrega el Research, qué consume el de Portafolio, qué consume fyoCapital AI. Bien definido, los agentes se componen; mal definido, se pisan. Suma el <em>orquestador del briefing</em> (la pieza por encima que llama a los tres internos), <em>el naming de "cartera"</em> (book de clientes vs. portafolio de inversión — los nuevos nombres lo resuelven solos) y <em>la reasignación, como quinto agente aparte</em> (nivel gerencial, otro dueño, otra cadencia).</p>
+    </div>
+
+    <div class="note warn">
+      <span class="lbl">Decisión estratégica — Capa 2 (embedded)</span>
+      <p><strong>No es un faltante de fyoCapital: es una decisión de fyo sobre cómo monetiza su ecosistema.</strong> El sponsor es Ale y el comité. La pregunta que define todo: cuando el productor cobra la cosecha y tiene caja ociosa, ¿ese momento es del comercial de Granos o de fyoCapital? Si Granos no abre la puerta, el embedded no existe. El cuello de botella no es técnico: es político. Y atado a eso, ¿la data de Granos llega hoy a Capital o están en silos con permisos, secreto y CNV de por medio?</p>
+    </div>
+
+    <div class="prose">
+      <p><strong>E · Instrumentación.</strong> <em>Canal de entrega</em>: dónde vive cada agente para el comercial y para el cliente (fyoDigital, Teams, WhatsApp, mail). <em>Métricas y loop de aprendizaje</em>: qué número mueve cada agente, y la instrumentación para registrar qué propuso, qué se hizo y qué resultó.</p>
+    </div>
+  </section>
+
+  <!-- 05 PROCESO -->
+  <section class="chapter" id="s5">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">05</span><span class="lbl">Proceso</span></div>
+      <h2 class="ch-title">En qué <span class="hl">orden</span> encenderlos</h2>
+      <p class="ch-lede">La secuencia es la estrategia. El cerebro se enciende temprano porque alimenta a todos; lo chico y vivo compra el derecho —y la data— para lo grande.</p>
+    </div>
+
+    <div class="stack">
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Fase 0</span></div>
+        <div class="t-items"><div class="cell"><span class="cn">Cimientos</span><span class="cs">MCP de posiciones, control de identidad, framework de evals, estructuración del research y clusters limpios. Sin esto, nada de lo que sigue funciona.</span></div></div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Fase 1</span></div>
+        <div class="t-items"><div class="cell x"><span class="cn">El cerebro + el primer MVP</span><span class="cs">Encender el Agente de Research (house view + señal), que alimenta a todos, junto con el Debrief del Comercial — no depende de nadie y se ve enseguida.</span></div></div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Fase 2</span></div>
+        <div class="t-items"><div class="cell"><span class="cn">Comercial y Portafolio completos</span><span class="cs">Con la señal del Research disponible: research al revés del lado Portafolio, radares, próxima mejor acción, recomendación y mensaje listo, briefing orquestado a tres manos.</span></div></div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Fase 3</span></div>
+        <div class="t-items"><div class="cell"><span class="cn">fyoCapital AI · Modo 1</span><span class="cs">El modo informativo ("ChatGPT de tu cartera"). Piloto con clientes autogestores. El MCP ya está: solo se abre otra puerta.</span></div></div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Fase 4</span></div>
+        <div class="t-items"><div class="cell"><span class="cn">fyoCapital AI · Modo 2</span><span class="cs">Avisos proactivos. Conecta directo con el float / cash sweep y es la antesala del embedded. La caja ociosa deja de ser invisible.</span></div></div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Fase 5</span></div>
+        <div class="t-items"><div class="cell"><span class="cn">fyoCapital AI · Modo 3</span><span class="cs">Conversar con research, con el Agente de Research ya maduro y todo el aparato regulatorio: perfil, suitability, disclaimers, derivación.</span></div></div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Horizonte</span></div>
+        <div class="t-items"><div class="cell x"><span class="cn">Capa 2 — embedded</span><span class="cs">fyoCapital como capital markets embebido del ecosistema fyo, y eventualmente la ejecución (Modo 4). Es decisión de fyo, no un proyecto de la unidad. Se plantea con las fases anteriores ya caminando atrás.</span></div></div>
+      </div>
+    </div>
+
+    <div class="note">
+      <span class="lbl">Transversal a todas las fases</span>
+      <p>El humano siempre en el centro (la máquina propone, el humano aprueba) y el loop de aprendizaje encendido desde la Fase 1. <strong>La autonomía no se diseña de entrada: se gana con historial.</strong></p>
+    </div>
+
+    <div class="statement">
+      <span class="lbl">La apuesta, en una frase</span>
+      <p>fyoCapital no tiene que ser un broker con IA: tiene que ser el <span class="hl">capital markets embebido del agro argentino</span>.</p>
+    </div>
+  </section>
+
+  <!-- COLOFÓN -->
+  <div class="colophon">
+    <span>Iñaki · Consultoría</span>
+    <span>inaki@alganaras.com.ar · estilo «Plano»</span>
+  </div>
+
+</div></div>
+
+</body></html>

@@ -30,7 +30,7 @@
     box-shadow:0 8px 30px rgba(33,29,24,.28);
     font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12px;letter-spacing:.03em;
   }
-  .ed-toolbar .status{display:flex;align-items:center;gap:8px;opacity:.85;min-width:160px}
+  .ed-toolbar .status{display:flex;align-items:center;gap:8px;opacity:.9;min-width:132px}
   .ed-toolbar .led{width:8px;height:8px;border-radius:50%;background:#6b6357;transition:.25s;flex-shrink:0}
   .ed-toolbar.editing .led{background:var(--code-accent,#D89A6A);box-shadow:0 0 10px var(--code-accent,#D89A6A)}
   .ed-toolbar.dirty .led{background:var(--warn,#E0A24A);box-shadow:0 0 10px var(--warn,#E0A24A)}
@@ -39,11 +39,9 @@
   .ed-toolbar.err .led{background:var(--err,#C26F5A);box-shadow:0 0 10px var(--err,#C26F5A)}
   .ed-toolbar button{
     font-family:inherit;font-size:12px;letter-spacing:.03em;cursor:pointer;
-    border:none;border-radius:30px;padding:9px 16px;font-weight:500;transition:.18s;
+    border:none;border-radius:30px;padding:9px 14px;font-weight:500;transition:.18s;
   }
-  .ed-toolbar button:disabled{opacity:.5;cursor:not-allowed}
-  .ed-btn-edit{background:var(--code-accent,#D89A6A);color:#241a10}
-  .ed-btn-edit:hover:not(:disabled){filter:brightness(1.08)}
+  .ed-toolbar button:disabled{opacity:.42;cursor:not-allowed}
   .ed-btn-save{background:transparent;color:var(--code-fg,#EDE6D6);border:1px solid #4a443b !important}
   .ed-btn-save:hover:not(:disabled){background:#332f28}
   .ed-toolbar.dirty .ed-btn-save{
@@ -51,6 +49,17 @@
     animation:ed-pulse-warn 2s ease-in-out infinite;
   }
   .ed-toolbar.dirty .ed-btn-save:hover:not(:disabled){filter:brightness(1.08)}
+  .ed-btn-soft{background:transparent;color:var(--code-fg,#EDE6D6);border:1px solid transparent !important}
+  .ed-btn-soft:hover{background:#332f28;border-color:#4a443b !important}
+  .ed-menu-wrap{position:relative}
+  .ed-menu-pop{
+    position:absolute;right:0;bottom:44px;display:none;min-width:190px;z-index:10002;
+    background:var(--paper-2,#FCFAF4);color:var(--ink,#211D18);border:1px solid var(--line,#DED4C2);
+    border-radius:12px;box-shadow:0 18px 50px rgba(33,29,24,.32);overflow:hidden;padding:6px;
+  }
+  .ed-menu-pop.show{display:block}
+  .ed-menu-pop button{display:block;width:100%;text-align:left;background:transparent;color:var(--ink,#211D18);border-radius:8px;padding:9px 10px;font-size:12px}
+  .ed-menu-pop button:hover{background:rgba(216,154,106,.16)}
   @keyframes ed-pulse-warn{
     0%,100%{box-shadow:0 0 0 0 rgba(224,162,74,.5)}
     50%{box-shadow:0 0 0 6px rgba(224,162,74,0)}
@@ -143,22 +152,23 @@
     font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   }
   .ed-comments-pop.show{display:block}
-  .ed-comments-pop header{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line,#DED4C2)}
+  .ed-comments-pop header{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line,#DED4C2)}
   .ed-comments-pop h3{font-family:"Instrument Serif",Georgia,serif;font-size:20px;font-weight:400;margin:0}
   .ed-comments-pop .close{background:transparent;border:none;color:var(--ink-faint,#8C8475);cursor:pointer;font-size:20px;line-height:1;padding:2px 6px;border-radius:6px}
   .ed-comments-pop .close:hover{background:var(--line,#DED4C2);color:var(--ink,#211D18)}
-  .ed-comments-list{max-height:240px;overflow:auto;padding:8px 0}
-  .ed-comment-empty{padding:18px 14px;color:var(--ink-faint,#8C8475);font-style:italic;font-size:13px}
-  .ed-comment{padding:11px 14px;border-bottom:1px dashed var(--line,#DED4C2);display:flex;flex-direction:column;gap:6px}
+  .ed-comments-list{max-height:min(220px,calc(100vh - 260px));overflow:auto;padding:0}
+  .ed-comment-empty{padding:14px;color:var(--ink-faint,#8C8475);font-style:italic;font-size:13px}
+  .ed-comment{padding:10px 14px;border-bottom:1px dashed var(--line,#DED4C2);display:flex;flex-direction:column;gap:5px}
+  .ed-comment:first-child{padding-top:8px}
   .ed-comment:last-child{border-bottom:none}
   .ed-comment .meta{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-faint,#8C8475)}
   .ed-comment .quote{font-size:12px;color:var(--ink-soft,#5C544A);border-left:2px solid var(--line,#DED4C2);padding-left:8px;line-height:1.35}
-  .ed-comment .text{font-size:14px;line-height:1.45;white-space:pre-wrap}
-  .ed-comment .delete{align-self:flex-start;border:1px solid var(--line,#DED4C2);background:transparent;color:var(--ink-soft,#5C544A);border-radius:999px;padding:5px 10px;cursor:pointer;font-size:11px}
+  .ed-comment .text{font-size:14px;line-height:1.35;white-space:pre-wrap}
+  .ed-comment .delete{align-self:flex-start;border:1px solid var(--line,#DED4C2);background:transparent;color:var(--ink-soft,#5C544A);border-radius:999px;padding:4px 9px;cursor:pointer;font-size:11px}
   .ed-comment .delete:hover{background:var(--err,#C26F5A);border-color:var(--err,#C26F5A);color:#fff}
-  .ed-comment-form{border-top:1px solid var(--line,#DED4C2);padding:12px 14px;display:flex;flex-direction:column;gap:8px}
-  .ed-comment-form textarea{width:100%;min-height:72px;resize:vertical;border:1px solid var(--line,#DED4C2);border-radius:10px;padding:9px 10px;background:#fff;color:var(--ink,#211D18);font:13px/1.4 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;box-sizing:border-box}
-  .ed-comment-form .hint{font-size:11px;color:var(--ink-faint,#8C8475)}
+  .ed-comment-form{border-top:1px solid var(--line,#DED4C2);padding:10px 14px;display:flex;flex-direction:column;gap:7px}
+  .ed-comment-form textarea{width:100%;min-height:54px;resize:vertical;border:1px solid var(--line,#DED4C2);border-radius:10px;padding:9px 10px;background:#fff;color:var(--ink,#211D18);font:13px/1.4 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;box-sizing:border-box}
+  .ed-comment-form .hint{font-size:10px;color:var(--ink-faint,#8C8475)}
   .ed-comment-form button{align-self:flex-end;border:none;border-radius:999px;background:var(--accent,#8E3B2E);color:#fff;padding:8px 13px;cursor:pointer;font-size:12px}
   .ed-comment-form button:hover{filter:brightness(1.08)}
 
@@ -177,12 +187,17 @@
   bar.className = 'ed-toolbar';
   bar.setAttribute('data-editor-ui', '1');
   bar.innerHTML =
-    '<div class="status"><span class="led"></span><span class="ed-mode">clickeá texto</span></div>' +
+    '<div class="status"><span class="led"></span><span class="ed-mode">listo</span></div>' +
     '<button class="ed-btn-save ed-save">Guardar</button>' +
-    '<button class="ed-btn-icon ed-history" title="Versiones">📜</button>' +
-    '<button class="ed-btn-icon ed-refresh" title="Recargar desde server">↻</button>' +
-    '<button class="ed-btn-icon ed-share" title="Copiar link compartible">🔗</button>' +
-    '<button class="ed-btn-icon ed-cfg" title="Configurar Worker URL (solo en htmlpreview)">⚙</button>';
+    '<button class="ed-btn-soft ed-history">Historial</button>' +
+    '<button class="ed-btn-soft ed-share">Compartir</button>' +
+    '<div class="ed-menu-wrap">' +
+      '<button class="ed-btn-icon ed-menu" title="Más opciones">⋯</button>' +
+      '<div class="ed-menu-pop" data-editor-ui="1">' +
+        '<button class="ed-refresh">Recargar desde server</button>' +
+        '<button class="ed-cfg">Configurar Worker URL</button>' +
+      '</div>' +
+    '</div>';
   document.body.appendChild(bar);
 
   var overlay = document.createElement('div');
@@ -215,6 +230,8 @@
   var refresh = $('.ed-refresh', bar);
   var share   = $('.ed-share', bar);
   var cfg     = $('.ed-cfg', bar);
+  var menuBtn = $('.ed-menu', bar);
+  var menuPop = $('.ed-menu-pop', bar);
   var mode    = $('.ed-mode', bar);
   var closeOv = $('.ed-close', overlay);
   var hBody   = $('.ed-hbody', overlay);
@@ -247,6 +264,16 @@
   /* ---- Modo de hosting: 'worker' o 'htmlpreview' ---- */
   var hostMode = (location.hostname === 'htmlpreview.github.io') ? 'htmlpreview' : 'worker';
 
+  if (hostMode === 'worker') cfg.style.display = 'none';
+  menuBtn.addEventListener('click', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    menuPop.classList.toggle('show');
+  });
+  document.addEventListener('click', function (e) {
+    if (!bar.contains(e.target)) menuPop.classList.remove('show');
+  });
+
   if (hostMode === 'htmlpreview') {
     var banner = document.createElement('div');
     banner.className = 'ed-banner';
@@ -267,6 +294,7 @@
     return url;
   }
   cfg.addEventListener('click', function () {
+    menuPop.classList.remove('show');
     if (hostMode === 'worker') {
       alert('No hace falta: el Worker URL es el actual (' + location.origin + ').');
       return;
@@ -297,6 +325,7 @@
   function clearClasses() { bar.classList.remove('editing', 'dirty', 'saving', 'ok', 'err'); }
   function setStatus(text, cls) {
     mode.textContent = text;
+    save.disabled = !dirty || cls === 'saving';
     clearClasses();
     if (editing) bar.classList.add('editing');
     if (dirty) bar.classList.add('dirty');
@@ -314,7 +343,7 @@
     if (dirty) return 'sin guardar';
     if (editing) return 'editando';
     if (lastSavedAt) return 'guardado hace ' + secondsAgo(lastSavedAt);
-    return 'clickeá texto';
+    return 'listo';
   }
   function refreshStatus() { setStatus(statusLine()); }
   setInterval(function () { if (!editing && !dirty && lastSavedAt) refreshStatus(); }, 5000);
@@ -505,11 +534,14 @@
     comments.forEach(function (comment, idx) {
       var item = document.createElement('div');
       item.className = 'ed-comment';
-      var meta = document.createElement('div');
-      meta.className = 'meta';
       var date = comment.createdAt ? new Date(comment.createdAt).toLocaleString('es-AR') : '';
-      meta.textContent = (comment.author || 'Sin autor') + (date ? ' · ' + date : '');
-      item.appendChild(meta);
+      var metaText = (comment.author || '') + (date ? ((comment.author ? ' · ' : '') + date) : '');
+      if (metaText) {
+        var meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.textContent = metaText;
+        item.appendChild(meta);
+      }
       if (comment.quote) {
         var quote = document.createElement('div');
         quote.className = 'quote';
@@ -631,12 +663,13 @@
       setStatus('✗ error red', 'err');
       alert('No se pudo conectar al Worker.\n\n' + e.message);
     } finally {
-      save.disabled = false;
+      save.disabled = !dirty;
     }
   });
 
   /* ---- Reload ---- */
   refresh.addEventListener('click', function () {
+    menuPop.classList.remove('show');
     if (dirty && !confirm('Tenés cambios sin guardar. Si recargás, los perdés.\n\n¿Recargar igual?')) return;
     if (hostMode === 'worker') {
       location.reload();

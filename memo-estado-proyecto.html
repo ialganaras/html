@@ -104,7 +104,7 @@
   <main>
 
     <section>
-      <h2 class=""><span>§1 — Resumen</span>Qué resolvimos en esta vuelta</h2>
+      <h2 class=""><span>§1 — Resumeeeeeen</span>Qué resolvimos en esta vuelta</h2>
       <p data-editable="" class="" data-comments="[{&quot;id&quot;:&quot;c_mqzzt2s7_qkqmb&quot;,&quot;author&quot;:&quot;Iña&quot;,&quot;createdAt&quot;:&quot;2026-06-30T01:53:30.199Z&quot;,&quot;updatedAt&quot;:&quot;2026-06-30T01:53:30.199Z&quot;,&quot;text&quot;:&quot;cmenteajajahf;aiuhf&quot;,&quot;quote&quot;:&quot;&quot;,&quot;replies&quot;:[]}]">El proyecto arrancó esta sesión con el editor embebido dentro del HTML demo, el Worker desplegado en una versión vieja, sin Skill, sin endpoint MCP, y con el loop de escritura roto: yo podía leer del repo pero no escribir.</p>
       <p data-editable="" class="">Después de cuatro vueltas de diagnóstico (algunas mías equivocadas), quedó todo el roadmap principal cerrado: el editor extraído como archivo standalone, el Worker como MCP server propio con auth, y el connector oficial de GitHub finalmente escribiendo en el repo....</p>
     </section>
@@ -130,8 +130,8 @@
 
     <section>
       <h2><span>§4 — Aprendizaje</span>El diagnóstico equivocado</h2>
-      <p data-editable="">El loop de escritura tardó cuatro intentos porque arranqué con la hipótesis de que el plan free de GitHub no permitía escribir desde MCP. Era falsa. Después probé "no tiene scopes write en el OAuth"; también falsa. Después "el connector es read-only por diseño de Anthropic"; también falsa.</p>
-      <p data-editable="">La verdad: el "Claude Github MCP Connector" es un <strong>GitHub App</strong> (no OAuth App), y los GitHub Apps necesitan dos cosas separadas — user authorization y repository installation. Solo había hecho la primera. Una vez instalado el app en el repo con permisos write, todo anduvo al primer intento.</p>
+      <p data-editable="" class="">El loop de escritura tardó cuatro intentos porque arranqué con la hipótesis de que el plan free de GitHub no permitía escribir desde MCP. Era falsa. Después probé "no tiene scopes write en el OAuth"; también falsa. Después "el connector es read-only por diseño de Anthropic"; también falsa.</p>
+      <p data-editable="" class="">La verdad: el "Claude Github MCP Connector" es un <strong>GitHub App</strong> (no OAuth App), y los GitHub Apps necesitan dos cosas separadas — user authorization y repository installation. Solo había hecho la primera. Una vez instalado el app en el repo con permisos write, todo anduvo al primer intento.</p>
       <div class="callout" data-editable="">Moraleja: cuando un 403 dice "Resource not accessible by integration", chequear si el client_id empieza con <code>Iv23</code>. Si sí, es GitHub App y falta installation, no scopes.</div>
     </section>
 

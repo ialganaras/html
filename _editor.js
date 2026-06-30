@@ -127,17 +127,15 @@
 
   .ed-comment-target{outline:2px solid var(--code-accent,#D89A6A) !important;outline-offset:6px}
   .ed-comment-badge,
-  .ed-edited-badge,
-  .ed-comment-action{
+  .ed-edited-badge{
     position:absolute;z-index:9997;min-width:30px;height:26px;padding:0 8px;
     border:none;border-radius:999px;background:var(--code-bg,#23201B);color:var(--code-fg,#EDE6D6);
     box-shadow:0 5px 18px rgba(33,29,24,.22);cursor:pointer;
     font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;line-height:26px;
   }
+  .ed-comment-badge.active{background:var(--accent,#8E3B2E);color:#fff}
   .ed-edited-badge{background:var(--warn,#E0A24A);color:#241a10;cursor:default}
-  .ed-comment-action{display:none;width:34px;height:34px;min-width:34px;padding:0;line-height:34px;font-size:15px;background:var(--accent,#8E3B2E);color:#fff}
-  .ed-comment-action.show{display:block}
-  .ed-comment-badge:hover,.ed-comment-action:hover{background:var(--accent,#8E3B2E);color:#fff;filter:brightness(1.08)}
+  .ed-comment-badge:hover{background:var(--accent,#8E3B2E);color:#fff;filter:brightness(1.08)}
   .ed-comments-pop{
     position:absolute;z-index:10001;width:min(340px,calc(100vw - 28px));display:none;
     background:var(--paper-2,#FCFAF4);color:var(--ink,#211D18);border:1px solid var(--line,#DED4C2);
@@ -179,10 +177,8 @@
   bar.className = 'ed-toolbar';
   bar.setAttribute('data-editor-ui', '1');
   bar.innerHTML =
-    '<div class="status"><span class="led"></span><span class="ed-mode">solo lectura</span></div>' +
-    '<button class="ed-btn-edit ed-toggle">Modo edición</button>' +
+    '<div class="status"><span class="led"></span><span class="ed-mode">clickeá texto</span></div>' +
     '<button class="ed-btn-save ed-save">Guardar</button>' +
-    '<button class="ed-btn-icon ed-comments" title="Comentarios del bloque">💬</button>' +
     '<button class="ed-btn-icon ed-history" title="Versiones">📜</button>' +
     '<button class="ed-btn-icon ed-refresh" title="Recargar desde server">↻</button>' +
     '<button class="ed-btn-icon ed-share" title="Copiar link compartible">🔗</button>' +
@@ -213,18 +209,8 @@
     '</div>';
   document.body.appendChild(commentsPop);
 
-  var commentAction = document.createElement('button');
-  commentAction.type = 'button';
-  commentAction.className = 'ed-comment-action';
-  commentAction.setAttribute('data-editor-ui', '1');
-  commentAction.title = 'Comentar este bloque';
-  commentAction.textContent = '💬';
-  document.body.appendChild(commentAction);
-
   var $ = function (sel, root) { return (root || document).querySelector(sel); };
-  var toggle  = $('.ed-toggle', bar);
   var save    = $('.ed-save', bar);
-  var commentsBtn = $('.ed-comments', bar);
   var histBtn = $('.ed-history', bar);
   var refresh = $('.ed-refresh', bar);
   var share   = $('.ed-share', bar);
@@ -328,7 +314,7 @@
     if (dirty) return 'sin guardar';
     if (editing) return 'editando';
     if (lastSavedAt) return 'guardado hace ' + secondsAgo(lastSavedAt);
-    return 'solo lectura';
+    return 'clickeá texto';
   }
   function refreshStatus() { setStatus(statusLine()); }
   setInterval(function () { if (!editing && !dirty && lastSavedAt) refreshStatus(); }, 5000);
@@ -369,7 +355,6 @@
       el.addEventListener('input', function () {
         recomputeDirty();
         renderCommentBadges();
-        if (currentCommentTarget) positionCommentAction(currentCommentTarget);
       });
     });
   }
@@ -429,7 +414,6 @@
       else n.removeAttribute('contenteditable');
     });
     hookEditableListeners();
-    toggle.textContent = 'Listo';
     refreshStatus();
   }
   function setCurrentCommentTarget(el) {
@@ -437,12 +421,10 @@
     currentCommentTarget = el || null;
     if (currentCommentTarget) {
       currentCommentTarget.classList.add('ed-comment-target');
-      positionCommentAction(currentCommentTarget);
-      commentAction.classList.add('show');
       activateBlockEditing(currentCommentTarget);
-    } else {
-      commentAction.classList.remove('show');
     }
+    renderCommentBadges();
+    renderEditedBadges();
   }
   function hookCommentListeners() {
     getEditableBlocks().forEach(function (el) {
@@ -470,7 +452,8 @@
       badge.setAttribute('data-editor-ui', '1');
       badge.textContent = '✎';
       badge.title = 'Bloque editado sin guardar';
-      badge.style.top = (window.scrollY + rect.top + 30) + 'px';
+      var hasCommentBadge = parseComments(el).length || el === currentCommentTarget;
+      badge.style.top = (window.scrollY + rect.top + (hasCommentBadge ? 30 : 0)) + 'px';
       badge.style.left = (window.scrollX + rect.right + 8) + 'px';
       document.body.appendChild(badge);
     });
@@ -479,15 +462,17 @@
     removeCommentBadges();
     getEditableBlocks().forEach(function (el) {
       var comments = parseComments(el);
-      if (!comments.length) return;
+      if (!comments.length && el !== currentCommentTarget) return;
       var rect = el.getBoundingClientRect();
       if (!rect.width && !rect.height) return;
       var badge = document.createElement('button');
       badge.type = 'button';
-      badge.className = 'ed-comment-badge';
+      badge.className = 'ed-comment-badge' + (el === currentCommentTarget ? ' active' : '');
       badge.setAttribute('data-editor-ui', '1');
-      badge.textContent = '💬 ' + comments.length;
-      badge.title = comments.length + ' comentario' + (comments.length === 1 ? '' : 's');
+      badge.textContent = comments.length ? ('💬 ' + comments.length) : '💬';
+      badge.title = comments.length
+        ? comments.length + ' comentario' + (comments.length === 1 ? '' : 's')
+        : 'Comentar este bloque';
       badge.style.top = (window.scrollY + rect.top) + 'px';
       badge.style.left = (window.scrollX + rect.right + 8) + 'px';
       badge.addEventListener('click', function (e) {
@@ -497,19 +482,6 @@
       });
       document.body.appendChild(badge);
     });
-  }
-  function positionCommentAction(el) {
-    if (!el) return;
-    var rect = el.getBoundingClientRect();
-    if (!rect.width && !rect.height) {
-      commentAction.classList.remove('show');
-      return;
-    }
-    var top = window.scrollY + rect.top - 4;
-    var left = window.scrollX + rect.left - 44;
-    if (left < window.scrollX + 8) left = window.scrollX + rect.right + 8;
-    commentAction.style.top = top + 'px';
-    commentAction.style.left = left + 'px';
   }
   function positionCommentsPopover(el) {
     var rect = el.getBoundingClientRect();
@@ -575,20 +547,6 @@
   function hideCommentsPopover() {
     commentsPop.classList.remove('show');
   }
-  commentsBtn.addEventListener('click', function () {
-    var target = currentCommentTarget;
-    if (!target && document.activeElement) target = closestEditableBlock(document.activeElement);
-    if (!target) {
-      alert('Clickeá primero el bloque que querés comentar.');
-      return;
-    }
-    showCommentsPopover(target);
-  });
-  commentAction.addEventListener('click', function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    if (currentCommentTarget) showCommentsPopover(currentCommentTarget);
-  });
   commentsAdd.addEventListener('click', function () {
     if (!currentCommentTarget) return;
     var txt = commentsText.value.trim();
@@ -618,25 +576,7 @@
   window.addEventListener('resize', function () {
     renderCommentBadges();
     renderEditedBadges();
-    if (currentCommentTarget) positionCommentAction(currentCommentTarget);
     if (commentsPop.classList.contains('show') && currentCommentTarget) positionCommentsPopover(currentCommentTarget);
-  });
-
-  /* ---- Modo edición ---- */
-  toggle.addEventListener('click', function () {
-    if (editing) {
-      editing = false;
-      document.body.classList.remove('ed-editing');
-      getEditableBlocks().forEach(function (el) { el.removeAttribute('contenteditable'); });
-      toggle.textContent = 'Modo edición';
-      refreshStatus();
-      return;
-    }
-    if (currentCommentTarget) {
-      activateBlockEditing(currentCommentTarget);
-    } else {
-      alert('Clickeá el texto que querés editar o comentar.');
-    }
   });
 
   /* ---- Save ---- */
@@ -673,7 +613,6 @@
         editing = false;
         document.body.classList.remove('ed-editing');
         document.querySelectorAll('[contenteditable]').forEach(function (n) { n.removeAttribute('contenteditable'); });
-        toggle.textContent = 'Modo edición';
         snapshot = null;
         blockSnapshots = new WeakMap();
         removeEditedBadges();

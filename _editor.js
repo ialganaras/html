@@ -127,6 +127,41 @@
     content:"actual";margin-left:8px;
     background:var(--accent,#8E3B2E);color:#fff;padding:1px 6px;border-radius:8px;font-size:9px;
   }
+
+  .ed-comment-target{outline:2px solid var(--code-accent,#D89A6A) !important;outline-offset:6px}
+  .ed-comment-badge{
+    position:absolute;z-index:9997;min-width:30px;height:26px;padding:0 8px;
+    border:none;border-radius:999px;background:var(--code-bg,#23201B);color:var(--code-fg,#EDE6D6);
+    box-shadow:0 5px 18px rgba(33,29,24,.22);cursor:pointer;
+    font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;line-height:26px;
+  }
+  .ed-comment-badge:hover{background:var(--accent,#8E3B2E);color:#fff}
+  .ed-comments-pop{
+    position:absolute;z-index:10001;width:min(340px,calc(100vw - 28px));display:none;
+    background:var(--paper-2,#FCFAF4);color:var(--ink,#211D18);border:1px solid var(--line,#DED4C2);
+    border-radius:14px;box-shadow:0 18px 60px rgba(33,29,24,.35);overflow:hidden;
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+  .ed-comments-pop.show{display:block}
+  .ed-comments-pop header{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line,#DED4C2)}
+  .ed-comments-pop h3{font-family:"Instrument Serif",Georgia,serif;font-size:20px;font-weight:400;margin:0}
+  .ed-comments-pop .close{background:transparent;border:none;color:var(--ink-faint,#8C8475);cursor:pointer;font-size:20px;line-height:1;padding:2px 6px;border-radius:6px}
+  .ed-comments-pop .close:hover{background:var(--line,#DED4C2);color:var(--ink,#211D18)}
+  .ed-comments-list{max-height:240px;overflow:auto;padding:8px 0}
+  .ed-comment-empty{padding:18px 14px;color:var(--ink-faint,#8C8475);font-style:italic;font-size:13px}
+  .ed-comment{padding:11px 14px;border-bottom:1px dashed var(--line,#DED4C2);display:flex;flex-direction:column;gap:6px}
+  .ed-comment:last-child{border-bottom:none}
+  .ed-comment .meta{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-faint,#8C8475)}
+  .ed-comment .quote{font-size:12px;color:var(--ink-soft,#5C544A);border-left:2px solid var(--line,#DED4C2);padding-left:8px;line-height:1.35}
+  .ed-comment .text{font-size:14px;line-height:1.45;white-space:pre-wrap}
+  .ed-comment .delete{align-self:flex-start;border:1px solid var(--line,#DED4C2);background:transparent;color:var(--ink-soft,#5C544A);border-radius:999px;padding:5px 10px;cursor:pointer;font-size:11px}
+  .ed-comment .delete:hover{background:var(--err,#C26F5A);border-color:var(--err,#C26F5A);color:#fff}
+  .ed-comment-form{border-top:1px solid var(--line,#DED4C2);padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+  .ed-comment-form textarea{width:100%;min-height:72px;resize:vertical;border:1px solid var(--line,#DED4C2);border-radius:10px;padding:9px 10px;background:#fff;color:var(--ink,#211D18);font:13px/1.4 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;box-sizing:border-box}
+  .ed-comment-form .hint{font-size:11px;color:var(--ink-faint,#8C8475)}
+  .ed-comment-form button{align-self:flex-end;border:none;border-radius:999px;background:var(--accent,#8E3B2E);color:#fff;padding:8px 13px;cursor:pointer;font-size:12px}
+  .ed-comment-form button:hover{filter:brightness(1.08)}
+
   @media(max-width:560px){
     .ed-toolbar{font-size:11px}
     .ed-toolbar .status{min-width:120px}
@@ -145,6 +180,7 @@
     '<div class="status"><span class="led"></span><span class="ed-mode">solo lectura</span></div>' +
     '<button class="ed-btn-edit ed-toggle">Modo edición</button>' +
     '<button class="ed-btn-save ed-save">Guardar</button>' +
+    '<button class="ed-btn-icon ed-comments" title="Comentarios del bloque">💬</button>' +
     '<button class="ed-btn-icon ed-history" title="Versiones">📜</button>' +
     '<button class="ed-btn-icon ed-refresh" title="Recargar desde server">↻</button>' +
     '<button class="ed-btn-icon ed-share" title="Copiar link compartible">🔗</button>' +
@@ -162,9 +198,23 @@
     '</div>';
   document.body.appendChild(overlay);
 
+  var commentsPop = document.createElement('div');
+  commentsPop.className = 'ed-comments-pop';
+  commentsPop.setAttribute('data-editor-ui', '1');
+  commentsPop.innerHTML =
+    '<header><h3>Comentarios</h3><button class="close ed-cpop-close" title="Cerrar">✕</button></header>' +
+    '<div class="ed-comments-list"></div>' +
+    '<div class="ed-comment-form">' +
+      '<textarea class="ed-comment-text" placeholder="Comentario sobre este bloque…"></textarea>' +
+      '<div class="hint">Se guarda en <code>data-comments</code> del bloque.</div>' +
+      '<button class="ed-comment-add">Agregar comentario</button>' +
+    '</div>';
+  document.body.appendChild(commentsPop);
+
   var $ = function (sel, root) { return (root || document).querySelector(sel); };
   var toggle  = $('.ed-toggle', bar);
   var save    = $('.ed-save', bar);
+  var commentsBtn = $('.ed-comments', bar);
   var histBtn = $('.ed-history', bar);
   var refresh = $('.ed-refresh', bar);
   var share   = $('.ed-share', bar);
@@ -172,11 +222,16 @@
   var mode    = $('.ed-mode', bar);
   var closeOv = $('.ed-close', overlay);
   var hBody   = $('.ed-hbody', overlay);
+  var commentsList = $('.ed-comments-list', commentsPop);
+  var commentsText = $('.ed-comment-text', commentsPop);
+  var commentsAdd  = $('.ed-comment-add', commentsPop);
+  var commentsClose = $('.ed-cpop-close', commentsPop);
 
   var editing = false;
   var dirty = false;
   var snapshot = null;       // foto del contenido editable al entrar en edición
   var lastSavedAt = null;
+  var currentCommentTarget = null;
 
   /* ---- Modo de hosting: 'worker' o 'htmlpreview' ---- */
   var hostMode = (location.hostname === 'htmlpreview.github.io') ? 'htmlpreview' : 'worker';
@@ -261,8 +316,9 @@
     var parts = [];
     document.querySelectorAll('[data-editable]').forEach(function (el) {
       parts.push(el.innerHTML);
+      parts.push(el.getAttribute('data-comments') || '');
     });
-    return parts.join('');
+    return parts.join('');
   }
   function recomputeDirty() {
     var now = (snapshot !== null) && (getSnapshot() !== snapshot);
@@ -272,9 +328,190 @@
     document.querySelectorAll('[data-editable]').forEach(function (el) {
       if (el.dataset.edHooked) return;
       el.dataset.edHooked = '1';
-      el.addEventListener('input', recomputeDirty);
+      el.addEventListener('input', function () {
+        recomputeDirty();
+        renderCommentBadges();
+      });
     });
   }
+
+  /* ---- Comentarios embebidos por bloque ---- */
+  function ensureSnapshotForCommentMutation() {
+    if (snapshot === null) snapshot = getSnapshot();
+  }
+  function getCommentAuthor() {
+    var stored = localStorage.getItem('htmlDocsCommentAuthor') || '';
+    var author = prompt('Autor para comentarios:', stored || 'Iña');
+    if (author === null) return null;
+    author = author.trim() || 'Iña';
+    localStorage.setItem('htmlDocsCommentAuthor', author);
+    return author;
+  }
+  function parseComments(el) {
+    try {
+      var parsed = JSON.parse(el.getAttribute('data-comments') || '[]');
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      console.warn('data-comments inválido', e, el);
+      return [];
+    }
+  }
+  function writeComments(el, comments) {
+    if (comments.length) el.setAttribute('data-comments', JSON.stringify(comments));
+    else el.removeAttribute('data-comments');
+    recomputeDirty();
+    renderCommentBadges();
+    if (currentCommentTarget === el) renderCommentsPopover(el);
+  }
+  function newCommentId() {
+    return 'c_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7);
+  }
+  function selectedQuoteWithin(el) {
+    var sel = window.getSelection && window.getSelection();
+    if (!sel || sel.isCollapsed || !sel.rangeCount) return '';
+    var range = sel.getRangeAt(0);
+    if (!el.contains(range.commonAncestorContainer)) return '';
+    return sel.toString().replace(/\s+/g, ' ').trim().slice(0, 220);
+  }
+  function setCurrentCommentTarget(el) {
+    if (currentCommentTarget && currentCommentTarget !== el) currentCommentTarget.classList.remove('ed-comment-target');
+    currentCommentTarget = el || null;
+    if (currentCommentTarget) currentCommentTarget.classList.add('ed-comment-target');
+  }
+  function hookCommentListeners() {
+    document.querySelectorAll('[data-editable]').forEach(function (el) {
+      if (el.dataset.edCommentHooked) return;
+      el.dataset.edCommentHooked = '1';
+      el.addEventListener('click', function () { setCurrentCommentTarget(el); });
+      el.addEventListener('focus', function () { setCurrentCommentTarget(el); });
+      el.addEventListener('mouseenter', function () { if (!currentCommentTarget) setCurrentCommentTarget(el); });
+    });
+  }
+  function removeCommentBadges() {
+    document.querySelectorAll('.ed-comment-badge').forEach(function (n) { n.remove(); });
+  }
+  function renderCommentBadges() {
+    removeCommentBadges();
+    document.querySelectorAll('[data-editable]').forEach(function (el) {
+      var comments = parseComments(el);
+      if (!comments.length) return;
+      var rect = el.getBoundingClientRect();
+      if (!rect.width && !rect.height) return;
+      var badge = document.createElement('button');
+      badge.type = 'button';
+      badge.className = 'ed-comment-badge';
+      badge.setAttribute('data-editor-ui', '1');
+      badge.textContent = '💬 ' + comments.length;
+      badge.title = comments.length + ' comentario' + (comments.length === 1 ? '' : 's');
+      badge.style.top = (window.scrollY + rect.top) + 'px';
+      badge.style.left = (window.scrollX + rect.right + 8) + 'px';
+      badge.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        showCommentsPopover(el);
+      });
+      document.body.appendChild(badge);
+    });
+  }
+  function positionCommentsPopover(el) {
+    var rect = el.getBoundingClientRect();
+    var top = window.scrollY + rect.top;
+    var left = window.scrollX + rect.right + 14;
+    var maxLeft = window.scrollX + document.documentElement.clientWidth - 354;
+    if (left > maxLeft) left = Math.max(window.scrollX + 14, maxLeft);
+    commentsPop.style.top = Math.max(window.scrollY + 14, top) + 'px';
+    commentsPop.style.left = left + 'px';
+  }
+  function renderCommentsPopover(el) {
+    var comments = parseComments(el);
+    commentsList.innerHTML = '';
+    if (!comments.length) {
+      var empty = document.createElement('div');
+      empty.className = 'ed-comment-empty';
+      empty.textContent = 'Este bloque no tiene comentarios.';
+      commentsList.appendChild(empty);
+      return;
+    }
+    comments.forEach(function (comment, idx) {
+      var item = document.createElement('div');
+      item.className = 'ed-comment';
+      var meta = document.createElement('div');
+      meta.className = 'meta';
+      var date = comment.createdAt ? new Date(comment.createdAt).toLocaleString('es-AR') : '';
+      meta.textContent = (comment.author || 'Sin autor') + (date ? ' · ' + date : '');
+      item.appendChild(meta);
+      if (comment.quote) {
+        var quote = document.createElement('div');
+        quote.className = 'quote';
+        quote.textContent = '“' + comment.quote + '”';
+        item.appendChild(quote);
+      }
+      var text = document.createElement('div');
+      text.className = 'text';
+      text.textContent = comment.text || '';
+      item.appendChild(text);
+      var del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'delete';
+      del.textContent = 'Eliminar';
+      del.addEventListener('click', function () {
+        if (!confirm('¿Eliminar este comentario?')) return;
+        ensureSnapshotForCommentMutation();
+        var latest = parseComments(el);
+        latest.splice(idx, 1);
+        writeComments(el, latest);
+      });
+      item.appendChild(del);
+      commentsList.appendChild(item);
+    });
+  }
+  function showCommentsPopover(el) {
+    if (!el) return;
+    setCurrentCommentTarget(el);
+    renderCommentsPopover(el);
+    commentsText.value = '';
+    positionCommentsPopover(el);
+    commentsPop.classList.add('show');
+    commentsText.focus();
+  }
+  function hideCommentsPopover() {
+    commentsPop.classList.remove('show');
+  }
+  commentsBtn.addEventListener('click', function () {
+    var target = currentCommentTarget;
+    if (!target && document.activeElement) target = document.activeElement.closest && document.activeElement.closest('[data-editable]');
+    if (!target) {
+      alert('Clickeá primero el bloque que querés comentar.');
+      return;
+    }
+    showCommentsPopover(target);
+  });
+  commentsAdd.addEventListener('click', function () {
+    if (!currentCommentTarget) return;
+    var txt = commentsText.value.trim();
+    if (!txt) return;
+    var author = getCommentAuthor();
+    if (!author) return;
+    ensureSnapshotForCommentMutation();
+    var comments = parseComments(currentCommentTarget);
+    var now = new Date().toISOString();
+    comments.push({
+      id: newCommentId(),
+      author: author,
+      createdAt: now,
+      updatedAt: now,
+      text: txt,
+      quote: selectedQuoteWithin(currentCommentTarget),
+      replies: []
+    });
+    commentsText.value = '';
+    writeComments(currentCommentTarget, comments);
+  });
+  commentsClose.addEventListener('click', hideCommentsPopover);
+
+  hookCommentListeners();
+  renderCommentBadges();
+  window.addEventListener('resize', renderCommentBadges);
 
   /* ---- Modo edición ---- */
   toggle.addEventListener('click', function () {
@@ -303,6 +540,8 @@
     clone.querySelectorAll('[data-editor-ui]').forEach(function (n) { n.remove(); });
     clone.querySelectorAll('[contenteditable]').forEach(function (n) { n.removeAttribute('contenteditable'); });
     clone.querySelectorAll('[data-ed-hooked]').forEach(function (n) { n.removeAttribute('data-ed-hooked'); });
+    clone.querySelectorAll('[data-ed-comment-hooked]').forEach(function (n) { n.removeAttribute('data-ed-comment-hooked'); });
+    clone.querySelectorAll('.ed-comment-target').forEach(function (n) { n.classList.remove('ed-comment-target'); });
     clone.querySelectorAll('base').forEach(function (n) { n.remove(); });
     var cb = clone.querySelector('body');
     if (cb) { cb.classList.remove('ed-editing', 'ed-has-banner'); }

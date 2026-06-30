@@ -130,12 +130,14 @@
 
   .ed-comment-target{outline:2px solid var(--code-accent,#D89A6A) !important;outline-offset:6px}
   .ed-comment-badge,
+  .ed-edited-badge,
   .ed-comment-action{
     position:absolute;z-index:9997;min-width:30px;height:26px;padding:0 8px;
     border:none;border-radius:999px;background:var(--code-bg,#23201B);color:var(--code-fg,#EDE6D6);
     box-shadow:0 5px 18px rgba(33,29,24,.22);cursor:pointer;
     font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;line-height:26px;
   }
+  .ed-edited-badge{background:var(--warn,#E0A24A);color:#241a10;cursor:default}
   .ed-comment-action{display:none;width:34px;height:34px;min-width:34px;padding:0;line-height:34px;font-size:15px;background:var(--accent,#8E3B2E);color:#fff}
   .ed-comment-action.show{display:block}
   .ed-comment-badge:hover,.ed-comment-action:hover{background:var(--accent,#8E3B2E);color:#fff;filter:brightness(1.08)}
@@ -243,6 +245,7 @@
   var snapshot = null;       // foto del contenido editable al entrar en edición
   var lastSavedAt = null;
   var currentCommentTarget = null;
+  var blockSnapshots = new WeakMap();
   var TEXT_BLOCK_SELECTOR = '[data-editable],h1,h2,h3,h4,h5,h6,p,li,blockquote,figcaption,dt,dd';
 
   function isEditableBlock(el) {
@@ -345,9 +348,22 @@
     });
     return parts.join('');
   }
+  function getBlockEditSnapshot(el) {
+    return el ? el.innerHTML : '';
+  }
+  function captureBlockSnapshots() {
+    blockSnapshots = new WeakMap();
+    getEditableBlocks().forEach(function (el) {
+      blockSnapshots.set(el, getBlockEditSnapshot(el));
+    });
+  }
+  function isBlockEdited(el) {
+    return snapshot !== null && blockSnapshots.has(el) && blockSnapshots.get(el) !== getBlockEditSnapshot(el);
+  }
   function recomputeDirty() {
     var now = (snapshot !== null) && (getSnapshot() !== snapshot);
     if (now !== dirty) { dirty = now; refreshStatus(); }
+    renderEditedBadges();
   }
   function hookEditableListeners() {
     getEditableBlocks().forEach(function (el) {
@@ -363,7 +379,10 @@
 
   /* ---- Comentarios embebidos por bloque ---- */
   function ensureSnapshotForCommentMutation() {
-    if (snapshot === null) snapshot = getSnapshot();
+    if (snapshot === null) {
+      snapshot = getSnapshot();
+      captureBlockSnapshots();
+    }
   }
   function getCommentAuthor() {
     var stored = (localStorage.getItem('htmlDocsCommentAuthor') || '').trim();
@@ -402,7 +421,10 @@
   }
   function activateBlockEditing(el) {
     if (!el) return;
-    if (snapshot === null) snapshot = getSnapshot();
+    if (snapshot === null) {
+      snapshot = getSnapshot();
+      captureBlockSnapshots();
+    }
     editing = true;
     document.body.classList.add('ed-editing');
     getEditableBlocks().forEach(function (n) {
@@ -436,6 +458,25 @@
   }
   function removeCommentBadges() {
     document.querySelectorAll('.ed-comment-badge').forEach(function (n) { n.remove(); });
+  }
+  function removeEditedBadges() {
+    document.querySelectorAll('.ed-edited-badge').forEach(function (n) { n.remove(); });
+  }
+  function renderEditedBadges() {
+    removeEditedBadges();
+    getEditableBlocks().forEach(function (el) {
+      if (!isBlockEdited(el)) return;
+      var rect = el.getBoundingClientRect();
+      if (!rect.width && !rect.height) return;
+      var badge = document.createElement('span');
+      badge.className = 'ed-edited-badge';
+      badge.setAttribute('data-editor-ui', '1');
+      badge.textContent = '✎';
+      badge.title = 'Bloque editado sin guardar';
+      badge.style.top = (window.scrollY + rect.top + 30) + 'px';
+      badge.style.left = (window.scrollX + rect.right + 8) + 'px';
+      document.body.appendChild(badge);
+    });
   }
   function renderCommentBadges() {
     removeCommentBadges();
@@ -576,8 +617,10 @@
 
   hookCommentListeners();
   renderCommentBadges();
+  renderEditedBadges();
   window.addEventListener('resize', function () {
     renderCommentBadges();
+    renderEditedBadges();
     if (currentCommentTarget) positionCommentAction(currentCommentTarget);
     if (commentsPop.classList.contains('show') && currentCommentTarget) positionCommentsPopover(currentCommentTarget);
   });
@@ -635,6 +678,8 @@
         document.querySelectorAll('[contenteditable]').forEach(function (n) { n.removeAttribute('contenteditable'); });
         toggle.textContent = 'Modo edición';
         snapshot = null;
+        blockSnapshots = new WeakMap();
+        removeEditedBadges();
         dirty = false;
         lastSavedAt = Date.now();
         setStatus('✓ guardado', 'ok');

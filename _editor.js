@@ -129,13 +129,16 @@
   }
 
   .ed-comment-target{outline:2px solid var(--code-accent,#D89A6A) !important;outline-offset:6px}
-  .ed-comment-badge{
+  .ed-comment-badge,
+  .ed-comment-action{
     position:absolute;z-index:9997;min-width:30px;height:26px;padding:0 8px;
     border:none;border-radius:999px;background:var(--code-bg,#23201B);color:var(--code-fg,#EDE6D6);
     box-shadow:0 5px 18px rgba(33,29,24,.22);cursor:pointer;
     font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;line-height:26px;
   }
-  .ed-comment-badge:hover{background:var(--accent,#8E3B2E);color:#fff}
+  .ed-comment-action{display:none;width:34px;height:34px;min-width:34px;padding:0;line-height:34px;font-size:15px;background:var(--accent,#8E3B2E);color:#fff}
+  .ed-comment-action.show{display:block}
+  .ed-comment-badge:hover,.ed-comment-action:hover{background:var(--accent,#8E3B2E);color:#fff;filter:brightness(1.08)}
   .ed-comments-pop{
     position:absolute;z-index:10001;width:min(340px,calc(100vw - 28px));display:none;
     background:var(--paper-2,#FCFAF4);color:var(--ink,#211D18);border:1px solid var(--line,#DED4C2);
@@ -210,6 +213,14 @@
       '<button class="ed-comment-add">Agregar comentario</button>' +
     '</div>';
   document.body.appendChild(commentsPop);
+
+  var commentAction = document.createElement('button');
+  commentAction.type = 'button';
+  commentAction.className = 'ed-comment-action';
+  commentAction.setAttribute('data-editor-ui', '1');
+  commentAction.title = 'Comentar este bloque';
+  commentAction.textContent = '💬';
+  document.body.appendChild(commentAction);
 
   var $ = function (sel, root) { return (root || document).querySelector(sel); };
   var toggle  = $('.ed-toggle', bar);
@@ -331,6 +342,7 @@
       el.addEventListener('input', function () {
         recomputeDirty();
         renderCommentBadges();
+        if (currentCommentTarget) positionCommentAction(currentCommentTarget);
       });
     });
   }
@@ -376,7 +388,13 @@
   function setCurrentCommentTarget(el) {
     if (currentCommentTarget && currentCommentTarget !== el) currentCommentTarget.classList.remove('ed-comment-target');
     currentCommentTarget = el || null;
-    if (currentCommentTarget) currentCommentTarget.classList.add('ed-comment-target');
+    if (currentCommentTarget) {
+      currentCommentTarget.classList.add('ed-comment-target');
+      positionCommentAction(currentCommentTarget);
+      commentAction.classList.add('show');
+    } else {
+      commentAction.classList.remove('show');
+    }
   }
   function hookCommentListeners() {
     document.querySelectorAll('[data-editable]').forEach(function (el) {
@@ -384,7 +402,9 @@
       el.dataset.edCommentHooked = '1';
       el.addEventListener('click', function () { setCurrentCommentTarget(el); });
       el.addEventListener('focus', function () { setCurrentCommentTarget(el); });
-      el.addEventListener('mouseenter', function () { if (!currentCommentTarget) setCurrentCommentTarget(el); });
+      el.addEventListener('mouseenter', function () {
+        if (!commentsPop.classList.contains('show')) setCurrentCommentTarget(el);
+      });
     });
   }
   function removeCommentBadges() {
@@ -412,6 +432,19 @@
       });
       document.body.appendChild(badge);
     });
+  }
+  function positionCommentAction(el) {
+    if (!el) return;
+    var rect = el.getBoundingClientRect();
+    if (!rect.width && !rect.height) {
+      commentAction.classList.remove('show');
+      return;
+    }
+    var top = window.scrollY + rect.top - 4;
+    var left = window.scrollX + rect.left - 44;
+    if (left < window.scrollX + 8) left = window.scrollX + rect.right + 8;
+    commentAction.style.top = top + 'px';
+    commentAction.style.left = left + 'px';
   }
   function positionCommentsPopover(el) {
     var rect = el.getBoundingClientRect();
@@ -486,6 +519,11 @@
     }
     showCommentsPopover(target);
   });
+  commentAction.addEventListener('click', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (currentCommentTarget) showCommentsPopover(currentCommentTarget);
+  });
   commentsAdd.addEventListener('click', function () {
     if (!currentCommentTarget) return;
     var txt = commentsText.value.trim();
@@ -511,7 +549,11 @@
 
   hookCommentListeners();
   renderCommentBadges();
-  window.addEventListener('resize', renderCommentBadges);
+  window.addEventListener('resize', function () {
+    renderCommentBadges();
+    if (currentCommentTarget) positionCommentAction(currentCommentTarget);
+    if (commentsPop.classList.contains('show') && currentCommentTarget) positionCommentsPopover(currentCommentTarget);
+  });
 
   /* ---- Modo edición ---- */
   toggle.addEventListener('click', function () {

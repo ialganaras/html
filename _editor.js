@@ -366,8 +366,9 @@
     if (snapshot === null) snapshot = getSnapshot();
   }
   function getCommentAuthor() {
-    var stored = localStorage.getItem('htmlDocsCommentAuthor') || '';
-    var author = prompt('Autor para comentarios:', stored || 'Iña');
+    var stored = (localStorage.getItem('htmlDocsCommentAuthor') || '').trim();
+    if (stored) return stored;
+    var author = prompt('Autor para comentarios:', 'Iña');
     if (author === null) return null;
     author = author.trim() || 'Iña';
     localStorage.setItem('htmlDocsCommentAuthor', author);

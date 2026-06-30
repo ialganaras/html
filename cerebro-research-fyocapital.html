@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>fyoCortex · El cerebro de research de fyoCapital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#f3f2ee;
+    --paper-2:#eceae4;
+    --card:#ffffff;
+    --ink:#111110;
+    --ink-2:#2c2b27;
+    --muted:#56544f;
+    --faint:#78756f;
+    --rule:#d6d4ce;
+    --rule-2:#cbc8c0;
+    --accent:#e22b16; --accent-soft:#f7e6e2; --accent-line:#e22b1642; --accent-deep:#c0220f;
+    --disp:'Space Grotesk', system-ui, sans-serif;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--paper);
+    color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--accent); color:#fff; }
+  .lbl{ font-family:var(--mono); font-size:11px; font-weight:500; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--muted); }
+  .fc{ color:var(--accent); }
+
+  .doc{ max-width:1120px; margin:0 auto; padding:0 0 130px; }
+  .sheet{ background:var(--paper); padding:0 52px; position:relative; }
+  @media (max-width:760px){ .sheet{ padding:0 20px; } }
+
+  .titleblock{ display:grid; grid-template-columns:1fr auto; align-items:stretch;
+    border-bottom:1px solid var(--ink); }
+  .titleblock .tb-l{ padding:16px 0; font-family:var(--mono); font-size:11px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--ink-2); display:flex; align-items:center; gap:14px; }
+  .titleblock .tb-l .sq{ width:8px; height:8px; background:var(--accent); }
+  .titleblock .tb-r{ font-family:var(--mono); font-size:11px; letter-spacing:.06em; color:var(--muted);
+    text-transform:uppercase; display:flex; align-items:center; padding:16px 0 16px 22px;
+    border-left:1px solid var(--rule); }
+  .titleblock .tb-r b{ color:var(--accent-deep); font-weight:600; }
+
+  .cover{ padding:70px 0 0; }
+  .cover .ref{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); margin-bottom:30px; display:flex; gap:18px; flex-wrap:wrap; }
+  .cover .ref span{ position:relative; padding-left:16px; }
+  .cover .ref span::before{ content:''; position:absolute; left:0; top:50%; width:8px; height:8px;
+    border:1px solid var(--accent); transform:translateY(-50%); }
+  h1.title{ font-family:var(--disp); font-weight:600; font-size:clamp(40px,6.4vw,82px);
+    line-height:1.0; letter-spacing:-.03em; margin:0; max-width:16ch; color:var(--ink); }
+  h1.title .hl{ color:var(--accent); }
+  .lede{ font-size:clamp(17px,1.8vw,21px); line-height:1.55; color:var(--ink-2); max-width:64ch;
+    margin:30px 0 0; }
+  .lede b{ color:var(--ink); font-weight:600; }
+  .specsheet{ margin-top:48px; border:1px solid var(--rule-2); background:var(--card);
+    display:grid; grid-template-columns:repeat(3,1fr); }
+  @media (max-width:680px){ .specsheet{ grid-template-columns:1fr; } }
+  .specsheet .sc{ padding:18px 20px; border-right:1px solid var(--rule); }
+  .specsheet .sc:last-child{ border-right:none; }
+  .specsheet .sc .k{ display:block; margin-bottom:8px; }
+  .specsheet .sc .v{ font-family:var(--disp); font-weight:500; font-size:16px; color:var(--ink);
+    line-height:1.35; }
+
+  .contents{ margin:72px 0 0; border-top:1px solid var(--ink); padding-top:26px; }
+  .contents .ct{ color:var(--accent); margin-bottom:18px; }
+  .toc{ list-style:none; margin:0; padding:0; }
+  .toc li{ display:grid; grid-template-columns:70px 1fr auto; align-items:center; gap:18px;
+    padding:15px 0; border-bottom:1px solid var(--rule); }
+  .toc .n{ font-family:var(--mono); font-size:12px; color:var(--accent); }
+  .toc a{ color:var(--ink); text-decoration:none; font-family:var(--disp); font-weight:500;
+    font-size:19px; letter-spacing:-.01em; }
+  .toc li:hover a{ color:var(--accent); }
+  .toc .ar{ font-family:var(--mono); color:var(--faint); font-size:12px; }
+
+  .chapter{ margin-top:96px; scroll-margin-top:24px; }
+  .ch-head{ border-bottom:1px solid var(--ink); padding-bottom:26px; }
+  .ch-marker{ display:flex; align-items:center; gap:14px; margin-bottom:20px; }
+  .ch-marker .mn{ font-family:var(--mono); font-size:12px; color:#fff; background:var(--accent);
+    padding:4px 9px; font-weight:600; letter-spacing:.06em; }
+  h2.ch-title{ font-family:var(--disp); font-weight:600; font-size:clamp(28px,4.2vw,52px);
+    line-height:1.02; letter-spacing:-.03em; margin:0; max-width:18ch; }
+  h2.ch-title .hl{ color:var(--accent); }
+  .ch-lede{ font-size:19px; line-height:1.5; color:var(--ink-2); margin:20px 0 0; max-width:64ch; }
+
+  .prose{ max-width:70ch; margin-top:32px; font-size:16.5px; line-height:1.62; color:var(--ink-2); }
+  .prose p{ margin:0 0 18px; }
+  .prose strong{ color:var(--ink); font-weight:600; }
+  .prose em{ font-style:normal; color:var(--accent); font-weight:500; }
+  .subhead{ font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--accent); margin:40px 0 0; }
+
+  .figure{ margin:32px 0 8px; border:1px solid var(--ink); background:var(--card); padding:26px 22px 16px; }
+  .figure svg{ display:block; width:100%; height:auto; }
+  .figcap{ font-family:var(--mono); font-size:10.5px; letter-spacing:.07em; text-transform:uppercase;
+    color:var(--faint); margin-top:16px; text-align:center; line-height:1.5; }
+
+  .note{ margin:32px 0; border:1px solid var(--rule-2); border-left:3px solid var(--accent);
+    background:var(--card); padding:22px 26px; max-width:78ch; position:relative; }
+  .note .lbl{ color:var(--accent); display:block; margin-bottom:11px; }
+  .note p{ margin:0; font-size:15.5px; line-height:1.58; color:var(--ink-2); }
+  .note p+p{ margin-top:12px; }
+  .note strong{ color:var(--ink); font-weight:600; }
+  .note em{ font-style:normal; color:var(--accent-deep); font-weight:500; }
+  .note.warn{ border-left-color:var(--accent-deep); }
+
+  .stack{ margin:36px 0 8px; border:1px solid var(--ink); background:var(--card); }
+  .tier{ display:grid; grid-template-columns:178px 1fr; border-bottom:1px solid var(--rule); }
+  .tier:last-child{ border-bottom:none; }
+  @media (max-width:680px){ .tier{ grid-template-columns:1fr; } }
+  .tier .t-lbl{ padding:18px 20px; border-right:1px solid var(--rule); display:flex; align-items:center;
+    background:var(--paper-2); }
+  @media (max-width:680px){ .tier .t-lbl{ border-right:none; border-bottom:1px solid var(--rule); padding-bottom:10px; } }
+  .tier .t-items{ display:flex; }
+  .cell{ flex:1; padding:18px 22px; }
+  .cell .cn{ font-family:var(--disp); font-weight:600; font-size:17px; color:var(--ink); display:block;
+    letter-spacing:-.01em; }
+  .cell .cs{ font-size:14.5px; color:var(--ink-2); display:block; margin-top:8px; line-height:1.55; }
+  .cell.x .cn{ color:var(--accent); }
+
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; margin-top:24px; border:1px solid var(--ink);
+    background:var(--card); }
+  @media (max-width:680px){ .grid2{ grid-template-columns:1fr; } }
+  .card{ padding:26px 28px 28px; border-bottom:1px solid var(--rule); }
+  .card:nth-child(odd){ border-right:1px solid var(--rule); }
+  @media (max-width:680px){ .card:nth-child(odd){ border-right:none; } }
+  .card:nth-last-child(-n+2){ border-bottom:none; }
+  @media (max-width:680px){ .card:nth-last-child(-n+2){ border-bottom:1px solid var(--rule); } .card:last-child{ border-bottom:none; } }
+  .card .cnum{ font-family:var(--mono); font-size:11px; color:var(--accent); display:block; margin-bottom:14px; }
+  .card h4{ font-family:var(--disp); font-weight:600; font-size:21px; letter-spacing:-.015em; margin:0 0 9px; color:var(--ink); }
+  .card p{ font-size:15px; line-height:1.55; color:var(--ink-2); margin:0; }
+
+  .statement{ margin:88px 0 0; padding:56px 44px; border:1px solid var(--ink); background:var(--card);
+    position:relative; }
+  .statement::before{ content:''; position:absolute; top:0; left:0; width:6px; height:100%; background:var(--accent); }
+  .statement .lbl{ color:var(--accent); margin-bottom:22px; display:block; }
+  .statement p{ font-family:var(--disp); font-weight:500; font-size:clamp(24px,3.4vw,40px); line-height:1.2;
+    letter-spacing:-.025em; margin:0; max-width:24ch; color:var(--ink); }
+  .statement .hl{ color:var(--accent); }
+
+  .colophon{ margin-top:50px; padding-top:18px; border-top:1px solid var(--ink); display:flex;
+    justify-content:space-between; flex-wrap:wrap; gap:12px; font-family:var(--mono); font-size:11px;
+    color:var(--muted); letter-spacing:.05em; text-transform:uppercase; }
+</style>
+</head>
+<body>
+
+<div class="doc"><div class="sheet">
+
+  <!-- CABECERA -->
+  <div class="titleblock">
+    <div class="tb-l"><span class="sq"></span>Consultoría<span style="color:var(--muted)">inaki@alganaras.com.ar</span></div>
+    <div class="tb-r">DOC. <b>FYO-05</b> · REV. <b>v3</b> · IA APLICADA</div>
+  </div>
+
+  <!-- PORTADA -->
+  <header class="cover">
+    <div class="ref"><span>fyoCapital</span><span>fyoCortex</span><span>El cerebro de research</span></div>
+    <h1 class="title">La inteligencia de la mesa, viva y en un solo <span class="hl">lugar</span>.</h1>
+    <p class="lede"><span class="fc">fyoCortex</span> es la idea de un cerebro de research para fyo: que la visión de la mesa sobre el mercado deje de vivir en informes que nadie relee y en la cabeza de cada analista, y pase a ser <b>inteligencia y memoria vivas</b> —que sintetizan, conectan y responden— a mano de todo el equipo, con el porqué y la fuente de cada cosa.</p>
+    <div class="specsheet">
+      <div class="sc"><span class="lbl k">Qué es</span><span class="v"><span class="fc">fyoCortex</span> · inteligencia + memoria del research de fyo</span></div>
+      <div class="sc"><span class="lbl k">Para quién</span><span class="v">Trading y research hoy · el cliente, mañana</span></div>
+      <div class="sc"><span class="lbl k">Este documento</span><span class="v">La idea, cómo funciona y por qué conviene construirlo</span></div>
+    </div>
+  </header>
+
+  <!-- ÍNDICE -->
+  <nav class="contents">
+    <div class="lbl ct">Índice del documento</div>
+    <ol class="toc">
+      <li><span class="n">00</span><a href="#s0">El problema · dónde vive hoy lo que fyo sabe</a><span class="ar">[↗]</span></li>
+      <li><span class="n">01</span><a href="#s1">La idea · inteligencia y memoria, en un lugar</a><span class="ar">[↗]</span></li>
+      <li><span class="n">02</span><a href="#s2">Por dentro · cómo fyoCortex ordena lo que sabe</a><span class="ar">[↗]</span></li>
+      <li><span class="n">03</span><a href="#s3">Un día con fyoCortex encendido</a><span class="ar">[↗]</span></li>
+      <li><span class="n">04</span><a href="#s4">Por qué conviene construirlo</a><span class="ar">[↗]</span></li>
+    </ol>
+  </nav>
+
+  <!-- 00 PROBLEMA -->
+  <section class="chapter" id="s0">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">00</span><span class="lbl">El problema</span></div>
+      <h2 class="ch-title">Lo que fyo sabe vale oro. Hoy no está en ningún <span class="hl">lado</span>.</h2>
+      <p class="ch-lede">No falta conocimiento en la mesa. Falta que ese conocimiento esté junto, vivo y a mano cuando hace falta.</p>
+    </div>
+
+    <div class="prose">
+      <p>Hoy la visión de fyo sobre el mercado vive en dos lugares, y los dos son malos. Uno es <strong>el informe</strong>: un PDF que se arma con esfuerzo, se manda, y que para el martes ya nadie relee. El otro es <strong>la cabeza de cada analista</strong>: lo que de verdad piensa la mesa de un emisor, de una licitación o de una posición casi nunca está escrito en ningún lado que se pueda consultar.</p>
+      <p>Eso tiene costos que se pagan todos los días, aunque no aparezcan en ninguna planilla. Cuando un analista se va, <em>su lectura del mercado se va con él</em>. Un junior tarda meses en ponerse al día, preguntando lo mismo una y otra vez. La misma pregunta se contesta cinco veces. Una visión cambia y no todos se enteran. Y cada tanto una buena oportunidad pasa de largo —no porque nadie la haya visto, sino porque la lectura no llegó a tiempo a quien tenía que actuar.</p>
+    </div>
+
+    <div class="note">
+      <span class="lbl">El punto</span>
+      <p>No es un problema de talento ni de esfuerzo: la mesa produce buen research todos los días. Es un problema de <strong>dónde queda</strong>. Lo que se produce con trabajo se evapora o se entierra, y hay que volver a producirlo —o peor, se pierde. El research más caro es el que ya pagaste y no podés volver a usar.</p>
+    </div>
+  </section>
+
+  <!-- 01 LA IDEA -->
+  <section class="chapter" id="s1">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">01</span><span class="lbl">La idea</span></div>
+      <h2 class="ch-title"><span class="fc">fyoCortex</span>: inteligencia y memoria, en un solo <span class="hl">lugar</span>.</h2>
+      <p class="ch-lede">No es un buscador de informes ni un chat más. Es la inteligencia de la mesa, ordenada como la mesa piensa: por instrumento, por emisor, por tema.</p>
+    </div>
+
+    <div class="prose">
+      <p>La idea es simple de decir: <strong>un solo lugar donde vive todo lo que fyo piensa del mercado</strong>, y al que cualquiera del equipo le puede preguntar en castellano. La diferencia con un buscador es clave. Un buscador te devuelve cinco documentos para que los leas vos. <span class="fc">fyoCortex</span> te da <em>la respuesta</em> —la visión de fyo, con el argumento y con la fuente al lado, lista para abrir y verificar.</p>
+      <p>Y no reemplaza al analista. Es <strong>su inteligencia y su memoria, compartidas</strong>. El analista sigue siendo el que piensa; <span class="fc">fyoCortex</span> hace que lo que pensó no se pierda, esté a mano de todos y se vuelva consultable al instante.</p>
+    </div>
+
+    <div class="note">
+      <span class="lbl">No es solo memoria</span>
+      <p>Un archivo guarda lo que se dijo. <span class="fc">fyoCortex</span> hace eso —y algo más: <strong>piensa sobre lo que guarda</strong>. Sintetiza la visión de fyo a partir de muchas fuentes, detecta lo que importa de cada novedad, conecta lo que se relaciona y responde preguntas. Memoria <em>y</em> inteligencia: la primera sin la segunda es un cajón de PDFs; la segunda sin la primera, un chat que se olvida de todo.</p>
+    </div>
+  </section>
+
+  <!-- 02 POR DENTRO -->
+  <section class="chapter" id="s2">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">02</span><span class="lbl">Por dentro</span></div>
+      <h2 class="ch-title">Cómo <span class="fc">fyoCortex</span> ordena lo que <span class="hl">sabe</span>.</h2>
+      <p class="ch-lede">No es un chat con buena memoria. Tiene una forma concreta de juntar lo que entra, ordenarlo por instrumento, conectarlo solo y mantenerse al día sin que nadie lo empuje.</p>
+    </div>
+
+    <div class="prose">
+      <p>Vale la pena abrir el capó un momento —sin tecnicismos—, porque la forma en que <span class="fc">fyoCortex</span> está armado es justo lo que lo hace distinto de un buscador o de un chat común.</p>
+    </div>
+
+    <div class="figure">
+      <svg viewBox="0 0 760 430" width="100%" role="img" aria-label="Las fuentes dispersas se consolidan en fyoCortex, que combina memoria e inteligencia organizadas por entidades, y de ahí alimenta a la mesa, al comercial, al portafolio y al cliente.">
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#2c2b27" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <text x="30" y="20" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;fill:#e22b16;">LO QUE ENTRA — HOY DISPERSO</text>
+
+        <g style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13.5px;fill:#111110;">
+          <rect x="30"  y="32" width="160" height="46" fill="#ffffff" stroke="#111110" stroke-width="0.5"/>
+          <rect x="210" y="32" width="160" height="46" fill="#ffffff" stroke="#111110" stroke-width="0.5"/>
+          <rect x="390" y="32" width="160" height="46" fill="#ffffff" stroke="#111110" stroke-width="0.5"/>
+          <rect x="570" y="32" width="160" height="46" fill="#ffffff" stroke="#111110" stroke-width="0.5"/>
+          <text x="110" y="55" text-anchor="middle" dominant-baseline="central">Las dos mesas</text>
+          <text x="290" y="55" text-anchor="middle" dominant-baseline="central">Consultoras</text>
+          <text x="470" y="55" text-anchor="middle" dominant-baseline="central">Mercado en vivo</text>
+          <text x="650" y="55" text-anchor="middle" dominant-baseline="central">Calendario</text>
+        </g>
+
+        <g stroke="#b9b6ae" stroke-width="1" fill="none">
+          <line x1="110" y1="78" x2="110" y2="92"/>
+          <line x1="290" y1="78" x2="290" y2="92"/>
+          <line x1="470" y1="78" x2="470" y2="92"/>
+          <line x1="650" y1="78" x2="650" y2="92"/>
+          <line x1="110" y1="92" x2="650" y2="92"/>
+        </g>
+        <line x1="380" y1="92" x2="380" y2="121" stroke="#2c2b27" stroke-width="1.4" marker-end="url(#ar)"/>
+        <text x="390" y="111" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;fill:#56544f;">se consolida en</text>
+
+        <rect x="30" y="124" width="700" height="192" fill="#ffffff" stroke="#111110" stroke-width="0.5"/>
+        <rect x="30" y="124" width="700" height="3" fill="#e22b16"/>
+        <text x="54" y="160" style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:22px;fill:#e22b16;letter-spacing:-.01em;">fyoCortex</text>
+        <text x="706" y="156" text-anchor="end" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;fill:#c0220f;">INTELIGENCIA + MEMORIA</text>
+        <text x="54" y="180" style="font-family:'IBM Plex Sans',sans-serif;font-size:13px;fill:#56544f;">No solo recuerda: piensa sobre lo que recuerda.</text>
+
+        <rect x="54" y="194" width="316" height="72" fill="#f3f2ee" stroke="#d6d4ce" stroke-width="0.5"/>
+        <text x="70" y="218" style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;fill:#e22b16;">Memoria</text>
+        <text x="70" y="240" style="font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;fill:#2c2b27;">Recuerda qué se dijo,</text>
+        <text x="70" y="258" style="font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;fill:#2c2b27;">con la fuente y la fecha.</text>
+
+        <rect x="390" y="194" width="316" height="72" fill="#f3f2ee" stroke="#d6d4ce" stroke-width="0.5"/>
+        <text x="406" y="218" style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;fill:#e22b16;">Inteligencia</text>
+        <text x="406" y="240" style="font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;fill:#2c2b27;">Sintetiza la visión, detecta</text>
+        <text x="406" y="258" style="font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;fill:#2c2b27;">lo que importa y conecta.</text>
+
+        <rect x="54" y="276" width="652" height="28" fill="#f7e6e2"/>
+        <text x="380" y="290" text-anchor="middle" dominant-baseline="central" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.04em;fill:#c0220f;">Columna vertebral · instrumento · emisor · familias · temas macro</text>
+
+        <line x1="380" y1="316" x2="380" y2="345" stroke="#2c2b27" stroke-width="1.4" marker-end="url(#ar)"/>
+        <text x="30" y="338" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;fill:#e22b16;">ALIMENTA A — UNA FUENTE, MUCHAS BOCAS</text>
+
+        <g style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13.5px;fill:#111110;">
+          <rect x="30"  y="350" width="160" height="46" fill="#eceae4" stroke="#111110" stroke-width="0.5"/>
+          <rect x="210" y="350" width="160" height="46" fill="#eceae4" stroke="#111110" stroke-width="0.5"/>
+          <rect x="390" y="350" width="160" height="46" fill="#eceae4" stroke="#111110" stroke-width="0.5"/>
+          <rect x="570" y="350" width="160" height="46" fill="#eceae4" stroke="#111110" stroke-width="0.5"/>
+          <text x="110" y="373" text-anchor="middle" dominant-baseline="central">La mesa</text>
+          <text x="290" y="373" text-anchor="middle" dominant-baseline="central">Comercial</text>
+          <text x="470" y="373" text-anchor="middle" dominant-baseline="central">Portafolio</text>
+          <text x="650" y="373" text-anchor="middle" dominant-baseline="central">Cliente · mañana</text>
+        </g>
+      </svg>
+      <div class="figcap">Las fuentes se consolidan en una sola inteligencia, organizada por entidades — y de ahí sale al equipo.</div>
+    </div>
+
+    <div class="subhead">A · Lo que entra</div>
+    <div class="prose">
+      <p>Primero, junta en un solo lugar lo que hoy vive disperso —en mails, PDFs, pantallas y cabezas:</p>
+    </div>
+    <div class="grid2">
+      <div class="card"><span class="cnum">Fuente · 01</span><h4>Las dos mesas</h4><p>Las minutas de Capitales y de Granos: lo que la mesa lee, discute y decide cada día.</p></div>
+      <div class="card"><span class="cnum">Fuente · 02</span><h4>Las consultoras</h4><p>Los informes de afuera que fyo sigue, para cruzarlos con la visión propia.</p></div>
+      <div class="card"><span class="cnum">Fuente · 03</span><h4>El mercado en vivo</h4><p>Precios, curvas y paridades en tiempo real —no una foto vieja pegada en un informe.</p></div>
+      <div class="card"><span class="cnum">Fuente · 04</span><h4>El calendario</h4><p>Licitaciones del Tesoro, decisiones del BCRA, vencimientos, hitos de cosecha y reportes tipo USDA.</p></div>
+    </div>
+
+    <div class="subhead">B · La columna vertebral</div>
+    <div class="prose">
+      <p>Lo segundo, y lo más importante: todo eso no cae en una bolsa de texto. <strong>Cuelga de entidades bien definidas</strong> —las mismas con las que la mesa ya piensa. Eso es lo que evita que <span class="fc">fyoCortex</span> sea un pozo de informes y lo vuelve algo que se puede preguntar de verdad.</p>
+    </div>
+    <div class="stack">
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">El instrumento</span></div>
+        <div class="t-items"><div class="cell"><span class="cn">La unidad mínima</span><span class="cs">Cada bono, ON, letra, acción o contrato de futuro tiene su propia página.</span></div></div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">El emisor</span></div>
+        <div class="t-items"><div class="cell"><span class="cn">Quién emite</span><span class="cs">El soberano, las provincias, los corporativos.</span></div></div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Las familias</span></div>
+        <div class="t-items"><div class="cell"><span class="cn">Los grupos con los que se opera</span><span class="cs">"Soberanos hard dollar", "CER cortos", "ONs energía", "soja Matba".</span></div></div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Los temas macro</span></div>
+        <div class="t-items"><div class="cell"><span class="cn">Lo que mueve todo</span><span class="cs">Dólar, tasa e inflación, clima y cosecha, política.</span></div></div>
+      </div>
+    </div>
+    <div class="note">
+      <span class="lbl">Cada entidad es una página viva</span>
+      <p>Cada una de esas páginas tiene dos partes: la <strong>verdad compilada</strong> —qué piensa fyo hoy de ese instrumento— y una <strong>línea de tiempo</strong> de cómo se llegó ahí. Eso es lo que te deja contestar algo que hoy es imposible: <em>«¿qué pensábamos de este emisor en marzo, y por qué cambió la visión?»</em></p>
+    </div>
+
+    <div class="subhead">C · Se cablea solo, y trabaja de noche</div>
+    <div class="prose">
+      <p>Cada vez que se escribe algo en una página, <span class="fc">fyoCortex</span> detecta las entidades que se mencionan y las <strong>conecta solo</strong>, con relaciones que tienen nombre: este emisor <em>emite</em> este bono, este bono <em>pertenece a</em> esta familia, este tema macro <em>afecta a</em> estos instrumentos, esta visión <em>contradice</em> a esta otra. Nadie arma esas conexiones a mano: se arman al escribir.</p>
+      <p>Y no espera a que alguien lo ordene. Mientras la mesa no está —de noche, los fines de semana— <span class="fc">fyoCortex</span> hace su <strong>turno noche</strong>: relee lo que entró, actualiza las páginas, repara y consolida. La mesa abre a un cerebro más ordenado que cuando lo dejó.</p>
+    </div>
+    <div class="note">
+      <span class="lbl">Las preguntas que hoy no podés contestar</span>
+      <p>La columna vertebral, más esas conexiones, es lo que vuelve simples preguntas que hoy llevan media tarde de mails —o directamente no se pueden contestar. Por ejemplo: <em>«¿qué dijo la mesa de Capitales de esta ON en las últimas tres semanas, y cómo cambió?»</em> o <em>«¿qué instrumentos toca esta suba de tasa, según lo que ya escribimos?»</em>. Hoy eso vive en cinco cabezas y diez mails; en <span class="fc">fyoCortex</span> es una sola pregunta.</p>
+    </div>
+  </section>
+
+  <!-- 03 UN DÍA -->
+  <section class="chapter" id="s3">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">03</span><span class="lbl">El día a día</span></div>
+      <h2 class="ch-title">Un día con <span class="fc">fyoCortex</span> <span class="hl">encendido</span>.</h2>
+      <p class="ch-lede">Cómo se vería trabajar con él una vez plenamente desarrollado, contado como un día normal de la mesa.</p>
+    </div>
+
+    <div class="prose">
+      <p>Imaginá la mesa con <span class="fc">fyoCortex</span> andando. El día no arranca con una pila de informes para leer: arranca con <strong>lo que cambió</strong>.</p>
+    </div>
+
+    <div class="stack">
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">De noche</span></div>
+        <div class="t-items"><div class="cell"><span class="cn">Ya hizo su turno noche</span><span class="cs">Mientras no había nadie, repasó todo lo que entró y actualizó la visión de cada instrumento. La mesa abre a un cerebro al día, no a una bandeja de pendientes.</span></div></div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Al abrir</span></div>
+        <div class="t-items"><div class="cell"><span class="cn">Un "qué cambió", no cinco PDFs</span><span class="cs">La mesa abre el día con un resumen de qué se movió, qué visión se actualizó y qué quedó viejo. En vez de empezar a leer, empieza a decidir.</span></div></div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Durante el día</span></div>
+        <div class="t-items"><div class="cell"><span class="cn">Se le pregunta, contesta con la fuente</span><span class="cs">"¿Qué opina fyo del GD30 y por qué?" → devuelve la visión, el argumento y la fuente, en un solo lugar. Un junior prepara una llamada leyendo <span class="fc">fyoCortex</span>, en lugar de perseguir a cinco personas.</span></div></div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Si hay desacuerdo</span></div>
+        <div class="t-items"><div class="cell x"><span class="cn">Guarda las dos visiones, marca la diferencia</span><span class="cs">Si Capitales lo ve de una manera y una consultora de otra, conserva ambas, dice de quién es cada una y cuándo, y marca la tensión para que la resuelva un humano. El desacuerdo queda registrado, no perdido.</span></div></div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Si algo envejece</span></div>
+        <div class="t-items"><div class="cell"><span class="cn">Lo marca como viejo</span><span class="cs">Una visión de marzo que nadie refrescó queda señalada, para que nadie opere sobre una lectura vencida pensando que es la de hoy.</span></div></div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Hacia afuera</span></div>
+        <div class="t-items"><div class="cell x"><span class="cn">Le da de comer al resto del equipo</span><span class="cs">El mismo <span class="fc">fyoCortex</span> alimenta al equipo comercial, al armado de portafolios y —el día de mañana— a la cara de fyo frente al cliente. Una sola fuente de "qué piensa fyo", muchas bocas.</span></div></div>
+      </div>
+    </div>
+
+    <div class="note">
+      <span class="lbl">El humano, siempre en el centro</span>
+      <p><span class="fc">fyoCortex</span> propone, ordena y recuerda; <strong>la decisión —y la palabra final sobre cualquier desacuerdo— siempre es de la mesa.</strong> No opera, no manda nada solo: deja todo listo para que una persona decida.</p>
+    </div>
+
+    <div class="subhead">Las reglas que siempre sigue</div>
+    <div class="prose">
+      <p>Haga lo que haga, <span class="fc">fyoCortex</span> se comporta siempre igual. Esas reglas son las que lo hacen confiable para una mesa:</p>
+    </div>
+    <div class="grid2">
+      <div class="card"><span class="cnum">Cómo se comporta · 01</span><h4>Nunca inventa un número</h4><p>Todo lo que dice sale de una fuente real de fyo. Si no la tiene, lo dice; no rellena con suposiciones.</p></div>
+      <div class="card"><span class="cnum">Cómo se comporta · 02</span><h4>Muestra de dónde salió</h4><p>Cada afirmación viene con su fuente, que se abre en un clic. Si querés verificar, verificás —no hay que creerle a ciegas.</p></div>
+      <div class="card"><span class="cnum">Cómo se comporta · 03</span><h4>No aplana el desacuerdo</h4><p>Si dos analistas piensan distinto, guarda las dos visiones y marca la diferencia, en vez de elegir una en silencio.</p></div>
+      <div class="card"><span class="cnum">Cómo se comporta · 04</span><h4>Avisa cuando algo quedó viejo</h4><p>Sabe cuándo una visión se hizo vieja y la marca, para que nadie actúe sobre una lectura vencida creyéndola actual.</p></div>
+    </div>
+
+    <div class="note">
+      <span class="lbl">Y además, aprende</span>
+      <p><span class="fc">fyoCortex</span> registra qué se dijo, qué se hizo y qué resultó. Con el tiempo, eso lo hace afinar cada vez mejor qué es lo importante. Es de las pocas herramientas que <strong>valen más cuanto más se usan</strong>.</p>
+    </div>
+  </section>
+
+  <!-- 04 VENTAJAS -->
+  <section class="chapter" id="s4">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">04</span><span class="lbl">Las ventajas</span></div>
+      <h2 class="ch-title">Por qué conviene <span class="hl">construirlo</span>.</h2>
+      <p class="ch-lede">Las ventajas no son tecnológicas: son de negocio. <span class="fc">fyoCortex</span> convierte un costo que hoy se evapora en un activo que se acumula.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card"><span class="cnum">Ventaja 01</span><h4>El conocimiento no se va con la gente</h4><p>Cuando un senior se va, su lectura del mercado queda. El capital intelectual de la mesa deja de depender de quién está sentado.</p></div>
+      <div class="card"><span class="cnum">Ventaja 02</span><h4>De meses a días</h4><p>Un analista nuevo se pone al día leyendo <span class="fc">fyoCortex</span>, en lugar de aprender por ósmosis. La curva de un ingreso se acorta drásticamente.</p></div>
+      <div class="card"><span class="cnum">Ventaja 03</span><h4>Ninguna oportunidad se pierde por llegar tarde</h4><p>La lectura correcta llega a quien tiene que actuar, a tiempo, en vez de quedar atrapada en una cabeza o en un PDF.</p></div>
+      <div class="card"><span class="cnum">Ventaja 04</span><h4>Cada decisión es trazable</h4><p>Toda recomendación tiene su porqué y su fuente. Sube la calidad del research y, si hace falta, se puede reconstruir cualquier lectura del pasado.</p></div>
+      <div class="card"><span class="cnum">Ventaja 05</span><h4>Un activo que se capitaliza</h4><p>El research deja de ser un costo enterrado en un informe y pasa a ser algo que se usa todos los días —y que se reaprovecha al alimentar a los demás equipos y, mañana, al cliente.</p></div>
+      <div class="card"><span class="cnum">Ventaja 06</span><h4>Una ventaja que se acumula</h4><p>Cuanto más se usa, mejor prioriza. Es de las pocas inversiones que valen más con el tiempo, no menos: un activo que compone.</p></div>
+    </div>
+
+    <div class="note">
+      <span class="lbl">No hay que apostar todo de entrada</span>
+      <p>Antes de comprometerse a construirlo entero, se prueba barato: un <strong>piloto sobre una sola mesa</strong>, con unas semanas de informes reales, que responde una sola pregunta —¿la mesa lo usa, y le sirve?—. Si la respuesta es sí, recién ahí se invierte en el resto. La apuesta grande se gana el derecho con una prueba chica.</p>
+    </div>
+
+    <div class="statement">
+      <span class="lbl">La idea, en una frase</span>
+      <p>La inteligencia de fyo es su mayor activo. Hoy no vive en ningún lado. <span class="hl">fyoCortex</span> la pone en uno solo, viva, y a mano de todos.</p>
+    </div>
+  </section>
+
+  <!-- COLOFÓN -->
+  <div class="colophon">
+    <span>Iñaki · Consultoría · <span class="fc">fyoCortex</span></span>
+    <span>inaki@alganaras.com.ar · estilo «Plano»</span>
+  </div>
+
+</div></div>
+
+<script src="https://docs.alganaras.com.ar/_editor.js"></script>
+</body></html>

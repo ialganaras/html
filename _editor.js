@@ -58,13 +58,10 @@
   .ed-btn-icon{background:transparent;color:var(--code-fg,#EDE6D6);width:34px;padding:9px 0;font-size:14px}
   .ed-btn-icon:hover{background:#332f28}
 
-  body.ed-editing [data-editable]{
-    outline:1.5px dashed rgba(142,59,46,.45);
-    outline-offset:5px;border-radius:3px;transition:outline-color .2s;
-  }
-  body.ed-editing [data-editable]:hover{outline-color:var(--accent,#8E3B2E)}
-  body.ed-editing [data-editable]:focus{
-    outline:1.5px solid var(--accent,#8E3B2E);background:rgba(216,154,106,.10);
+  body.ed-editing [contenteditable="true"]{
+    outline:1.5px solid var(--accent,#8E3B2E);
+    outline-offset:5px;border-radius:3px;background:rgba(216,154,106,.10);
+    transition:outline-color .2s,background .2s;
   }
 
   .ed-banner{

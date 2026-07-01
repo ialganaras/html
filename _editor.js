@@ -3,7 +3,8 @@
  * ----------------------------------------------------------------------------
  * Uso: agregar al final del <body> de cualquier HTML:
  *      <script src="/_editor.js"></script>
- * y marcar las regiones editables con el atributo  data-editable.
+ * y usar HTML semántico: h1-h6/p/li/etc. se vuelven editables automáticamente.
+ * `data-editable` queda para textos especiales fuera de esos tags.
  *
  * - El editor (toolbar + chrome) SOLO aparece si la URL trae  ?edit=si.
  *   Sin eso → vista limpia para terceros (el script no inyecta nada).
@@ -195,6 +196,7 @@
       '<button class="ed-btn-icon ed-menu" title="Más opciones">⋯</button>' +
       '<div class="ed-menu-pop" data-editor-ui="1">' +
         '<button class="ed-refresh">Recargar desde server</button>' +
+        '<button class="ed-views">Ver lecturas</button>' +
         '<button class="ed-cfg">Configurar Worker URL</button>' +
       '</div>' +
     '</div>';
@@ -228,6 +230,7 @@
   var save    = $('.ed-save', bar);
   var histBtn = $('.ed-history', bar);
   var refresh = $('.ed-refresh', bar);
+  var views   = $('.ed-views', bar);
   var share   = $('.ed-share', bar);
   var cfg     = $('.ed-cfg', bar);
   var menuBtn = $('.ed-menu', bar);
@@ -307,6 +310,37 @@
       else localStorage.removeItem('workerUrl');
     }
   });
+
+  function restHeaders() {
+    var headers = { 'Content-Type': 'application/json' };
+    var token = (localStorage.getItem('htmlCommitRestToken') || '').trim();
+    if (token) headers.Authorization = 'Bearer ' + token;
+    return headers;
+  }
+  function promptRestToken() {
+    var cur = localStorage.getItem('htmlCommitRestToken') || '';
+    var token = prompt('Token de escritura del editor:', cur);
+    if (token === null) return null;
+    token = token.trim();
+    if (token) localStorage.setItem('htmlCommitRestToken', token);
+    else localStorage.removeItem('htmlCommitRestToken');
+    return token;
+  }
+  async function postWorker(workerUrl, payload, retryAuth) {
+    var resp = await fetch(workerUrl, {
+      method: 'POST',
+      headers: restHeaders(),
+      body: JSON.stringify(payload)
+    });
+    if (resp.status === 401 && retryAuth !== false && promptRestToken()) {
+      resp = await fetch(workerUrl, {
+        method: 'POST',
+        headers: restHeaders(),
+        body: JSON.stringify(payload)
+      });
+    }
+    return resp;
+  }
 
   /* ---- Path del archivo ---- */
   function getFilePath() {
@@ -633,13 +667,9 @@
     setStatus('guardando…', 'saving');
 
     try {
-      var resp = await fetch(workerUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          op: 'save', path: path, html: html,
-          message: 'Edición desde el navegador — ' + new Date().toISOString()
-        })
+      var resp = await postWorker(workerUrl, {
+        op: 'save', path: path, html: html,
+        message: 'Edición desde el navegador — ' + new Date().toISOString()
       });
       if (resp.ok) {
         editing = false;
@@ -705,6 +735,37 @@
     }
   });
 
+  /* ---- Lecturas externas ---- */
+  views.addEventListener('click', async function () {
+    menuPop.classList.remove('show');
+    var workerUrl = getWorkerUrl();
+    if (!workerUrl) return;
+    var path = getFilePath();
+    if (!path) return;
+    try {
+      var resp = await fetch(workerUrl + '/_views?path=' + encodeURIComponent(path), {
+        method: 'GET',
+        headers: restHeaders()
+      });
+      if (resp.status === 401 && promptRestToken()) {
+        resp = await fetch(workerUrl + '/_views?path=' + encodeURIComponent(path), {
+          method: 'GET',
+          headers: restHeaders()
+        });
+      }
+      if (!resp.ok) {
+        alert('No se pudieron leer las aperturas (' + resp.status + ').');
+        return;
+      }
+      var data = await resp.json();
+      var total = data.external_views || 0;
+      var last = data.last_view_at ? new Date(data.last_view_at).toLocaleString('es-AR') : '—';
+      alert('Lecturas externas de ' + path + ': ' + total + '\nÚltima apertura: ' + last);
+    } catch (e) {
+      alert('No se pudo consultar lecturas.\n\n' + e.message);
+    }
+  });
+
   /* ---- Advertencia al cerrar ---- */
   window.addEventListener('beforeunload', function (e) {
     if (dirty) { e.preventDefault(); e.returnValue = ''; return ''; }
@@ -756,13 +817,9 @@
           rb.textContent = 'restaurando…';
           var workerUrl = getWorkerUrl();
           try {
-            var resp = await fetch(workerUrl, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                op: 'revert', path: path, sha: c.sha,
-                message: 'Restore from ' + c.short + ' — ' + new Date().toISOString()
-              })
+            var resp = await postWorker(workerUrl, {
+              op: 'revert', path: path, sha: c.sha,
+              message: 'Restore from ' + c.short + ' — ' + new Date().toISOString()
             });
             if (resp.ok) {
               dirty = false;

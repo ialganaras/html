@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>fyoDigital · Copiloto comercial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal:#1a8a9e; --teal-d:#15707f; --teal-dd:#115b67;
+    --teal-50:#ecf6f8; --teal-100:#d8edf0; --teal-200:#bfe2e7;
+    --ink:#2b2f33; --ink-strong:#1d2226; --muted:#7a828a; --muted-2:#9aa1a8;
+    --app:#ededed; --card:#ffffff;
+    --border:#e4e6e8; --border-2:#eef0f1; --line:#f0f1f2;
+    --pos:#2e8b57; --pos-bg:#e7f4ec;
+    --neg:#c1483f; --neg-bg:#fbe9e7;
+    --warn:#b6791a; --warn-bg:#fbf2e1;
+    --neu:#7a828a; --neu-bg:#eef0f1;
+    --blue-link:#1a56b0;
+    --r:8px; --r-sm:6px;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+    --sans:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+    --sh:0 1px 2px rgba(30,40,50,.04),0 2px 10px rgba(30,40,50,.05);
+    --sh-lg:0 6px 18px rgba(20,40,55,.10),0 18px 44px rgba(20,40,55,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--sans);background:var(--app);color:var(--ink);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .num{font-variant-numeric:tabular-nums}
+
+  /* ===== TOP BAR ===== */
+  .topbar{background:var(--teal);height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:60;color:#fff}
+  .topbar .left{display:flex;align-items:center;gap:16px}
+  .topbar .burger{width:24px;height:24px;cursor:pointer;opacity:.95}
+  .topbar .icons{display:flex;align-items:center;gap:20px}
+  .topbar .icons svg{width:20px;height:20px;cursor:pointer;opacity:.92;transition:.15s}
+  .topbar .icons svg:hover{opacity:1}
+
+  /* ===== MODULE NAV ===== */
+  .modnav{background:#fff;border-bottom:1px solid var(--border);height:50px;display:flex;align-items:stretch;padding:0 20px;position:sticky;top:50px;z-index:55;overflow-x:auto}
+  .modnav::-webkit-scrollbar{height:0}
+  .modnav .logo{display:flex;align-items:center;gap:6px;font-weight:700;font-size:18px;color:var(--teal);padding-right:26px;white-space:nowrap}
+  .modnav .logo svg{width:15px;height:15px}
+  .modnav .logo b{font-weight:700}
+  .modnav nav{display:flex;align-items:stretch}
+  .modnav a{display:flex;align-items:center;padding:0 16px;font-size:13.5px;color:#55606a;font-weight:500;white-space:nowrap;text-decoration:none;border-bottom:2.5px solid transparent;transition:.14s;cursor:pointer;position:relative}
+  .modnav a:hover{color:var(--teal-d)}
+  .modnav a.active{color:var(--teal);font-weight:600;border-bottom-color:var(--teal)}
+  .modnav a .ia{font-family:var(--mono);font-size:9px;font-weight:700;background:var(--teal);color:#fff;border-radius:3px;padding:1px 4px;margin-left:6px;letter-spacing:.04em}
+
+  /* ===== CONTENT ===== */
+  .content{max-width:1240px;margin:0 auto;padding:18px 20px 40px}
+  .panel{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+
+  /* sub-tabs */
+  .subtabs{display:flex;align-items:stretch;border-bottom:1px solid var(--border);padding:0 8px;overflow-x:auto}
+  .subtabs::-webkit-scrollbar{height:0}
+  .subtab{display:flex;align-items:center;gap:8px;padding:15px 16px 13px;font-size:13.5px;color:#5b656e;font-weight:500;white-space:nowrap;cursor:pointer;border-bottom:2.5px solid transparent;transition:.14s}
+  .subtab:hover{color:var(--teal-d)}
+  .subtab.active{color:var(--teal);font-weight:600;border-bottom-color:var(--teal)}
+  .subtab .cnt{font-family:var(--mono);font-size:11px;font-weight:600;background:var(--teal-100);color:var(--teal-dd);border-radius:99px;padding:0 6px}
+  .subtab.active .cnt{background:var(--teal);color:#fff}
+
+  /* context strip */
+  .ctxstrip{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--border-2);background:#fcfcfd;flex-wrap:wrap}
+  .ctxstrip .pill{display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:var(--r-sm);padding:7px 11px;font-size:13px;color:#4b545c;background:#fff;min-height:34px}
+  .ctxstrip .pill svg{width:15px;height:15px;color:var(--muted-2)}
+  .ctxstrip .pill.client{color:var(--teal-dd);font-weight:600;border-color:var(--teal-200);background:var(--teal-50)}
+  .ctxstrip .pill .chev{margin-left:2px;color:var(--muted-2)}
+  .ctxstrip .spacer{flex:1}
+  .ctxstrip .iconbtn{width:34px;height:34px;border:1px solid var(--border);border-radius:var(--r-sm);background:#fff;display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer}
+  .ctxstrip .iconbtn:hover{color:var(--teal);border-color:var(--teal-200)}
+  .ctxstrip .iconbtn svg{width:17px;height:17px}
+
+  .body{padding:22px 22px 8px}
+
+  /* ===== VIEWS ===== */
+  .view{display:none}
+  .view.active{display:block;animation:fade .2s ease-out}
+  @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+  .vhead{margin-bottom:18px}
+  .vhead .eyebrow{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin-bottom:7px}
+  .vhead h1{font-size:22px;font-weight:700;color:var(--ink-strong);letter-spacing:-.01em;line-height:1.15}
+  .vhead p{font-size:13.5px;color:var(--muted);margin-top:7px;max-width:680px}
+
+  .seyebrow{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:11px;margin:26px 0 13px}
+  .seyebrow::after{content:"";flex:1;height:1px;background:var(--border)}
+  .seyebrow .n{font-family:var(--mono);color:var(--teal);background:var(--teal-50);border-radius:4px;padding:1px 6px}
+
+  /* grids */
+  .grid{display:grid;gap:14px}
+  .g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+
+  /* kpi */
+  .kpi{border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;background:#fff}
+  .kpi .l{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+  .kpi .v{font-size:23px;font-weight:700;color:var(--ink-strong);margin-top:6px;line-height:1;letter-spacing:-.01em}
+  .kpi .v .u{font-size:13px;color:var(--muted-2);font-weight:600;margin-right:2px}
+  .kpi .s{font-size:11.5px;color:var(--muted);margin-top:6px}
+  .kpi .s.up{color:var(--pos)} .kpi .s.down{color:var(--neg)}
+
+  .box{border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;background:#fff}
+  .box h3{font-size:13.5px;font-weight:700;color:var(--ink-strong)}
+  .box p{font-size:13px;color:var(--muted);margin-top:8px}
+  .box p b{color:var(--ink)}
+
+  /* chips */
+  .chip{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:700;white-space:nowrap;letter-spacing:.01em}
+  .chip.buy,.chip.pos{background:var(--pos-bg);color:var(--pos)}
+  .chip.sell,.chip.neg{background:var(--neg-bg);color:var(--neg)}
+  .chip.hold,.chip.neu{background:var(--neu-bg);color:var(--neu)}
+  .chip.warn{background:var(--warn-bg);color:var(--warn)}
+  .chip.info{background:var(--teal-50);color:var(--teal-dd)}
+  .chip.cat{background:var(--teal-50);color:var(--teal-dd);font-family:var(--mono)}
+  .tick{font-family:var(--mono);font-weight:700;color:var(--ink-strong)}
+  .idt{font-family:var(--mono);font-size:11.5px;color:var(--muted-2);font-weight:500}
+
+  /* tables */
+  .tablecard{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:#fff}
+  .tablecard .th{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .tablecard .th h3{font-size:13.5px;font-weight:700;color:var(--ink-strong)}
+  .tablecard .th .sub{font-size:12px;color:var(--muted);margin-top:3px}
+  table{width:100%;border-collapse:collapse}
+  thead th{text-align:left;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted-2);padding:9px 14px;border-bottom:1px solid var(--border);background:#fafbfb}
+  thead th.r,td.r{text-align:right}
+  tbody td{padding:10px 14px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:middle}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:hover td{background:#fafbfc}
+  .tn{font-weight:600;color:var(--ink-strong)}
+  .note{font-size:12px;color:var(--muted)}
+  tr.clickable{cursor:pointer}
+  tr.clickable:hover td{background:var(--teal-50)}
+  .golink{color:var(--teal);font-weight:600;font-size:12px}
+
+  /* callout */
+  .callout{border-radius:var(--r-sm);padding:13px 15px 13px 16px;font-size:13px;line-height:1.55;position:relative;border:1px solid transparent}
+  .callout::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
+  .callout.warn{background:var(--warn-bg);color:#6e4d12;border-color:#ecd9af}.callout.warn::before{background:var(--warn)}
+  .callout.info{background:var(--teal-50);color:var(--teal-dd);border-color:var(--teal-200)}.callout.info::before{background:var(--teal)}
+  .callout .ct{font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+  .callout b{font-weight:700}
+
+  .stat-inline{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 12px}
+  .si{background:#fafbfb;border:1px solid var(--border);border-radius:var(--r-sm);padding:6px 11px}
+  .si .l{font-size:10px;text-transform:uppercase;letter-spacing:.03em;color:var(--muted-2);font-weight:600}
+  .si .v{font-family:var(--mono);font-weight:700;font-size:13.5px;color:var(--ink-strong);margin-top:2px}
+
+  /* call board */
+  .call{border:1px solid var(--border);border-radius:var(--r);background:#fff;padding:15px 17px;display:grid;grid-template-columns:34px 1fr 150px;gap:16px;align-items:center;position:relative;overflow:hidden}
+  .call::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--teal)}
+  .call .rank{font-size:22px;font-weight:700;color:var(--teal);text-align:center}
+  .call .nm{font-weight:700;font-size:14.5px;color:var(--ink-strong);display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .call .ang{font-size:12.5px;color:var(--muted);margin-top:5px;line-height:1.45}
+  .call .meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .call .gw{text-align:right}
+  .call .nl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted-2)}
+  .call .nv{font-size:19px;font-weight:700;color:var(--ink-strong);margin:2px 0 6px}
+  .gauge{height:5px;background:var(--neu-bg);border-radius:99px;overflow:hidden}
+  .gauge>i{display:block;height:100%;border-radius:99px;background:var(--teal);width:0;transition:width .8s cubic-bezier(.2,.7,.2,1)}
+
+  /* mix bar */
+  .mixbar{display:flex;height:12px;border-radius:99px;overflow:hidden;border:1px solid var(--border)}
+  .mixbar>span{display:block;height:100%}
+  .legend{display:flex;flex-wrap:wrap;gap:9px 16px;margin-top:13px}
+  .legend .li{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+  .legend .sw{width:10px;height:10px;border-radius:3px}
+  .legend .pct{font-family:var(--mono);font-weight:600;color:var(--ink-strong)}
+
+  /* holdings */
+  .hg{margin-bottom:15px}
+  .hg .l{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .hg .l .c{font-family:var(--mono);background:#fafbfb;border:1px solid var(--border);border-radius:99px;padding:0 7px;font-size:10.5px;color:var(--muted)}
+  .tags{display:flex;flex-wrap:wrap;gap:6px}
+  .tag{padding:4px 9px;border-radius:var(--r-sm);background:#fafbfb;border:1px solid var(--border);font-size:12px;color:#566069;font-weight:500}
+  .tag.flag{background:var(--warn-bg);border-color:#ecd9af;color:#6e4d12;font-weight:600}
+
+  /* rec */
+  .rec{border:1px solid var(--border);border-radius:var(--r);background:#fff;padding:17px 19px;position:relative;overflow:hidden}
+  .rec .rail{position:absolute;left:0;top:0;bottom:0;width:3px}
+  .rec.add .rail{background:var(--pos)}.rec.up .rail{background:var(--teal)}.rec.hold .rail{background:var(--warn)}.rec.alert .rail{background:var(--neg)}
+  .rec .top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:11px}
+  .rec .top .tk{font-family:var(--mono);font-weight:700;font-size:19px;color:var(--ink-strong)}
+  .rec .top .nm{font-size:12.5px;color:var(--muted);font-weight:500;margin-left:10px}
+  .rec ul{list-style:none;display:grid;gap:8px}
+  .rec li{font-size:13px;color:var(--ink);padding-left:18px;position:relative;line-height:1.5}
+  .rec li::before{content:"";position:absolute;left:3px;top:8px;width:5px;height:5px;border-radius:99px;background:var(--teal)}
+  .rec li.x::before{background:var(--neg)}
+  .rec li b{color:var(--ink-strong);font-weight:700}
+
+  /* roll cards */
+  .roll{border:1px solid var(--border);border-radius:var(--r);background:#fff;padding:15px 17px}
+  .roll .h{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+  .roll .h .tag-vto{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+  .roll .h .tk{font-family:var(--mono);font-weight:700;color:var(--ink-strong)}
+  .roll .opt{display:flex;gap:9px;align-items:flex-start;padding:8px 0;border-top:1px solid var(--line)}
+  .roll .opt:first-of-type{border-top:none}
+  .roll .opt .ot{font-size:12.5px;color:var(--ink);line-height:1.45}
+  .roll .opt .ot b{color:var(--ink-strong)}
+
+  /* talk */
+  .talk{counter-reset:tk;display:grid;gap:9px}
+  .talk .ti{display:grid;grid-template-columns:24px 1fr;gap:12px;align-items:start}
+  .talk .ti .num{counter-increment:tk;width:24px;height:24px;border-radius:7px;background:var(--teal-50);color:var(--teal-dd);font-family:var(--mono);font-weight:700;font-size:11.5px;display:flex;align-items:center;justify-content:center}
+  .talk .ti .num::before{content:counter(tk)}
+  .talk .ti .tx{font-size:13px;color:var(--ink);line-height:1.5;padding-top:2px}
+  .talk .ti .tx b{color:var(--ink-strong);font-weight:700}
+
+  /* action banner */
+  .abanner{display:flex;gap:14px;align-items:center;padding:15px 18px;background:var(--warn-bg);border:1px solid #ecd9af;border-radius:var(--r)}
+  .abanner .ic{width:40px;height:40px;border-radius:10px;background:var(--warn);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .abanner .t{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--warn)}
+  .abanner .b{font-size:13px;color:#6e4d12;margin-top:3px;line-height:1.5}.abanner .b b{color:#4a3209;font-weight:700}
+
+  /* inverse callout */
+  .inverse{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;background:var(--teal-50);border:1px solid var(--teal-200);border-radius:var(--r);margin-bottom:18px}
+  .inverse .ic{width:36px;height:36px;border-radius:9px;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .inverse .t{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--teal-dd)}
+  .inverse .d{font-size:13px;color:var(--teal-dd);margin-top:3px;line-height:1.5}.inverse .d b{font-weight:700}
+
+  /* ===== AGENT FOOTER BAR (feedback + chat) ===== */
+  .agentbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:14px;padding:10px 14px;border:1px solid var(--border);border-radius:var(--r);background:#fafbfc}
+  .agentbar.compact{margin-top:11px;padding:8px 12px}
+  .agentbar .id{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+  .agentbar .id .dot{width:7px;height:7px;border-radius:99px;background:var(--teal);box-shadow:0 0 0 3px var(--teal-100)}
+  .agentbar .id b{color:var(--teal-dd);font-weight:600}
+  .agentbar .acts{display:flex;align-items:center;gap:7px}
+  .agentbar .ask{font-size:12px;color:var(--muted);margin-right:2px}
+  .fb{width:30px;height:30px;border:1px solid var(--border);border-radius:7px;background:#fff;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.14s}
+  .fb svg{width:15px;height:15px}
+  .fb:hover{border-color:var(--teal);color:var(--teal)}
+  .fb.on-up{background:var(--pos-bg);border-color:var(--pos);color:var(--pos)}
+  .fb.on-down{background:var(--neg-bg);border-color:var(--neg);color:var(--neg)}
+  .chatbtn{display:flex;align-items:center;gap:7px;border:1px solid var(--teal-200);border-radius:7px;background:var(--teal-50);color:var(--teal-dd);font-weight:600;font-size:12.5px;padding:7px 12px;cursor:pointer;transition:.14s}
+  .chatbtn:hover{background:var(--teal-100);border-color:var(--teal)}
+  .chatbtn svg{width:15px;height:15px}
+  .fb-note{display:none;margin-top:9px;gap:8px}
+  .fb-note.show{display:flex}
+  .fb-note input{flex:1;border:1px solid var(--border);border-radius:7px;padding:8px 11px;font-size:12.5px;font-family:var(--sans);color:var(--ink);outline:none}
+  .fb-note input:focus{border-color:var(--teal)}
+  .fb-note button{border:none;background:var(--teal);color:#fff;border-radius:7px;padding:0 14px;font-weight:600;font-size:12.5px;cursor:pointer}
+  .fb-thanks{font-size:12px;color:var(--pos);font-weight:600;display:none;align-items:center;gap:6px}
+  .fb-thanks.show{display:flex}
+  .fb-thanks svg{width:14px;height:14px}
+
+  /* sources */
+  .sources{margin-top:14px;padding:10px 14px;border:1px dashed var(--border);border-radius:var(--r-sm);font-size:11.5px;color:var(--muted-2);display:flex;gap:8px;align-items:flex-start}
+  .sources svg{flex-shrink:0;margin-top:1px;width:13px;height:13px}
+  .sources b{color:var(--muted);font-weight:600}
+
+  .nextbtn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--teal-200);border-radius:7px;background:#fff;color:var(--teal-dd);font-weight:600;font-size:13px;padding:9px 15px;cursor:pointer;transition:.14s}
+  .nextbtn:hover{background:var(--teal-50);border-color:var(--teal)}
+
+  /* ===== FOOTER ===== */
+  footer{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;font-size:12px;color:var(--muted-2);max-width:1240px;margin:0 auto}
+  footer a{color:var(--blue-link);text-decoration:none}
+  footer a:hover{text-decoration:underline}
+
+  /* ===== CHAT DRAWER ===== */
+  .overlay{position:fixed;inset:0;background:rgba(20,30,38,.34);opacity:0;visibility:hidden;transition:.2s;z-index:100}
+  .overlay.open{opacity:1;visibility:visible}
+  .drawer{position:fixed;top:0;right:0;bottom:0;width:430px;max-width:92vw;background:#fff;box-shadow:var(--sh-lg);transform:translateX(100%);transition:transform .26s cubic-bezier(.3,.8,.3,1);z-index:101;display:flex;flex-direction:column}
+  .drawer.open{transform:none}
+  .dr-head{background:var(--teal);color:#fff;padding:15px 18px;display:flex;align-items:center;gap:11px}
+  .dr-head .av{width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .dr-head .av svg{width:19px;height:19px}
+  .dr-head .nm{font-weight:700;font-size:14.5px;line-height:1.2}
+  .dr-head .ctx{font-size:11.5px;opacity:.85;margin-top:2px}
+  .dr-head .x{margin-left:auto;cursor:pointer;opacity:.85;width:22px;height:22px}
+  .dr-head .x:hover{opacity:1}
+  .dr-body{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:13px;background:#f7f8f9}
+  .msg{max-width:86%;font-size:13px;line-height:1.5;padding:10px 13px;border-radius:13px;box-shadow:var(--sh)}
+  .msg.bot{background:#fff;color:var(--ink);align-self:flex-start;border-bottom-left-radius:4px}
+  .msg.me{background:var(--teal);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+  .msg.bot b{color:var(--ink-strong)}.msg.me b{color:#fff}
+  .typing{align-self:flex-start;background:#fff;border-radius:13px;border-bottom-left-radius:4px;padding:12px 15px;box-shadow:var(--sh);display:none;gap:4px}
+  .typing.show{display:flex}
+  .typing span{width:7px;height:7px;border-radius:99px;background:var(--muted-2);animation:bounce 1s infinite}
+  .typing span:nth-child(2){animation-delay:.15s}.typing span:nth-child(3){animation-delay:.3s}
+  @keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-5px);opacity:1}}
+  .dr-sugs{padding:11px 14px 0;display:flex;flex-direction:column;gap:7px;background:#fff;border-top:1px solid var(--border)}
+  .dr-sugs .lbl{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-2)}
+  .sug{text-align:left;border:1px solid var(--teal-200);background:var(--teal-50);color:var(--teal-dd);border-radius:8px;padding:8px 11px;font-size:12.5px;font-weight:500;cursor:pointer;font-family:var(--sans);transition:.14s}
+  .sug:hover{background:var(--teal-100)}
+  .dr-input{display:flex;gap:8px;padding:12px 14px;background:#fff;border-top:1px solid var(--border)}
+  .dr-input input{flex:1;border:1px solid var(--border);border-radius:9px;padding:10px 13px;font-size:13px;font-family:var(--sans);color:var(--ink);outline:none}
+  .dr-input input:focus{border-color:var(--teal)}
+  .dr-input button{border:none;background:var(--teal);color:#fff;width:42px;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .dr-input button svg{width:18px;height:18px}
+  .dr-disc{font-size:10.5px;color:var(--muted-2);text-align:center;padding:0 14px 11px;background:#fff}
+
+  /* responsive */
+  @media(max-width:900px){
+    .g4,.g3{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}
+    .call{grid-template-columns:30px 1fr}.call .gw{grid-column:1/-1;display:flex;align-items:center;gap:12px;text-align:left}.call .gw .gauge{flex:1}
+    .modnav .logo{padding-right:16px}
+  }
+  @media(max-width:560px){.g4,.g3{grid-template-columns:1fr}.content{padding:12px 12px 30px}.body{padding:16px 14px 6px}}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.gauge>i{transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="left">
+    <svg class="burger" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </div>
+  <div class="icons">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+  </div>
+</div>
+
+<!-- MODULE NAV -->
+<div class="modnav">
+  <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg><span>fyo<b>Capital</b></span></div>
+  <nav>
+    <a>Portfolio</a>
+    <a>Cuenta corriente</a>
+    <a>Valores y rendimientos</a>
+    <a>Boletos y comprobantes</a>
+    <a>Transferencia de fondos</a>
+    <a>Aprobaciones</a>
+    <a>Mercado</a>
+    <a class="active">Copiloto<span class="ia">IA</span></a>
+    <a>Solicitudes</a>
+  </nav>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+  <div class="panel">
+
+    <!-- SUB-TABS -->
+    <div class="subtabs" id="tabs">
+      <div class="subtab active" data-view="mercado">Pulso de mercado</div>
+      <div class="subtab" data-view="llamar">A quién llamar <span class="cnt">15</span></div>
+      <div class="subtab" data-view="vto">Vencimientos <span class="cnt">61</span></div>
+      <div class="subtab" data-view="briefing">Briefing</div>
+      <div class="subtab" data-view="acciones">Acciones</div>
+    </div>
+
+    <!-- CONTEXT STRIP -->
+    <div class="ctxstrip">
+      <div class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>Asesor: Cristian G. <span class="chev">▾</span></div>
+      <div class="pill" id="ctxClient"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Alcance: cartera fyoCapital</div>
+      <div class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>25/6/2026</div>
+      <div class="spacer"></div>
+      <div class="iconbtn" title="Exportar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div>
+    </div>
+
+    <div class="body">
+
+      <!-- ============ 01 · MERCADO ============ -->
+      <section class="view active" id="view-mercado">
+        <div class="vhead">
+          <div class="eyebrow">Pulso de mercado · al 05/06</div>
+          <h1>Qué cambió, y qué mirar hoy</h1>
+          <p>Síntesis de research para arrancar la rueda: global, equity y soberanos AR, más la cartera modelo conservadora del View FyO.</p>
+        </div>
+
+        <div class="grid g4">
+          <div class="kpi"><div class="l">S&amp;P 500</div><div class="v">máximo</div><div class="s down">−2,6% en la semana tras récord (+19% en 9,5 sem.)</div></div>
+          <div class="kpi"><div class="l">UST 10Y</div><div class="v mono" style="font-size:20px">4,59%</div><div class="s down">desde 4,25% en el mes · 70% tasa real</div></div>
+          <div class="kpi"><div class="l">BCRA · compras YTD</div><div class="v"><span class="u">USD</span>8.851<span class="u" style="font-size:12px"> MM</span></div><div class="s up">4× la guía · reservas 46.751 MM</div></div>
+          <div class="kpi"><div class="l">Cupón soberano julio</div><div class="v">55%</div><div class="s up">cubierto por buffer Tesoro</div></div>
+        </div>
+
+        <div class="seyebrow"><span class="n">A</span> Tesis del momento</div>
+        <div class="grid g2">
+          <div class="box">
+            <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px"><span class="chip warn">Cautela</span><h3>IA como aspiradora de capital</h3></div>
+            <p>Las Mag7 + AVGO/AMD/MU pasaron a <b>demandar</b> capital por encima del que generan (Alphabet colocó USD 80 bn + USD 65 bn de deuda nueva desde fin 2024). Planean ~USD 700 bn de CapEx en 2026 y ~USD 1 tn en 2027. Un corte del ciclo sería dramático. Cautela táctica para todo el bloque tech/IA en CEDEARs.</p>
+          </div>
+          <div class="box">
+            <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px"><span class="chip info">Watchlist</span><h3>IPO de SpaceX · semana próxima</h3></div>
+            <p>Busca una valuación de <b>~USD 1,75 tn</b> — el mayor IPO de la historia. La regla "Fast Entry" del Nasdaq 100 lo incorpora al día 15 → <b>demanda pasiva forzada de QQQ</b>. A vigilar en los CEDEARs ligados al índice (flujo positivo de corto plazo en MSFT, META).</p>
+          </div>
+        </div>
+
+        <div class="seyebrow"><span class="n">B</span> Argentina · equity y soberanos</div>
+        <div class="grid g3">
+          <div class="box"><h3 style="color:var(--teal-dd)">Bancos AR</h3><p>Delphos <b>sobrepondera</b>: −17% P/BV vs Latam (venían +100% de premium a inicios de 2025). Costo de riesgo ya hizo pico; recuperación esperada para 2S26. ROE 1T26 disperso (Macro 11,6% lidera, Supervielle 2,5% rezagado).</p></div>
+          <div class="box"><h3 style="color:var(--teal-dd)">Energía</h3><p>YPF volvió a correlacionar con el crudo (cautela táctica). <span class="tick">VIST</span> a <b>3,8× EV/EBITDA fwd</b> (−17% vs comparables), valor estructural intacto. El Merval ya depende más de drivers internacionales.</p></div>
+          <div class="box"><h3 style="color:var(--teal-dd)">Flujos 13F (1T)</h3><p>Apetito institucional por AR: Duquesne (Druckenmiller) <b>USD 128 M en YPF</b> + amplió VIST y ARGT; JPMorgan en Vista; Citi en Galicia; MS/UBS/Goldman en ARGT.</p></div>
+        </div>
+
+        <div class="seyebrow"><span class="n">C</span> Cartera modelo conservadora · View FyO bisemanal MDC</div>
+        <div class="tablecard">
+          <table>
+            <thead><tr><th>Instrumento</th><th>Tipo</th><th class="r">Peso</th><th>View</th><th>Comentario</th></tr></thead>
+            <tbody>
+              <tr><td class="tick">TXMJ9</td><td class="note">Dual</td><td class="r mono">30%</td><td><span class="chip buy">BULLISH</span></td><td class="note">Más beneficiado en aplanamiento de curva (Balanz)</td></tr>
+              <tr><td class="tick">S30S6</td><td class="note">LECAP</td><td class="r mono">20%</td><td><span class="chip hold">HOLD</span></td><td class="note">—</td></tr>
+              <tr><td class="tick">TZXM7</td><td class="note">CER</td><td class="r mono">15%</td><td><span class="chip buy">BUY</span></td><td class="note">View inflación + duration</td></tr>
+              <tr><td class="tick">TZXO6</td><td class="note">CER</td><td class="r mono">15%</td><td><span class="chip buy">BUY</span></td><td class="note">—</td></tr>
+              <tr><td class="tick">T30A7</td><td class="note">BONCAP</td><td class="r mono">10%</td><td><span class="chip buy">BUY</span></td><td class="note">Rotado desde S30O6 · tramo largo</td></tr>
+              <tr><td class="tick">TZV26</td><td class="note">DL</td><td class="r mono">resto</td><td><span class="chip buy">BUY</span></td><td class="note">Break-even Facimex</td></tr>
+              <tr><td class="tick">AO28</td><td class="note">HD soberano</td><td class="r mono">—</td><td><span class="chip buy">BUY</span></td><td class="note">Premio 0,05% TIR última lici · quedan 666 M USD</td></tr>
+              <tr><td class="tick">AO27</td><td class="note">HD soberano</td><td class="r mono">—</td><td><span class="chip hold">HOLD</span></td><td class="note">Sin premio · agotados los 2.000 M</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="agentbar" data-ctx="mercado">
+          <div class="id"><span class="dot"></span>Generado por <b>Feed de research</b> · Delphos + View FyO</div>
+          <div class="acts">
+            <span class="ask">¿Te sirvió?</span>
+            <button class="fb" data-v="up" title="Útil">{{UP}}</button>
+            <button class="fb" data-v="down" title="No útil">{{DOWN}}</button>
+            <span class="fb-thanks">{{CHK}} Gracias — calibra al agente</span>
+            <button class="chatbtn" data-ctx="mercado">{{CHAT}} Preguntar al agente</button>
+          </div>
+        </div>
+        <div class="fb-note"><input type="text" placeholder="¿Qué ajustarías? (opcional, suma al RL)"><button>Enviar</button></div>
+
+        <div class="sources"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><span><b>Fuentes:</b> Delphos Investment Semanales 1564–1566 (22-may a 05-jun) · View FyO bisemanal MDC (05/06/2026).</span></div>
+
+        <div style="margin-top:18px;display:flex;justify-content:flex-end"><button class="nextbtn" data-goto="llamar">Ver a quién llamar con esto →</button></div>
+      </section>
+
+      <!-- ============ 02 · A QUIÉN LLAMAR ============ -->
+      <section class="view" id="view-llamar">
+        <div class="vhead">
+          <div class="eyebrow">A quién llamar hoy</div>
+          <h1>Prioridades de la rueda</h1>
+          <p>Las novedades del feed cruzadas con el ranking NBA. Primero el top de prioridad; abajo, el ruteo por ángulo de conversación.</p>
+        </div>
+
+        <div class="seyebrow"><span class="n">★</span> Top 3 para llamar hoy</div>
+        <div class="grid" style="gap:12px">
+          <div class="call">
+            <div class="rank">1</div>
+            <div><div class="nm">FELIPE CROSETTI S.A. <span class="idt">#281</span></div><div class="ang">Excusa perfecta: View MDC bisemanal (rotación CER + Duales) sobre un cliente Cat. A que no opera hace casi 2 años.</div><div class="meta"><span class="chip info">OPTIMIZAR YIELD</span><span class="chip warn">Dormido 589 d</span><span class="chip cat">CAT A</span></div></div>
+            <div class="gw"><div class="nl">NBA score</div><div class="nv mono">0,855</div><div class="gauge"><i data-w="85.5"></i></div></div>
+          </div>
+          <div class="call">
+            <div class="rank">2</div>
+            <div><div class="nm">YERUTI S.A. <span class="idt">#653</span></div><div class="ang">Productor Cat. A, ideal para sumar HD soberanos pre-cupón de julio. Wallet gap de USD 3.547.</div><div class="meta"><span class="chip pos">CRECER</span><span class="chip warn">Dormido 132 d</span><span class="chip cat">CAT A</span></div></div>
+            <div class="gw"><div class="nl">NBA score</div><div class="nv mono">0,783</div><div class="gauge"><i data-w="78.3"></i></div></div>
+          </div>
+          <div class="call">
+            <div class="rank">3</div>
+            <div><div class="nm">TOMAS HNOS Y CIA. <span class="idt">#629</span></div><div class="ang">Activo (recencia 1 d), CLV USD 57k. Tema: 13-F + flujos institucionales en YPF / VIST / GGAL.</div><div class="meta"><span class="chip info">REVISAR</span><span class="chip neu">Activo</span></div></div>
+            <div class="gw"><div class="nl">NBA score</div><div class="nv mono">0,782</div><div class="gauge"><i data-w="78.2"></i></div></div>
+          </div>
+        </div>
+
+        <div class="seyebrow"><span class="n">A</span> View MDC · rotación de renta fija</div>
+        <div class="tablecard">
+          <div class="th"><div><h3>OPTIMIZAR YIELD</h3><div class="sub">Cómo armar / rotar la pata conservadora (TXMJ9 · T30A7 · CER · TZV26)</div></div></div>
+          <table><thead><tr><th>Cliente</th><th>ID</th><th class="r">Yield uplift est.</th><th>Nota</th></tr></thead><tbody>
+            <tr><td class="tn">GRUPO SARTORI</td><td class="idt">921</td><td class="r mono">USD 18.890</td><td class="note">Mayor uplift del bloque</td></tr>
+            <tr><td class="tn">RIBOLDI S.A.</td><td class="idt">558</td><td class="r mono">USD 15.143</td><td class="note">Activo (recencia 1 d)</td></tr>
+            <tr><td class="tn">CRESUD</td><td class="idt">200</td><td class="r mono">USD 11.359</td><td class="note">Cat A · comis. USD 187k</td></tr>
+            <tr><td class="tn">SOUTHERN SEEDS</td><td class="idt">7769</td><td class="r mono">USD 3.867</td><td class="note">CLV USD 127k</td></tr>
+          </tbody></table>
+        </div>
+
+        <div class="seyebrow"><span class="n">B</span> Cupón de julio HD · tesis constructiva soberanos</div>
+        <div class="tablecard">
+          <div class="th"><div><h3>PROTEGER</h3><div class="sub">Qué hacer con el cobro de julio · AO28 BUY · top de cartera con HD</div></div></div>
+          <table><thead><tr><th>Cliente</th><th>ID</th><th class="r">Comis. USD</th><th>Nota</th></tr></thead><tbody>
+            <tr><td class="tn">JUAMARITA</td><td class="idt">8380</td><td class="r mono">181.605</td><td class="note">Cat A · CLV USD 102k</td></tr>
+            <tr><td class="tn">DON PONCIANO</td><td class="idt">223</td><td class="r mono">155.251</td><td class="note">Recencia 58 d · conviene retomar</td></tr>
+            <tr><td class="tn">RURALCO</td><td class="idt">575</td><td class="r mono">42.141</td><td class="note">Yield uplift USD 28.984</td></tr>
+            <tr><td class="tn">BOIX JUAN ESTEBAN</td><td class="idt">3602</td><td class="r mono">11.027</td><td class="note">Wallet gap USD 19k + uplift USD 35k</td></tr>
+          </tbody></table>
+        </div>
+
+        <div class="seyebrow"><span class="n">C</span> Equity AR · bancos, Vista/YPF, flujos 13-F</div>
+        <div class="tablecard">
+          <div class="th"><div><h3>REVISAR</h3><div class="sub">Cuentas grandes activas + perfiles sofisticados (arquetipos 3–4, ticket grande)</div></div><span class="chip info">también aplica al ángulo D · IPO SpaceX</span></div>
+          <table><thead><tr><th>Cliente</th><th>ID</th><th class="r">CLV</th><th>Arquetipo</th><th></th></tr></thead><tbody>
+            <tr class="clickable" data-goto="briefing"><td class="tn" style="color:var(--teal-dd)">PONCE MICINO R.</td><td class="idt">1045</td><td class="r mono">USD 1.465k</td><td><span class="chip cat">ARQ 4</span></td><td class="r"><span class="golink">Ver briefing →</span></td></tr>
+            <tr><td class="tn">LARTIRIGOYEN Y CIA.</td><td class="idt">417</td><td class="r mono">USD 494k</td><td><span class="chip cat">ARQ 4</span></td><td></td></tr>
+            <tr><td class="tn">ALEA Y CIA</td><td class="idt">70</td><td class="r mono">USD 259k</td><td><span class="chip cat">ARQ 4</span></td><td></td></tr>
+            <tr><td class="tn">GAGLIARDO AGRICOLA</td><td class="idt">304</td><td class="r mono">USD 37k</td><td><span class="chip cat">ARQ 3</span></td><td></td></tr>
+          </tbody></table>
+        </div>
+
+        <div class="seyebrow"><span class="n">E</span> Reactivar dormidos · la novedad como excusa</div>
+        <div class="tablecard">
+          <table><thead><tr><th>Cliente</th><th>ID</th><th class="r">Días sin operar</th><th>Acción</th><th>Nota</th></tr></thead><tbody>
+            <tr><td class="tn">MARTIN RAFAEL R.</td><td class="idt">1040</td><td class="r mono">855</td><td><span class="chip neu">RETENER</span></td><td class="note">churn 0,13</td></tr>
+            <tr><td class="tn">ALFREDO S. MONDINO</td><td class="idt">72</td><td class="r mono">240</td><td><span class="chip pos">CRECER</span></td><td class="note">gap USD 8.482 + uplift USD 23k</td></tr>
+            <tr><td class="tn">RIZOBACTER ARGENTINA</td><td class="idt">3115</td><td class="r mono">314</td><td><span class="chip pos">CRECER</span></td><td class="note"><span class="chip warn">churn 0,99</span></td></tr>
+            <tr><td class="tn">SIECON SA</td><td class="idt">11028</td><td class="r mono">688</td><td><span class="chip pos">CRECER</span></td><td class="note">gap USD 12.297</td></tr>
+          </tbody></table>
+        </div>
+
+        <div class="agentbar" data-ctx="llamar">
+          <div class="id"><span class="dot"></span>Generado por <b>Agente Comercial</b></div>
+          <div class="acts">
+            <span class="ask">¿Te sirvió?</span>
+            <button class="fb" data-v="up" title="Útil">{{UP}}</button>
+            <button class="fb" data-v="down" title="No útil">{{DOWN}}</button>
+            <span class="fb-thanks">{{CHK}} Gracias — calibra al agente</span>
+            <button class="chatbtn" data-ctx="llamar">{{CHAT}} Preguntar al agente</button>
+          </div>
+        </div>
+        <div class="fb-note"><input type="text" placeholder="¿Faltó algún cliente o el ángulo no cierra? (opcional)"><button>Enviar</button></div>
+
+        <div class="sources"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><span><b>Cómo se construye:</b> ranking NBA del sistema FyO cruzado con las tesis del Pulso de mercado. El contacto y la conversación los define el asesor.</span></div>
+      </section>
+
+      <!-- ============ 03 · VENCIMIENTOS (research inverso) ============ -->
+      <section class="view" id="view-vto">
+        <div class="vhead">
+          <div class="eyebrow">Mesa de Renta Fija · research inverso</div>
+          <h1>Vencimiento 30/06/2026 — concentración de calendario</h1>
+          <p>Emitido 24/06/2026 · vence el martes 30/06. Cuatro instrumentos cortos vencen el mismo día sobre la cartera.</p>
+        </div>
+
+        <div class="inverse">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 5 5v0a5 5 0 0 1-5 5H9"/></svg></div>
+          <div><div class="t">Research inverso</div><div class="d">En vez de partir del mercado para buscar clientes, este informe parte de un <b>evento de cartera</b> —un vencimiento que cae sobre 61 clientes el mismo día— y rutea hacia atrás: a quién llamar, cuánto cobra cada uno y qué ofrecerle en el roll.</div></div>
+        </div>
+
+        <div class="grid g3">
+          <div class="kpi"><div class="l">Vencimiento estimado total</div><div class="v"><span class="u">≈ USD</span>39<span class="u" style="font-size:12px"> M</span></div><div class="s">USD-linked en VN + pesos a FX ~1.300</div></div>
+          <div class="kpi"><div class="l">Instrumentos</div><div class="v">4</div><div class="s">DUAL · LECAP · CER · USD-linked</div></div>
+          <div class="kpi"><div class="l">Clientes con exposición</div><div class="v">61</div><div class="s">excl. book FyoCapital prop · vence en 5 días</div></div>
+        </div>
+
+        <div class="seyebrow"><span class="n">①</span> Instrumentos que vencen el 30/06/2026</div>
+        <div class="tablecard">
+          <table><thead><tr><th>Ticker</th><th>Detalle</th><th>Tipo</th><th class="r">Nominales totales</th><th class="r">Clientes</th></tr></thead><tbody>
+            <tr><td class="tick">TTJ26 <span class="idt">/9320</span></td><td class="note">Bono Dual 30/06/26 $</td><td><span class="chip cat">DUAL</span></td><td class="r mono">ARS 2.513.353.204</td><td class="r mono">14</td></tr>
+            <tr><td class="tick">T30J6 <span class="idt">/9318</span></td><td class="note">LECAP cap. 30/06/26 $</td><td><span class="chip cat">LECAP</span></td><td class="r mono">ARS 1.682.213.272</td><td class="r mono">9</td></tr>
+            <tr><td class="tick">TZX26 <span class="idt">/9240</span></td><td class="note">Bono CER 30/06/26 $</td><td><span class="chip cat">CER</span></td><td class="r mono">ARS 582.803.384</td><td class="r mono">4</td></tr>
+            <tr><td class="tick">TZV26 <span class="idt">/9246</span></td><td class="note">Bono USD-linked 30/06/26 · cero cupón</td><td><span class="chip cat">USD-LINK</span></td><td class="r mono">USD 38.435.434 VN</td><td class="r mono">49</td></tr>
+          </tbody></table>
+        </div>
+        <p class="note" style="margin-top:9px">Vencimiento estimado total ≈ USD 39 M. Valores finales sujetos al CER / TAMAR / parity de cada título y al MEP del día.</p>
+
+        <div class="seyebrow"><span class="n">②</span> Top 20 clientes para llamar · por tamaño del vencimiento</div>
+        <div class="tablecard">
+          <div class="th"><div><h3>Priorizado por monto a cobrar</h3><div class="sub">USD aprox. = nominales USD-linked + nominales en pesos / 1.300 (referencial)</div></div></div>
+          <table><thead><tr><th>#</th><th>Cliente</th><th>id_grupo</th><th>Cat</th><th>Acción NBA</th><th class="r">Comis USD</th><th class="r">Vto ~USD</th><th>Instrumentos</th></tr></thead><tbody>
+            <tr><td class="mono">1</td><td class="tn">YABITO SA</td><td class="idt">881</td><td>—</td><td>—</td><td class="r mono">—</td><td class="r mono"><b>14.230.115</b></td><td class="note">TZX26 + TZV26 + TTJ26</td></tr>
+            <tr><td class="mono">2</td><td class="tn">CRESUD</td><td class="idt">200</td><td><span class="chip cat">A</span></td><td><span class="chip info">OPTIMIZAR YIELD</span></td><td class="r mono">187.338</td><td class="r mono">4.000.000</td><td class="note">TZV26</td></tr>
+            <tr><td class="mono">3</td><td class="tn">CEREALES DEC SA</td><td class="idt">—</td><td>—</td><td>—</td><td class="r mono">—</td><td class="r mono">3.598.202</td><td class="note">TZV26</td></tr>
+            <tr><td class="mono">4</td><td class="tn">PRO DE MAN SA</td><td class="idt">540</td><td><span class="chip cat">A</span></td><td><span class="chip info">OPTIMIZAR YIELD</span></td><td class="r mono">64.858</td><td class="r mono">2.454.122</td><td class="note">TZV26</td></tr>
+            <tr><td class="mono">5</td><td class="tn">CEREALISTA MOLDES SA</td><td class="idt">159</td><td><span class="chip cat">A</span></td><td>—</td><td class="r mono">—</td><td class="r mono">2.197.128</td><td class="note">TZV26</td></tr>
+            <tr><td class="mono">6</td><td class="tn">PAMPA BIO SA</td><td class="idt">—</td><td>—</td><td>—</td><td class="r mono">—</td><td class="r mono">2.005.674</td><td class="note">TZV26</td></tr>
+            <tr><td class="mono">7</td><td class="tn">MAN AGRO SA</td><td class="idt">2506</td><td><span class="chip cat">A</span></td><td><span class="chip pos">CRECER</span></td><td class="r mono">80.934</td><td class="r mono">1.519.410</td><td class="note">TZV26</td></tr>
+            <tr><td class="mono">8</td><td class="tn">LOS TACURUCES SA</td><td class="idt">439</td><td><span class="chip cat">B</span></td><td>—</td><td class="r mono">—</td><td class="r mono">1.045.808</td><td class="note">TZV26 + T30J6 + TTJ26</td></tr>
+            <tr><td class="mono">9</td><td class="tn">JUAMARITA SA</td><td class="idt">8380</td><td><span class="chip cat">A</span></td><td><span class="chip warn">PROTEGER</span></td><td class="r mono">181.605</td><td class="r mono">819.940</td><td class="note">TZV26</td></tr>
+            <tr><td class="mono">10</td><td class="tn">FYO ACOPIO SA</td><td class="idt">—</td><td>—</td><td>—</td><td class="r mono">—</td><td class="r mono">761.290</td><td class="note">T30J6</td></tr>
+            <tr><td class="mono">11</td><td class="tn">Coop. Aranguren Ltda.</td><td class="idt">3527</td><td><span class="chip cat">A</span></td><td>—</td><td class="r mono">—</td><td class="r mono">622.240</td><td class="note">TZV26</td></tr>
+            <tr><td class="mono">12</td><td class="tn">AGRO LEBEN SRL</td><td class="idt">13616</td><td class="note">s/cat</td><td><span class="chip pos">CRECER</span></td><td class="r mono">9.058</td><td class="r mono">531.662</td><td class="note">TZV26</td></tr>
+            <tr><td class="mono">13</td><td class="tn">EL PRETEXTO SA</td><td class="idt">244</td><td><span class="chip cat">B</span></td><td><span class="chip info">OPTIMIZAR YIELD</span></td><td class="r mono">86.021</td><td class="r mono">520.360</td><td class="note">TZV26</td></tr>
+            <tr><td class="mono">14</td><td class="tn">NICOLA AGRO SA</td><td class="idt">26</td><td><span class="chip cat">B</span></td><td><span class="chip pos">CRECER</span></td><td class="r mono">1.790</td><td class="r mono">494.450</td><td class="note">TZV26 + T30J6</td></tr>
+            <tr><td class="mono">15</td><td class="tn">MAIOCCO CEREALES SA</td><td class="idt">444</td><td><span class="chip cat">A</span></td><td><span class="chip info">OPTIMIZAR YIELD</span></td><td class="r mono">64.109</td><td class="r mono">452.498</td><td class="note">TZV26</td></tr>
+            <tr><td class="mono">16</td><td class="tn">VILUCO SA</td><td class="idt">650</td><td>—</td><td>—</td><td class="r mono">—</td><td class="r mono">420.706</td><td class="note">TZV26</td></tr>
+            <tr><td class="mono">17</td><td class="tn">ALEA Y CIA SA</td><td class="idt">70</td><td><span class="chip cat">A</span></td><td><span class="chip info">REVISAR</span></td><td class="r mono">375.357</td><td class="r mono">358.846</td><td class="note">TZV26</td></tr>
+            <tr><td class="mono">18</td><td class="tn">MELCHIORI HNOS SA</td><td class="idt">3229</td><td><span class="chip cat">C</span></td><td><span class="chip warn">PROTEGER</span></td><td class="r mono">17.323</td><td class="r mono">322.422</td><td class="note">TZV26 + TTJ26</td></tr>
+            <tr><td class="mono">19</td><td class="tn">EL MALINCHE SAS</td><td class="idt">—</td><td>—</td><td>—</td><td class="r mono">—</td><td class="r mono">292.930</td><td class="note">TZV26</td></tr>
+            <tr><td class="mono">20</td><td class="tn">ESTANCIAS SAN AGUSTÍN SCA</td><td class="idt">270</td><td><span class="chip cat">B</span></td><td>—</td><td class="r mono">—</td><td class="r mono">280.290</td><td class="note">TZV26</td></tr>
+          </tbody></table>
+        </div>
+        <p class="note" style="margin-top:9px">Los 41 clientes restantes suman &lt; USD 1,5 M y se manejan con un comunicado / llamado estándar.</p>
+
+        <div class="seyebrow"><span class="n">③</span> Prioritarios para sentarse cara a cara</div>
+        <div class="grid g2">
+          <div class="box"><h3>YABITO SA · <span class="mono" style="color:var(--teal-dd)">USD 14 M</span></h3><p>Expuesto en los 3 tramos en pesos + USD-linked. Es <b>el caso que más decisión de rotación requiere</b>.</p></div>
+          <div class="box"><h3>CRESUD · <span class="mono" style="color:var(--teal-dd)">USD 4 M</span></h3><p>En dollar-linked, NBA OPTIMIZAR_YIELD, comisión USD 187k → <b>ventana ideal para subir mix</b>.</p></div>
+          <div class="box"><h3>Cuentas grandes con NBA accionable</h3><p>PRO DE MAN, MAN AGRO, JUAMARITA, EL PRETEXTO, MAIOCCO, ALEA — vto material y acción NBA clara (OPTIMIZAR_YIELD / CRECER / PROTEGER).</p></div>
+          <div class="box"><h3>LOS TACURUCES SA</h3><p>Vto en los 3 instrumentos en pesos + dollar-linked; <b>pidió la semana pasada el detalle de cartera</b> (cat. B con USD 1 M maturando).</p></div>
+        </div>
+
+        <div class="seyebrow"><span class="n">④</span> Qué ofrecer en la rotación · View FyO + Delphos vigentes</div>
+        <div class="callout info" style="margin-bottom:14px"><b>Marco general (View MDC 05/06/2026, conservadora pesos):</b> DUAL + LECAP + CER sigue siendo el mix base.</div>
+        <div class="grid g2">
+          <div class="roll">
+            <div class="h"><span class="tag-vto">Vto USD-linked</span><span class="tk">TZV26</span></div>
+            <div class="opt"><span class="chip buy">BUY</span><div class="ot"><b>TZV26 corto</b> como break-even (Facimex) vs tasa fija. Al cobrarse, opciones de roll en moneda dura:</div></div>
+            <div class="opt"><span class="chip buy">BUY</span><div class="ot"><b>AO28</b> (HD corto) — premio última lici 0,05% TIR, quedan USD 666 M por colocar.</div></div>
+            <div class="opt"><span class="chip buy">BUY</span><div class="ot"><b>GD35 / GD41</b> soberano largo — tesis de compresión con riesgo país buscando 480–490.</div></div>
+            <div class="opt"><span class="chip info">DL</span><div class="ot"><b>TZV26 nuevo tramo</b> — si el cliente quiere mantenerse en dollar-linked.</div></div>
+          </div>
+          <div class="roll">
+            <div class="h"><span class="tag-vto">Vto pesos LECAP</span><span class="tk">T30J6</span></div>
+            <div class="opt"><span class="chip hold">HOLD</span><div class="ot">Roll a <b>S30S6</b> (LECAP 30/09/26)…</div></div>
+            <div class="opt"><span class="chip buy">BUY</span><div class="ot">…o estirar a <b>T30A7</b> (BONCAP) — rotación que ya hicimos desde S30O6 buscando compresión en tramo largo.</div></div>
+          </div>
+          <div class="roll">
+            <div class="h"><span class="tag-vto">Vto pesos DUAL</span><span class="tk">TTJ26</span></div>
+            <div class="opt"><span class="chip buy">BULLISH</span><div class="ot"><b>TXMJ9</b> (DUAL) — la cartera conservadora lo lleva al 30%: menor sensibilidad al ajuste de tasas + opcionalidad TAMAR.</div></div>
+            <div class="opt"><span class="chip info">Delphos 1332</span><div class="ot">Refuerzo táctico (17/06): bonos TAMAR <b>pre mandato / pre elecciones</b> como vehículo preferido en pesos — cobertura ante previa electoral + carry positivo vs LECAP corta.</div></div>
+          </div>
+          <div class="roll">
+            <div class="h"><span class="tag-vto">Vto pesos CER</span><span class="tk">TZX26</span></div>
+            <div class="opt"><span class="chip buy">BUY</span><div class="ot"><b>TZXM7 / TZXO6</b> — 15% + 15% de la conservadora; se mantienen por view de inflación y duration.</div></div>
+          </div>
+        </div>
+
+        <div class="callout warn" style="margin-top:16px">
+          <div class="ct">⚠ Caveats antes de mandarlo</div>
+          <b>(1)</b> Los valores en USD son aproximados a FX 1.300 y a nominales (no incluyen parity de LECAP/DUAL ni CER capitalizado al 30/06). Para Top-10 conviene correr tenencias-cliente por id y validar el monto exacto con la mesa. <b>(2)</b> 39 clientes no resolvieron id_grupo automático (Bossio, GALLEANO, Ada Susman, MASCOTENA, Irastorza…) — son individuales / PF.
+        </div>
+
+        <div class="agentbar" data-ctx="vto">
+          <div class="id"><span class="dot"></span>Generado por <b>Mesa de Renta Fija · research</b></div>
+          <div class="acts">
+            <span class="ask">¿Te sirvió?</span>
+            <button class="fb" data-v="up" title="Útil">{{UP}}</button>
+            <button class="fb" data-v="down" title="No útil">{{DOWN}}</button>
+            <span class="fb-thanks">{{CHK}} Gracias — calibra al agente</span>
+            <button class="chatbtn" data-ctx="vto">{{CHAT}} Preguntar al agente</button>
+          </div>
+        </div>
+        <div class="fb-note"><input type="text" placeholder="¿Falta un cliente, o querés otro corte del listado? (opcional)"><button>Enviar</button></div>
+
+        <div class="sources"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><span><b>Fuentes:</b> tenencias-cliente + calendario de vencimientos (sistema FyO Capital) · View FyO MDC (05/06) · Delphos Informe 1332 (17/06/2026). Confidencial · uso interno.</span></div>
+      </section>
+
+      <!-- ============ 04 · BRIEFING ============ -->
+      <section class="view" id="view-briefing">
+        <div class="vhead">
+          <div class="eyebrow">Briefing del cliente · Agente Comercial</div>
+          <h1>Ponce Micino R.</h1>
+          <p style="font-size:13px;color:var(--muted-2);margin-top:4px">René Arnaldo Leonel · <span class="idt">ID 1045</span> · Productor · Cliente Presupuestado</p>
+          <div style="display:flex;gap:7px;margin-top:11px;flex-wrap:wrap"><span class="chip cat">CAT A</span><span class="chip info">ARQUETIPO 4 · sofisticado</span><span class="chip warn">Acción sugerida · REVISAR</span></div>
+        </div>
+
+        <div class="abanner">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></div>
+          <div><div class="t">Por qué aparece como REVISAR</div><div class="b">Cumplimiento de presupuesto 2025/26 cayó al <b>83,7%</b> vs. un histórico promedio de <b>367%</b>. Anomaly score elevado (<b>5,1</b>). Sin riesgo de churn (≈ 0,00003): la señal es el delta negativo de actividad, no fuga.</div></div>
+        </div>
+
+        <div class="seyebrow">Perfil</div>
+        <div class="grid g4">
+          <div class="kpi"><div class="l">CLV · DCF 5 años</div><div class="v"><span class="u">USD</span>1,47<span class="u" style="font-size:12px"> M</span></div><div class="s">USD 1.465.095</div></div>
+          <div class="kpi"><div class="l">Comis. históricas</div><div class="v"><span class="u">USD</span>804<span class="u" style="font-size:12px"> k</span></div><div class="s">USD 803.989</div></div>
+          <div class="kpi"><div class="l">Comis. 25/26 anual.</div><div class="v"><span class="u">USD</span>374<span class="u" style="font-size:12px"> k</span></div><div class="s">USD 374.119</div></div>
+          <div class="kpi"><div class="l">NBA score</div><div class="v">0,77</div><div class="s up">churn ≈ 0,00003 · sin fuga</div></div>
+        </div>
+        <div class="grid g4" style="margin-top:14px">
+          <div class="kpi"><div class="l">Antigüedad</div><div class="v mono" style="font-size:18px">6,5 a</div><div class="s">desde oct-2019</div></div>
+          <div class="kpi"><div class="l">Días entre toques</div><div class="v mono" style="font-size:18px">1,5</div><div class="s">densidad 0,67 ops/día</div></div>
+          <div class="kpi"><div class="l">Última operación</div><div class="v mono" style="font-size:18px">28/04</div><div class="s">altamente activo</div></div>
+          <div class="kpi"><div class="l">Wallet share est.</div><div class="v mono" style="font-size:18px">1,5×</div><div class="s">sin wallet gap</div></div>
+        </div>
+
+        <div class="seyebrow">Mix de cartera · por comisiones acumuladas</div>
+        <div class="box">
+          <div class="mixbar">
+            <span style="width:28.1%;background:var(--teal)"></span><span style="width:25.8%;background:#3aa9bd"></span><span style="width:20.3%;background:var(--warn)"></span><span style="width:10.9%;background:var(--neu)"></span><span style="width:8.3%;background:var(--pos)"></span><span style="width:2.6%;background:var(--teal-dd)"></span><span style="width:1.4%;background:var(--muted-2)"></span>
+          </div>
+          <div class="legend">
+            <span class="li"><span class="sw" style="background:var(--teal)"></span>Rofex Dólar <span class="pct">28,1%</span></span>
+            <span class="li"><span class="sw" style="background:#3aa9bd"></span>Renta Variable <span class="pct">25,8%</span></span>
+            <span class="li"><span class="sw" style="background:var(--warn)"></span>Rofex Otro <span class="pct">20,3%</span></span>
+            <span class="li"><span class="sw" style="background:var(--neu)"></span>Caución Tomadora <span class="pct">10,9%</span></span>
+            <span class="li"><span class="sw" style="background:var(--pos)"></span>Renta Fija <span class="pct">8,3%</span></span>
+            <span class="li"><span class="sw" style="background:var(--teal-dd)"></span>RF Corta <span class="pct">2,6%</span></span>
+            <span class="li"><span class="sw" style="background:var(--muted-2)"></span>FCI <span class="pct">1,4%</span></span>
+          </div>
+          <div class="stat-inline" style="margin-top:14px">
+            <div class="si"><div class="l">Concentr. Rofex</div><div class="v">~48%</div></div>
+            <div class="si"><div class="l">Renta Variable</div><div class="v">~26%</div></div>
+            <div class="si"><div class="l">HHI</div><div class="v">0,21</div></div>
+            <div class="si"><div class="l">Verticales</div><div class="v">6</div></div>
+            <div class="si"><div class="l">Categorías</div><div class="v">12</div></div>
+          </div>
+        </div>
+
+        <div class="seyebrow">Tenencias reales · 26 posiciones</div>
+        <div class="box">
+          <div class="hg"><div class="l">Acciones locales <span class="c">9</span></div><div class="tags"><span class="tag">Soc. Comercial del Plata</span><span class="tag">Grupo Supervielle (B)</span><span class="tag">Pampa Energía</span><span class="tag">Galicia (B)</span><span class="tag">Banco Macro (B)</span><span class="tag">Edenor (B)</span><span class="tag">Loma Negra</span><span class="tag">Central Puerto (B)</span><span class="tag">TGS (B)</span></div></div>
+          <div class="hg"><div class="l">CEDEARs <span class="c">9</span></div><div class="tags"><span class="tag flag">MicroStrategy</span><span class="tag">MercadoLibre</span><span class="tag flag">iShares Bitcoin Trust (IBIT)</span><span class="tag">Nu Holdings</span><span class="tag">Netflix</span><span class="tag">Microsoft</span><span class="tag">Meta</span><span class="tag">Palantir</span><span class="tag">Oracle</span></div></div>
+          <div class="hg"><div class="l">FCIs <span class="c">2</span></div><div class="tags"><span class="tag">MEGAQM Acciones – Cl. A</span><span class="tag">Toronto Trust Ahorro – Cl. B</span></div></div>
+          <div class="hg" style="margin-bottom:0"><div class="l">Renta fija / MAV + liquidez</div><div class="tags"><span class="tag flag">Pagaré MAV Red Surcos — ARS 220 M · vto 16/12/2024 ⚠</span><span class="tag flag">Pagaré Acindar SGR — USD 250k · vence 19/06/2026 ⚠</span><span class="tag">Pagaré Acindar SGR — USD 130k · vto 30/11/2026</span><span class="tag">Liquidez USD 1.003,76 (cable)</span></div></div>
+        </div>
+
+        <div class="callout warn" style="margin-top:14px"><div class="ct">⚠ Alertas a verificar con el cliente</div><b>(1)</b> Pagaré Red Surcos (ARS 220 M) ya expiró en dic-2024 — confirmar si fue cobrado o renovado. <b>(2)</b> Pagaré Acindar SGR USD 250k vence el <b>19/06/2026</b>: confirmar instrucciones de cobro / reinversión.</div>
+
+        <div class="seyebrow">Recomendaciones de rotación</div>
+        <div class="grid g2">
+          <div class="tablecard"><div class="th"><h3 style="color:var(--pos)">✓ Mantener</h3></div><table><tbody>
+            <tr><td class="tn">Renta Variable</td><td class="r mono">25,8%</td><td class="note">Energía y bancos con momentum</td></tr>
+            <tr><td class="tn">Renta Fija</td><td class="r mono">8,3%</td><td class="note">Soberano HD · dolarización atractiva</td></tr>
+            <tr><td class="tn">Renta Fija Corta</td><td class="r mono">2,6%</td><td class="note">Lecaps cortos · tasa real positiva</td></tr>
+            <tr><td class="tn">FCI</td><td class="r mono">1,4%</td><td class="note">Money market USD competitivo</td></tr>
+          </tbody></table></div>
+          <div class="tablecard"><div class="th"><h3 style="color:var(--warn)">🔍 Revisar · conversación pendiente</h3></div><table><tbody>
+            <tr><td class="tn">Rofex Dólar</td><td class="r mono">28,1%</td><td class="note">Tasa implícita comprimida</td></tr>
+            <tr><td class="tn">Rofex Otro</td><td class="r mono">20,3%</td><td class="note">Evaluar por commodity subyacente</td></tr>
+            <tr><td class="tn">Caución Tomadora</td><td class="r mono">10,9%</td><td class="note">Spread comprimido, sin ventaja</td></tr>
+            <tr><td class="tn">MAV Pymes</td><td class="r mono">~1,6%</td><td class="note">Selectividad en el segmento</td></tr>
+          </tbody></table></div>
+        </div>
+
+        <div class="seyebrow">Puntos para la llamada</div>
+        <div class="box">
+          <div class="talk">
+            <div class="ti"><span class="num"></span><span class="tx"><b>Vencimiento urgente:</b> Pagaré Acindar SGR USD 250k vence el 19/06/2026 — confirmar instrucciones de cobro/reinversión.</span></div>
+            <div class="ti"><span class="num"></span><span class="tx"><b>Pagaré Red Surcos</b> (ARS 220 M, vto dic-2024): verificar si fue liquidado o queda pendiente.</span></div>
+            <div class="ti"><span class="num"></span><span class="tx"><b>Rofex Dólar (28%):</b> con tasa implícita comprimida, ¿mantiene la estrategia o rebalancea parte hacia HD o RV selectiva?</span></div>
+            <div class="ti"><span class="num"></span><span class="tx"><b>CEDEARs tech (MicroStrategy + IBIT):</b> el research advierte sobre el riesgo sistémico del ciclo IA. ¿Visión de corto o de largo?</span></div>
+            <div class="ti"><span class="num"></span><span class="tx"><b>Bancos locales:</b> Delphos refuerza la tesis. Podría ser momento de conversar si quiere aumentar exposición.</span></div>
+            <div class="ti"><span class="num"></span><span class="tx"><b>Cumplimiento 83,7%:</b> entender si hay wallet externo no capturado o si redujo actividad operativa.</span></div>
+          </div>
+        </div>
+
+        <div class="agentbar" data-ctx="briefing">
+          <div class="id"><span class="dot"></span>Generado por <b>Agente Comercial</b> · 10 jun 2026</div>
+          <div class="acts">
+            <span class="ask">¿Te sirvió?</span>
+            <button class="fb" data-v="up" title="Útil">{{UP}}</button>
+            <button class="fb" data-v="down" title="No útil">{{DOWN}}</button>
+            <span class="fb-thanks">{{CHK}} Gracias — calibra al agente</span>
+            <button class="chatbtn" data-ctx="briefing">{{CHAT}} Preguntar al agente</button>
+          </div>
+        </div>
+        <div class="fb-note"><input type="text" placeholder="¿El briefing erró en algo del cliente? (opcional)"><button>Enviar</button></div>
+
+        <div class="sources"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><span><b>Fuentes:</b> perfil-cliente · tenencias-cliente · recomendar-rotación (sistema FyO Capital) · Delphos Semanal 1566 (05-jun), 1565, 1564.</span></div>
+
+        <div style="margin-top:18px;display:flex;justify-content:flex-end"><button class="nextbtn" data-goto="acciones">Ver acciones concretas a proponer →</button></div>
+      </section>
+
+      <!-- ============ 05 · ACCIONES ============ -->
+      <section class="view" id="view-acciones">
+        <div class="vhead">
+          <div class="eyebrow">Acciones a proponer · Ponce Micino R. · Agente de Carteras</div>
+          <h1>Qué sumar, qué aumentar, qué cuidar</h1>
+          <p>Recomendaciones de equity ancladas en el research de la semana y en las tenencias reales del cliente. Dejá feedback por recomendación: cada 👍/👎 calibra al agente.</p>
+        </div>
+
+        <div class="rec add" style="margin-bottom:14px">
+          <div class="rail"></div>
+          <div class="top"><div><span class="tk">VIST</span><span class="nm">Vista Oil &amp; Gas · no la tiene</span></div><span class="chip buy">🥇 PRINCIPAL · AGREGAR</span></div>
+          <div class="stat-inline"><div class="si"><div class="l">EV/EBITDA fwd</div><div class="v">3,8×</div></div><div class="si"><div class="l">vs comparables</div><div class="v">−17%</div></div><div class="si"><div class="l">Flujo instit.</div><div class="v">JPM · Duquesne</div></div></div>
+          <ul>
+            <li>Delphos la cita a <b>3,8× EV/EBITDA fwd</b>, con <b>17% de descuento</b> vs. comparables directos — valuación concreta, no narrativa.</li>
+            <li>Flujo institucional real: <b>JPMorgan tomó posición</b>; <b>Druckenmiller (Duquesne) amplió</b> (+USD 128M en YPF).</li>
+            <li>1T26 sólido: <b>hedgeó ventas un mes forward</b> → el beneficio del rally del crudo pasa al 2T26. El mejor número todavía no apareció en precio.</li>
+            <li>Encaja con el perfil: ya tiene Pampa y energía local; VIST agrega oil &amp; gas de calidad con valuación comprimida.</li>
+          </ul>
+          <div class="callout warn" style="margin-top:12px"><b>Cautela táctica:</b> el crudo es el principal riesgo. YPF volvió a correlacionar con el Brent — Vista hedgea mejor ese riesgo por su política comercial. Mencionarlo al cliente.</div>
+          <div class="agentbar compact" data-ctx="acc-vist"><div class="id"><span class="dot"></span><b>Agente de Carteras</b> · recomendación VIST</div><div class="acts"><button class="fb" data-v="up" title="Buena recomendación">{{UP}}</button><button class="fb" data-v="down" title="No comparto">{{DOWN}}</button><span class="fb-thanks">{{CHK}} Anotado</span><button class="chatbtn" data-ctx="acc-vist">{{CHAT}} Preguntar</button></div></div>
+          <div class="fb-note"><input type="text" placeholder="¿Por qué no? (suma al RL del agente)"><button>Enviar</button></div>
+        </div>
+
+        <div class="rec up" style="margin-bottom:14px">
+          <div class="rail"></div>
+          <div class="top"><div><span class="tk">BMA</span><span class="nm">Banco Macro · ya la tiene</span></div><span class="chip info">🥈 AUMENTAR POSICIÓN</span></div>
+          <div class="stat-inline"><div class="si"><div class="l">ROE ajust. 1T26</div><div class="v">11,6%</div></div><div class="si"><div class="l">NIM</div><div class="v">25,3%</div></div><div class="si"><div class="l">Cobertura</div><div class="v">109,8%</div></div></div>
+          <ul>
+            <li>El cliente tiene BMA, GGAL y SUPV. El research <b>diferencia claramente a Macro</b>.</li>
+            <li><b>ROE ajustado 1T26: 11,6%</b> — el más alto del sistema (GGAL 3,2%, SUPV 2,5%).</li>
+            <li><b>Cobertura 109,8%</b> — único banco que la sostuvo &gt;100%. Alineado a pares, su ROE habría sido 15,7%.</li>
+            <li>Único de los 4 grandes que <b>mantuvo el guidance de préstamos</b>. Early delinquencies mejorando → pico de costo de riesgo ya pasó.</li>
+          </ul>
+          <div class="agentbar compact" data-ctx="acc-bma"><div class="id"><span class="dot"></span><b>Agente de Carteras</b> · recomendación BMA</div><div class="acts"><button class="fb" data-v="up" title="Buena recomendación">{{UP}}</button><button class="fb" data-v="down" title="No comparto">{{DOWN}}</button><span class="fb-thanks">{{CHK}} Anotado</span><button class="chatbtn" data-ctx="acc-bma">{{CHAT}} Preguntar</button></div></div>
+          <div class="fb-note"><input type="text" placeholder="¿Por qué no? (suma al RL del agente)"><button>Enviar</button></div>
+        </div>
+
+        <div class="rec hold" style="margin-bottom:14px">
+          <div class="rail"></div>
+          <div class="top"><div><span class="tk">YPFD</span><span class="nm">YPF · no la tiene</span></div><span class="chip hold">🟡 ESTRUCTURAL SÍ · TÁCTICO ESPERAR</span></div>
+          <div class="stat-inline"><div class="si"><div class="l">EBITDA 1T (récord)</div><div class="v">USD 1.594M</div></div><div class="si"><div class="l">Margen</div><div class="v">32%</div></div><div class="si"><div class="l">Lifting cost shale</div><div class="v">USD 4/bbl</div></div></div>
+          <ul>
+            <li>Mejor EBITDA 1T de su historia (+24% t/t), LNG en desarrollo con contratos firmados. <b>Valor estructural muy claro</b>.</li>
+            <li class="x">Delphos (1562, 09-may) <b>redujo exposición táctica</b> por correlación con el crudo y riesgo bajista ante distensión en Medio Oriente.</li>
+            <li class="x">Es para largo plazo, <b>no para un trade de acá a 60 días</b>.</li>
+          </ul>
+          <div class="agentbar compact" data-ctx="acc-ypfd"><div class="id"><span class="dot"></span><b>Agente de Carteras</b> · recomendación YPFD</div><div class="acts"><button class="fb" data-v="up" title="Buena recomendación">{{UP}}</button><button class="fb" data-v="down" title="No comparto">{{DOWN}}</button><span class="fb-thanks">{{CHK}} Anotado</span><button class="chatbtn" data-ctx="acc-ypfd">{{CHAT}} Preguntar</button></div></div>
+          <div class="fb-note"><input type="text" placeholder="¿Por qué no? (suma al RL del agente)"><button>Enviar</button></div>
+        </div>
+
+        <div class="rec alert">
+          <div class="rail"></div>
+          <div class="top"><div><span class="tk" style="font-size:15px;color:var(--neg)">⚠ CEDEARs tech / cripto</span></div><span class="chip sell">NO AGREGAR MÁS</span></div>
+          <ul>
+            <li class="x"><b>MicroStrategy + IBIT</b> → doble cripto. Sumado a Meta, Microsoft, Palantir, Oracle, Netflix: el bloque está concentrado en tech/IA.</li>
+            <li class="x">El research advierte: la IA demanda capital de forma históricamente elevada y <b>un corte del ciclo sería dramático</b>.</li>
+            <li>No es para salir, pero sí para <b>no agregar más a ese bloque</b> y tenerlo en el radar.</li>
+          </ul>
+          <div class="agentbar compact" data-ctx="acc-cedears"><div class="id"><span class="dot"></span><b>Agente de Carteras</b> · alerta CEDEARs</div><div class="acts"><button class="fb" data-v="up" title="Buena recomendación">{{UP}}</button><button class="fb" data-v="down" title="No comparto">{{DOWN}}</button><span class="fb-thanks">{{CHK}} Anotado</span><button class="chatbtn" data-ctx="acc-cedears">{{CHAT}} Preguntar</button></div></div>
+          <div class="fb-note"><input type="text" placeholder="¿Por qué no? (suma al RL del agente)"><button>Enviar</button></div>
+        </div>
+
+        <div class="seyebrow">Resumen ejecutivo para la llamada</div>
+        <div class="tablecard">
+          <table><thead><tr><th>Acción</th><th>Movimiento</th><th>Mensaje</th></tr></thead><tbody>
+            <tr><td class="tick">VIST</td><td><span class="chip buy">AGREGAR</span></td><td class="note">Valuación comprimida (3,8× EV/EBITDA, −17% vs peers), catalizador en 2T26, flujo institucional.</td></tr>
+            <tr><td class="tick">BMA</td><td><span class="chip info">AUMENTAR</span></td><td class="note">Mejor banco del sistema en 1T26, único que mantuvo guidance, ROE y cobertura superiores.</td></tr>
+            <tr><td class="tick">YPFD</td><td><span class="chip hold">ESPERAR</span></td><td class="note">Estructural sí; táctico no — la correlación con el crudo es el freno en el corto plazo.</td></tr>
+            <tr><td class="tick">CEDEARs IA/cripto</td><td><span class="chip sell">NO AGREGAR</span></td><td class="note">El riesgo sistémico del ciclo IA está identificado en el research.</td></tr>
+          </tbody></table>
+        </div>
+
+        <div class="callout info" style="margin-top:16px"><div class="ct">Recordá</div>Todas son <b>sugerencias para la conversación con el cliente</b>, no instrucciones de ejecución. El agente informa y fundamenta; recomendar, decidir y operar quedan del lado del asesor, dentro del marco de asesoramiento CNV.</div>
+
+        <div class="sources"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><span><b>Fuentes:</b> Delphos Investment Semanales 1562 (09-may) a 1566 (05-jun-2026). Cruzado con las tenencias reales del cliente.</span></div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span>© fyoDigital 2026</span>
+  <span>Production · v 87.00.03 · módulo Copiloto (beta)</span>
+  <a href="#">equipo@fyodigital.com</a>
+</footer>
+
+<!-- CHAT DRAWER -->
+<div class="overlay" id="overlay"></div>
+<div class="drawer" id="drawer" role="dialog" aria-label="Chat con el agente">
+  <div class="dr-head">
+    <div class="av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8M4 8h16v12H4zM2 14h2M20 14h2M9 13v2M15 13v2"/></svg></div>
+    <div><div class="nm" id="drName">Agente</div><div class="ctx" id="drCtx">—</div></div>
+    <svg class="x" id="drClose" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+  </div>
+  <div class="dr-body" id="drBody">
+    <div class="typing" id="drTyping"><span></span><span></span><span></span></div>
+  </div>
+  <div class="dr-sugs" id="drSugs"><div class="lbl">Preguntas sugeridas</div></div>
+  <div class="dr-input">
+    <input type="text" id="drInput" placeholder="Escribile al agente…" autocomplete="off">
+    <button id="drSend"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></button>
+  </div>
+  <div class="dr-disc">Prototipo · respuestas simuladas sobre los datos de la vista. En producción el agente consulta fyoDigital vía el MCP server.</div>
+</div>
+
+<script>
+(function(){
+  // ---- icons injected into template placeholders ----
+  var ICON = {
+    UP:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 10v11M2 11h5v10H2zM7 10l4.6-8.1a2 2 0 0 1 3.4 2.1L13 9h5.5a2 2 0 0 1 2 2.3l-1.4 8A2 2 0 0 1 17 21H7"/></svg>',
+    DOWN:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 14V3M22 13h-5V3h5zM17 14l-4.6 8.1a2 2 0 0 1-3.4-2.1L11 15H5.5a2 2 0 0 1-2-2.3l1.4-8A2 2 0 0 1 7 3h10"/></svg>',
+    CHK:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>',
+    CHAT:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>'
+  };
+  document.body.innerHTML = document.body.innerHTML
+    .replace(/\{\{UP\}\}/g, ICON.UP).replace(/\{\{DOWN\}\}/g, ICON.DOWN)
+    .replace(/\{\{CHK\}\}/g, ICON.CHK).replace(/\{\{CHAT\}\}/g, ICON.CHAT);
+
+  // ---- tab switching ----
+  var tabs = document.querySelectorAll('.subtab');
+  var views = document.querySelectorAll('.view');
+  var ctxClient = document.getElementById('ctxClient');
+  var clientScope = {
+    mercado:'Alcance: cartera fyoCapital', llamar:'Alcance: cartera fyoCapital',
+    vto:'Alcance: vencimiento 30/06/2026',
+    briefing:'Comitente: Ponce Micino R. · 1045', acciones:'Comitente: Ponce Micino R. · 1045'
+  };
+  function gauges(v){var b=v.querySelectorAll('.gauge>i');b.forEach(function(x){x.style.width='0'});requestAnimationFrame(function(){setTimeout(function(){b.forEach(function(x){x.style.width=(x.getAttribute('data-w')||0)+'%'})},60)})}
+  function go(name){
+    tabs.forEach(function(t){t.classList.toggle('active',t.dataset.view===name)});
+    views.forEach(function(v){v.classList.toggle('active',v.id==='view-'+name)});
+    ctxClient.lastChild.textContent = ' ' + (clientScope[name]||'');
+    var av=document.getElementById('view-'+name); if(av) gauges(av);
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  tabs.forEach(function(t){t.addEventListener('click',function(){go(t.dataset.view)})});
+  document.querySelectorAll('[data-goto]').forEach(function(el){el.addEventListener('click',function(e){e.stopPropagation();go(el.getAttribute('data-goto'))})});
+  document.querySelectorAll('tr.clickable').forEach(function(r){r.addEventListener('click',function(){go(r.getAttribute('data-goto'))})});
+
+  // ---- feedback (RL) ----
+  document.querySelectorAll('.agentbar').forEach(function(bar){
+    var note = bar.nextElementSibling && bar.nextElementSibling.classList.contains('fb-note') ? bar.nextElementSibling : null;
+    var thanks = bar.querySelector('.fb-thanks');
+    var ask = bar.querySelector('.ask');
+    bar.querySelectorAll('.fb').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var v = btn.dataset.v;
+        bar.querySelectorAll('.fb').forEach(function(b){b.classList.remove('on-up','on-down')});
+        btn.classList.add(v==='up'?'on-up':'on-down');
+        if(ask) ask.style.display='none';
+        if(thanks) thanks.classList.add('show');
+        if(v==='down' && note){ note.classList.add('show'); var i=note.querySelector('input'); if(i) setTimeout(function(){i.focus()},50); }
+        else if(note){ note.classList.remove('show'); }
+      });
+    });
+    if(note){
+      var btnN = note.querySelector('button');
+      btnN.addEventListener('click',function(){
+        note.innerHTML = '<div style="font-size:12px;color:var(--pos);font-weight:600;display:flex;align-items:center;gap:6px">'+ICON.CHK+' Recibido. Se considera en el próximo ciclo de ajuste del agente.</div>';
+      });
+    }
+  });
+
+  // ---- chat drawer ----
+  var CTX = {
+    mercado:{agent:'Feed de research',ctx:'Pulso de mercado · al 05/06',sugs:[
+      {q:'¿Cómo impacta el IPO de SpaceX en mis CEDEARs?',a:'El IPO de SpaceX activa la regla "Fast Entry" del Nasdaq 100: entra al día 15 y fuerza demanda pasiva de QQQ. Para tus CEDEARs juega a favor de corto plazo en <b>Microsoft</b> y <b>Meta</b>. Es flujo técnico, no un cambio de tesis: la señal de fondo sigue siendo no agregar al bloque IA/cripto.'},
+      {q:'Resumime la tesis de bancos AR',a:'Delphos <b>sobrepondera</b> bancos AR: cotizan a −17% P/BV vs Latam cuando a inicios de 2025 tenían +100% de premium. El costo de riesgo ya hizo pico (4T25–1T26) y la recuperación de rentabilidad se espera para 2S26. Dentro del sector, <b>Macro</b> lidera el 1T26 con ROE ajustado 11,6%.'}
+    ]},
+    llamar:{agent:'Agente Comercial',ctx:'A quién llamar hoy',sugs:[
+      {q:'¿Por qué Crosetti está primero?',a:'Crosetti queda primero porque combina el <b>NBA más alto del día (0,855)</b> con dos gatillos: lleva 589 días sin operar y la View MDC bisemanal (rotación CER + Duales) es la excusa concreta para retomar. Es Cat. A, así que el upside de reactivarlo es alto.'},
+      {q:'Armame el guion para llamar a Yeruti',a:'<b>Apertura:</b> "Se viene el cupón de julio y quería pasarte una idea antes." <b>Gancho:</b> es productor Cat. A con wallet gap de USD 3.547 y 132 días sin operar. <b>Propuesta:</b> sumar HD soberanos (AO28) pre-cupón. <b>Cierre:</b> ofrecer mandar el detalle por mail y agendar.'}
+    ]},
+    vto:{agent:'Mesa de Renta Fija · research',ctx:'Vencimiento 30/06/2026',sugs:[
+      {q:'¿Cuánto cobra exactamente YABITO?',a:'El estimado de YABITO es <b>USD 14,2 M</b>, pero es aproximado: está a FX 1.300 y sobre nominales, sin incluir parity de LECAP/DUAL ni el CER capitalizado al 30/06. Está expuesto en los 3 tramos en pesos + USD-linked. Para el monto exacto conviene correr tenencias-cliente por id y validarlo con la mesa antes de la reunión.'},
+      {q:'¿Qué le ofrezco a Cresud al cobrar TZV26?',a:'Cresud cobra ~USD 4 M de TZV26 (dollar-linked) y su NBA es OPTIMIZAR_YIELD (comisión USD 187k) → ventana ideal para subir mix. Roll en moneda dura sugerido: <b>AO28</b> (HD corto, BUY, premio 0,05% TIR) o <b>GD35/GD41</b> si quiere soberano largo con tesis de compresión. Si prefiere quedarse en DL, nuevo tramo TZV26.'},
+      {q:'Armá el comunicado estándar para los 41 restantes',a:'Para los 41 que suman &lt; USD 1,5 M: comunicado avisando el vencimiento del 30/06, el monto estimado y dos opciones de roll (mantener DL con nuevo TZV26 o pasar a AO28 en moneda dura). En el prototipo te dejo el borrador; en producción lo personalizo por cliente con el monto exacto de fyoDigital.'}
+    ]},
+    briefing:{agent:'Agente Comercial',ctx:'Briefing · Ponce Micino R.',sugs:[
+      {q:'¿Por qué REVISAR si no tiene riesgo de churn?',a:'REVISAR no es por fuga: su churn es ≈ 0,00003. La señal es de <b>actividad</b>: el cumplimiento de presupuesto 25/26 cayó al 83,7% contra un histórico promedio de 367%, con anomaly score 5,1. Es un cliente muy valioso (CLV USD 1,47 M) que bajó el ritmo — vale entender si hay wallet externo no capturado.'},
+      {q:'Ordená los 6 puntos por urgencia',a:'<b>Primero (time-sensitive):</b> (1) Pagaré Acindar USD 250k vence el 19/06. (2) Pagaré Red Surcos vencido en dic-2024, confirmar estado. <b>Después:</b> (3) Rofex Dólar 28% con tasa comprimida, (4) CEDEARs tech/cripto, (5) bancos locales, (6) la caída de cumplimiento.'}
+    ]},
+    'acc-vist':{agent:'Agente de Carteras',ctx:'Acciones · VIST',sugs:[
+      {q:'¿Por qué VIST y no YPF ahora?',a:'VIST hedgea mejor el riesgo crudo: hedgeó ventas un mes forward, así que el beneficio del rally pasa al 2T26. YPF, en cambio, volvió a correlacionar con el Brent y Delphos le redujo exposición táctica. Por valuación, VIST está a 3,8× EV/EBITDA fwd, −17% vs comparables, con flujo institucional entrando (JPM, Duquesne).'},
+      {q:'¿Qué peso sugerís para entrar?',a:'El informe no fija un peso objetivo — es una decisión tuya y de la mesa. Como referencia: el cliente ya tiene Pampa y energía local, así que VIST suma calidad sin duplicar tesis. En producción puedo cruzarlo con su cartera real en fyoDigital y proponerte un sizing concreto.'}
+    ]},
+    'acc-bma':{agent:'Agente de Carteras',ctx:'Acciones · BMA',sugs:[
+      {q:'¿Por qué Macro y no Galicia?',a:'Dentro de los bancos que ya tiene (BMA, GGAL, SUPV), Macro es el de mayor calidad en el 1T26: ROE ajustado 11,6% (vs GGAL 3,2% y SUPV 2,5%), cobertura 109,8% (único &gt;100%) y el único de los 4 grandes que mantuvo el guidance de préstamos. Por eso la sugerencia es aumentar Macro, no Galicia.'},
+      {q:'¿Cuánto pesa el FX en el NIM 25,3%?',a:'El NIM de 25,3% incluye el resultado por posición en FX, así que parte es no recurrente. Aun normalizando, Macro queda mejor parado que sus pares por cobertura y por haber sostenido el guidance. En producción puedo traerte la apertura del NIM del último balance.'}
+    ]},
+    'acc-ypfd':{agent:'Agente de Carteras',ctx:'Acciones · YPFD',sugs:[
+      {q:'¿Cuándo dejaría de ser "esperar"?',a:'El freno es táctico: la correlación de YPF con el crudo y el riesgo bajista ante una distensión en Medio Oriente. El "esperar" se levantaría si el crudo se estabiliza o si aparece un catalizador propio (avances firmes en LNG). El valor estructural ya está: mejor EBITDA 1T de su historia, lifting cost shale USD 4/bbl.'}
+    ]},
+    'acc-cedears':{agent:'Agente de Carteras',ctx:'Acciones · CEDEARs tech/cripto',sugs:[
+      {q:'¿Cuánto pesa el bloque IA/cripto en su cartera?',a:'Tiene doble cripto (MicroStrategy + IBIT) más Meta, Microsoft, Palantir, Oracle y Netflix: mucho peso relativo en tech/IA dentro de los CEDEARs. La tesis "IA aspiradora de capital" marca que un corte del ciclo sería dramático. No es para salir, sí para no agregar más y monitorearlo. En producción te doy el % exacto sobre la cartera total.'}
+    ]}
+  };
+
+  var overlay=document.getElementById('overlay'),drawer=document.getElementById('drawer');
+  var drName=document.getElementById('drName'),drCtx=document.getElementById('drCtx');
+  var drBody=document.getElementById('drBody'),drTyping=document.getElementById('drTyping');
+  var drSugs=document.getElementById('drSugs'),drInput=document.getElementById('drInput'),drSend=document.getElementById('drSend');
+  var current=null;
+
+  function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function addMsg(html,who){var d=document.createElement('div');d.className='msg '+who;d.innerHTML=html;drBody.insertBefore(d,drTyping);drBody.scrollTop=drBody.scrollHeight;}
+  function botReply(html){drTyping.classList.add('show');drBody.scrollTop=drBody.scrollHeight;setTimeout(function(){drTyping.classList.remove('show');addMsg(html,'bot');},Math.random()*400+650);}
+
+  function answerFor(text){
+    if(!current) return null;
+    var c=CTX[current]; if(!c) return null;
+    var hit=c.sugs.find(function(s){return s.q.toLowerCase()===text.toLowerCase()});
+    return hit?hit.a:null;
+  }
+  function send(text){
+    text=text.trim(); if(!text) return;
+    addMsg(esc(text),'me');
+    var a=answerFor(text);
+    if(a){ botReply(a); }
+    else { botReply('En el prototipo respondo con lo que ya está cargado en esta vista. En producción consulto <b>fyoDigital</b> vía el MCP server para traerte el número exacto y fundamentarlo. ¿Querés que profundice en algún punto del informe?'); }
+  }
+  function openChat(ctxKey){
+    current=ctxKey; var c=CTX[ctxKey]||{agent:'Agente',ctx:'',sugs:[]};
+    drName.textContent=c.agent; drCtx.textContent='Sobre: '+c.ctx;
+    // reset thread
+    drBody.querySelectorAll('.msg').forEach(function(m){m.remove()});
+    addMsg('Hola, soy el <b>'+c.agent+'</b>. Puedo explicarte el porqué de esta vista, darte un guion o profundizar un dato. ¿Por dónde arrancamos?','bot');
+    // suggestions
+    drSugs.innerHTML='<div class="lbl">Preguntas sugeridas</div>';
+    c.sugs.forEach(function(s){var b=document.createElement('button');b.className='sug';b.textContent=s.q;b.addEventListener('click',function(){send(s.q)});drSugs.appendChild(b);});
+    overlay.classList.add('open');drawer.classList.add('open');setTimeout(function(){drInput.focus()},250);
+  }
+  function closeChat(){overlay.classList.remove('open');drawer.classList.remove('open');}
+
+  document.querySelectorAll('.chatbtn').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();openChat(b.dataset.ctx)})});
+  document.getElementById('drClose').addEventListener('click',closeChat);
+  overlay.addEventListener('click',closeChat);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeChat()});
+  drSend.addEventListener('click',function(){send(drInput.value);drInput.value=''});
+  drInput.addEventListener('keydown',function(e){if(e.key==='Enter'){send(drInput.value);drInput.value=''}});
+
+  gauges(document.getElementById('view-mercado'));
+})();
+</script>
+</body>
+</html>

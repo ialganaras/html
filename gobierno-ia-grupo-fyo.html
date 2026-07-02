@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dar poder sin perder el control · Grupo fyo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#f3f2ee;
+    --paper-2:#eceae4;
+    --card:#ffffff;
+    --ink:#111110;
+    --ink-2:#2c2b27;
+    --muted:#56544f;
+    --faint:#78756f;
+    --rule:#d6d4ce;
+    --rule-2:#cbc8c0;
+    --accent:#e22b16; --accent-soft:#e22b160e; --accent-line:#e22b1642; --accent-deep:#c0220f;
+    --disp:'Space Grotesk', system-ui, sans-serif;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--paper);
+    color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--accent); color:#fff; }
+  .lbl{ font-family:var(--mono); font-size:11px; font-weight:500; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--muted); }
+
+  .doc{ max-width:1120px; margin:0 auto; padding:0 0 130px; }
+  .sheet{ background:var(--paper); padding:0 52px; position:relative; }
+  @media (max-width:760px){ .sheet{ padding:0 20px; } }
+
+  .titleblock{ display:grid; grid-template-columns:1fr auto; align-items:stretch;
+    border-bottom:1px solid var(--ink); }
+  .titleblock .tb-l{ padding:16px 0; font-family:var(--mono); font-size:11px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--ink-2); display:flex; align-items:center; gap:14px; }
+  .titleblock .tb-l .sq{ width:8px; height:8px; background:var(--accent); }
+  .titleblock .tb-r{ font-family:var(--mono); font-size:11px; letter-spacing:.06em; color:var(--muted);
+    text-transform:uppercase; display:flex; align-items:center; padding:16px 0 16px 22px;
+    border-left:1px solid var(--rule); }
+  .titleblock .tb-r b{ color:var(--accent-deep); font-weight:600; }
+
+  .cover{ padding:70px 0 0; }
+  .cover .ref{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); margin-bottom:30px; display:flex; gap:18px; }
+  .cover .ref span{ position:relative; padding-left:16px; }
+  .cover .ref span::before{ content:''; position:absolute; left:0; top:50%; width:8px; height:8px;
+    border:1px solid var(--accent); transform:translateY(-50%); }
+  h1.title{ font-family:var(--disp); font-weight:600; font-size:clamp(40px,6.4vw,82px);
+    line-height:1.0; letter-spacing:-.03em; margin:0; max-width:15ch; color:var(--ink); }
+  h1.title .hl{ color:var(--accent); }
+  .lede{ font-size:clamp(17px,1.8vw,21px); line-height:1.55; color:var(--ink-2); max-width:62ch;
+    margin:30px 0 0; }
+  .specsheet{ margin-top:48px; border:1px solid var(--rule-2); background:var(--card);
+    display:grid; grid-template-columns:repeat(3,1fr); }
+  @media (max-width:680px){ .specsheet{ grid-template-columns:1fr; } }
+  .specsheet .sc{ padding:18px 20px; border-right:1px solid var(--rule); }
+  .specsheet .sc:last-child{ border-right:none; }
+  .specsheet .sc .k{ display:block; margin-bottom:8px; }
+  .specsheet .sc .v{ font-family:var(--disp); font-weight:500; font-size:16px; color:var(--ink);
+    line-height:1.35; }
+
+  .contents{ margin:72px 0 0; border-top:1px solid var(--ink); padding-top:26px; }
+  .contents .ct{ color:var(--accent); margin-bottom:18px; }
+  .toc{ list-style:none; margin:0; padding:0; }
+  .toc li{ display:grid; grid-template-columns:70px 1fr auto; align-items:center; gap:18px;
+    padding:15px 0; border-bottom:1px solid var(--rule); }
+  .toc .n{ font-family:var(--mono); font-size:12px; color:var(--accent); }
+  .toc a{ color:var(--ink); text-decoration:none; font-family:var(--disp); font-weight:500;
+    font-size:19px; letter-spacing:-.01em; }
+  .toc li:hover a{ color:var(--accent); }
+  .toc .ar{ font-family:var(--mono); color:var(--faint); font-size:12px; }
+
+  .chapter{ margin-top:96px; scroll-margin-top:24px; }
+  .ch-head{ border-bottom:1px solid var(--ink); padding-bottom:26px; }
+  .ch-marker{ display:flex; align-items:center; gap:14px; margin-bottom:20px; }
+  .ch-marker .mn{ font-family:var(--mono); font-size:12px; color:#fff; background:var(--accent);
+    padding:4px 9px; font-weight:600; letter-spacing:.06em; }
+  h2.ch-title{ font-family:var(--disp); font-weight:600; font-size:clamp(28px,4.2vw,52px);
+    line-height:1.02; letter-spacing:-.03em; margin:0; max-width:18ch; }
+  h2.ch-title .hl{ color:var(--accent); }
+  .ch-lede{ font-size:19px; line-height:1.5; color:var(--ink-2); margin:20px 0 0; max-width:64ch; }
+
+  .prose{ max-width:70ch; margin-top:32px; font-size:16.5px; line-height:1.62; color:var(--ink-2); }
+  .prose p{ margin:0 0 18px; }
+  .prose strong{ color:var(--ink); font-weight:600; }
+  .prose em{ font-style:normal; color:var(--accent); font-weight:500; }
+
+  .note{ margin:32px 0; border:1px solid var(--rule-2); border-left:3px solid var(--accent);
+    background:var(--card); padding:22px 26px; max-width:78ch; position:relative; }
+  .note .lbl{ color:var(--accent); display:block; margin-bottom:11px; }
+  .note p{ margin:0; font-size:15.5px; line-height:1.58; color:var(--ink-2); }
+  .note strong{ color:var(--ink); font-weight:600; }
+  .note.warn{ border-left-color:var(--accent-deep); }
+
+  .stack{ margin:36px 0 8px; border:1px solid var(--ink); background:var(--card); }
+  .tier{ display:grid; grid-template-columns:158px 1fr; border-bottom:1px solid var(--rule); }
+  .tier:last-child{ border-bottom:none; }
+  @media (max-width:680px){ .tier{ grid-template-columns:1fr; } }
+  .tier .t-lbl{ padding:18px 20px; border-right:1px solid var(--rule); display:flex; align-items:center;
+    background:var(--paper-2); }
+  .tier .t-items{ display:flex; }
+  @media (max-width:560px){ .tier .t-items{ flex-direction:column; } }
+  .cell{ flex:1; padding:18px 20px; border-left:1px solid var(--rule); }
+  .cell:first-child{ border-left:none; }
+  .cell .cn{ font-family:var(--disp); font-weight:600; font-size:18px; color:var(--ink); display:block;
+    letter-spacing:-.01em; }
+  .cell .cs{ font-family:var(--mono); font-size:11px; color:var(--muted); display:block; margin-top:7px;
+    line-height:1.45; }
+  .cell.x .cn{ color:var(--accent); }
+  .flowmark{ font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; color:var(--faint);
+    text-transform:uppercase; padding:7px 20px; text-align:center; border-bottom:1px solid var(--rule);
+    background:var(--paper-2); }
+
+  .entity{ margin:38px 0; border:1px solid var(--ink); background:var(--card); }
+  .entity-head{ padding:26px 30px 22px; border-bottom:1px solid var(--rule); border-top:3px solid var(--accent); }
+  .entity-head .lbl{ color:var(--accent); display:block; margin-bottom:12px; }
+  .entity-name{ font-family:var(--disp); font-weight:600; font-size:28px; line-height:1.05;
+    letter-spacing:-.02em; margin:0 0 11px; }
+  .entity-name .hl{ color:var(--accent); }
+  .entity-purpose{ font-size:16px; line-height:1.55; color:var(--ink-2); margin:0; max-width:72ch; }
+  .entity-purpose strong{ color:var(--ink); font-weight:600; }
+  .entity-body{ padding:4px 30px; }
+  .fn{ display:grid; grid-template-columns:36px 1fr; gap:18px; padding:16px 0; border-bottom:1px solid var(--rule); }
+  .fn:last-child{ border-bottom:none; }
+  .fn .fi{ font-family:var(--mono); font-size:12px; color:var(--accent); border:1px solid var(--accent-line);
+    width:30px; height:30px; display:flex; align-items:center; justify-content:center; }
+  .fn .ft strong{ color:var(--ink); font-weight:600; }
+  .fn .ft .d{ color:var(--ink-2); }
+  .fn .ft .sub{ display:block; margin-top:6px; font-size:14px; color:var(--muted); line-height:1.5;
+    padding-left:12px; border-left:2px solid var(--rule-2); }
+  .entity-foot{ display:flex; flex-wrap:wrap; gap:9px; padding:18px 30px 22px; border-top:1px solid var(--rule);
+    background:var(--paper-2); }
+  .tag{ font-family:var(--mono); font-size:11px; color:var(--ink-2); padding:7px 12px; border:1px solid var(--rule-2);
+    background:var(--card); }
+  .tag strong{ color:var(--ink); font-weight:600; }
+  .tag.key{ border-color:var(--accent-line); color:var(--accent); background:var(--accent-soft); }
+  .tag.key strong{ color:var(--accent-deep); }
+  .tag.lnk{ border-color:var(--accent); color:var(--accent); }
+  .tag.lnk strong{ color:var(--accent-deep); }
+
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; margin-top:36px; border:1px solid var(--ink);
+    background:var(--card); }
+  @media (max-width:680px){ .grid2{ grid-template-columns:1fr; } }
+  .card{ padding:26px 28px 28px; border-bottom:1px solid var(--rule); }
+  .card:nth-child(odd){ border-right:1px solid var(--rule); }
+  @media (max-width:680px){ .card:nth-child(odd){ border-right:none; } }
+  .card:nth-last-child(-n+2){ border-bottom:none; }
+  @media (max-width:680px){ .card:nth-last-child(-n+2){ border-bottom:1px solid var(--rule); } .card:last-child{ border-bottom:none; } }
+  .card .cnum{ font-family:var(--mono); font-size:11px; color:var(--accent); display:block; margin-bottom:14px; }
+  .card h4{ font-family:var(--disp); font-weight:600; font-size:21px; letter-spacing:-.015em; margin:0 0 9px; color:var(--ink); }
+  .card p{ font-size:15px; line-height:1.55; color:var(--ink-2); margin:0; }
+
+  .statement{ margin:88px 0 0; padding:56px 44px; border:1px solid var(--ink); background:var(--card);
+    position:relative; }
+  .statement::before{ content:''; position:absolute; top:0; left:0; width:6px; height:100%; background:var(--accent); }
+  .statement .lbl{ color:var(--accent); margin-bottom:22px; display:block; }
+  .statement p{ font-family:var(--disp); font-weight:500; font-size:clamp(24px,3.4vw,42px); line-height:1.18;
+    letter-spacing:-.025em; margin:0; max-width:22ch; color:var(--ink); }
+  .statement .hl{ color:var(--accent); }
+
+  .colophon{ margin-top:50px; padding-top:18px; border-top:1px solid var(--ink); display:flex;
+    justify-content:space-between; flex-wrap:wrap; gap:12px; font-family:var(--mono); font-size:11px;
+    color:var(--muted); letter-spacing:.05em; text-transform:uppercase; }
+</style>
+</head>
+<body>
+
+<div class="doc"><div class="sheet">
+
+  <div class="titleblock">
+    <div class="tb-l"><span class="sq"></span>Iñaki · Consultoría<span style="color:var(--muted)">inaki@alganaras.com.ar</span></div>
+    <div class="tb-r">GRUPO FYO · CTO + IA · ENCUADRE v1</div>
+  </div>
+
+  <header class="cover">
+    <div class="ref"><span>Grupo fyo · Gobierno de la IA</span><span>Desafío a resolver</span></div>
+    <h1 class="title">Dar poder sin perder el <span class="hl">control</span>.</h1>
+    <p class="lede">La apuesta es darle a la gente poder y autonomía para construir con IA, embebido en el negocio. Pero sin un camino gobernado, esa misma energía se vuelve riesgo. El desafío —transversal a toda la compañía— es fomentar la adopción y la velocidad sin perder compliance ni seguridad. No es un problema de una sola área: es del CTO y de Transformación e IA, juntos.</p>
+    <div class="specsheet">
+      <div class="sc"><span class="lbl k">Alcance</span><span class="v">Todo el grupo fyo, no una unidad</span></div>
+      <div class="sc"><span class="lbl k">Dueños del problema</span><span class="v">CTO + Transformación e IA</span></div>
+      <div class="sc"><span class="lbl k">Principio rector</span><span class="v">Autonomía embebida, riesgo gobernado</span></div>
+    </div>
+  </header>
+
+  <section class="chapter" id="s0">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">00</span><span class="lbl">El desafío</span></div>
+      <h2 class="ch-title">El cuello de botella <span class="hl">ya se movió</span></h2>
+      <p class="ch-lede">Con IA, construir una herramienta dejó de ser el problema: cualquiera la describe en lenguaje natural y en una tarde la tiene andando. El cuello de botella se corrió a otro lado.</p>
+    </div>
+
+    <div class="prose">
+      <p>El problema ya no es <em>construir</em>, es <strong>compartir y sostener con seguridad</strong>: que la use la gente correcta, sobre los datos correctos, sin que la compañía quede expuesta. Y queremos que la gente construya —esa autonomía embebida en el negocio es la palanca de aceleración que buscamos—. Justamente por eso hay que <strong>dar una respuesta y gobernar el proceso</strong>, no frenarlo.</p>
+      <p>Esto no es de una unidad ni de una persona. Vive entre dos manos que hoy tienen que trabajar juntas: la del <strong>CTO</strong> —seguridad, arquitectura, perímetro— y la de <strong>Transformación e IA</strong> —adopción, casos de uso, cercanía al negocio—. Es exactamente en esa frontera donde se juega.</p>
+    </div>
+  </section>
+
+  <section class="chapter" id="s1">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">01</span><span class="lbl">Lo que ya está pasando</span></div>
+      <h2 class="ch-title">La IA que ya corre <span class="hl">en las sombras</span></h2>
+      <p class="ch-lede">No es una hipótesis a futuro. Es lo que ya se ve en el día a día, sin mala intención de nadie: gente resolviendo su problema con las herramientas que tiene a mano.</p>
+    </div>
+
+    <div class="entity">
+      <div class="entity-head">
+        <span class="lbl">Señales de campo · observado</span>
+        <h3 class="entity-name">Cinco cosas que <span class="hl">ya vi</span></h3>
+        <p class="entity-purpose">Cada una nace de una buena intención —autonomía, velocidad, ganas de resolver—. El problema no es la gente: es que <strong>no hay un carril donde canalizarla</strong>.</p>
+      </div>
+      <div class="entity-body">
+        <div class="fn"><div class="fi">01</div><div class="ft"><strong>Tarjeta personal para pagar tokens.</strong> <span class="d">Gente poniendo su propia tarjeta para conseguir acceso a modelos.</span><span class="sub">Gasto invisible, sin límites ni control — y datos de la compañía pasando por cuentas personales.</span></div></div>
+        <div class="fn"><div class="fi">02</div><div class="ft"><strong>Desarrollo en cuentas personales.</strong> <span class="d">Herramientas construidas y alojadas en cuentas propias.</span><span class="sub">Viven fuera del perímetro y del control de la compañía.</span></div></div>
+        <div class="fn"><div class="fi">03</div><div class="ft"><strong>Links sueltos de apps vibecodeadas.</strong> <span class="d">URLs de aplicaciones circulando por chat.</span><span class="sub">Sin control de quién entra ni de a qué datos accede.</span></div></div>
+        <div class="fn"><div class="fi">04</div><div class="ft"><strong>Dependencia de personas.</strong> <span class="d">La herramienta vive en la cabeza —y la cuenta— de quien la hizo.</span><span class="sub">Si esa persona se va, se va con ella. Nada queda documentado ni transferible.</span></div></div>
+        <div class="fn"><div class="fi">05</div><div class="ft"><strong>Exposición pública no intencional.</strong> <span class="d">Aplicaciones con datos de la compañía quedando accesibles públicamente.</span><span class="sub">Sin que nadie lo haya decidido ni advertido.</span></div></div>
+      </div>
+      <div class="entity-foot">
+        <span class="tag key"><strong>Patrón:</strong> resolver hoy, sin carril</span>
+        <span class="tag">Sin mala intención</span>
+        <span class="tag">Riesgo real, no teórico</span>
+      </div>
+    </div>
+
+    <div class="note warn">
+      <span class="lbl">El agravante · ciberseguridad</span>
+      <p><strong>En tiempos de IA, la ciberseguridad es más relevante que nunca.</strong> Más gente construyendo, más conexiones a datos internos, más credenciales dando vueltas y más agentes actuando de forma autónoma: la superficie de ataque se expande justo cuando la IA la vuelve más crítica. Cada uno de los síntomas de arriba no es solo un problema de gobierno — es también un vector de seguridad.</p>
+    </div>
+  </section>
+
+  <section class="chapter" id="s2">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">02</span><span class="lbl">La tesis</span></div>
+      <h2 class="ch-title">Separar construir de <span class="hl">gobernar</span></h2>
+      <p class="ch-lede">La respuesta no es prohibir ni centralizar todo en Tech. Es una división limpia: quien construye se ocupa de la herramienta; una plataforma se ocupa de lo que la vuelve segura y durable.</p>
+    </div>
+
+    <div class="stack">
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Quien construye</span></div>
+        <div class="t-items">
+          <div class="cell x"><span class="cn">Arma la herramienta</span><span class="cs">persona de negocio o agente · describe qué necesita, en lenguaje natural · autonomía real</span></div>
+        </div>
+      </div>
+      <div class="flowmark">▲ se apoya en · nunca improvisa la seguridad</div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">La plataforma</span></div>
+        <div class="t-items">
+          <div class="cell"><span class="cn">Identidad y permisos</span><span class="cs">quién abre qué</span></div>
+          <div class="cell"><span class="cn">Datos autoritativos</span><span class="cs">no exceles sueltos</span></div>
+          <div class="cell"><span class="cn">Secretos y accesos</span><span class="cs">por defecto, no a mano</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">
+      <span class="lbl">Ya hay piezas · fyoCapital como piloto</span>
+      <p>fyoCapital ya tiene los embriones de esta plataforma: un <strong>MCP sobre fyoDigital</strong> como contrato estable entre agentes y sistemas internos, <strong>LibreChat</strong> como superficie de acceso, y el modelo <strong>dupla + CoE</strong> como sistema operativo de adopción. Sirve de piloto para definir el <em>estándar de todo el grupo</em> — que es donde el CTO y Transformación e IA tienen que ponerse de acuerdo.</p>
+    </div>
+  </section>
+
+  <section class="chapter" id="s3">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">03</span><span class="lbl">Las decisiones a tomar</span></div>
+      <h2 class="ch-title">Las preguntas que hay que <span class="hl">responder</span></h2>
+      <p class="ch-lede">Gobernar no es prohibir: es responder con claridad estas preguntas, para que la autonomía tenga reglas y la gente sepa por dónde moverse.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <span class="cnum">Pregunta 01</span>
+        <h4>¿Quiénes construyen?</h4>
+        <p>Qué perfiles pueden crear herramientas, con qué preparación mínima y qué se espera de cada uno.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">Pregunta 02</span>
+        <h4>¿Con qué herramientas y proceso?</h4>
+        <p>Cuál es el stack sancionado y el camino oficial, en vez de que cada uno elija el suyo.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">Pregunta 03</span>
+        <h4>¿Con qué permisos y hasta dónde?</h4>
+        <p>El nivel de autonomía y libertad de cada quién, y a qué datos puede acceder una herramienta.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">Pregunta 04</span>
+        <h4>¿Cuándo entra Tech?</h4>
+        <p>El umbral en que una herramienta deja de ser personal y requiere arquitectura, seguridad y respaldo formal.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">Pregunta 05</span>
+        <h4>¿Cómo escala una solución?</h4>
+        <p>El paso de la herramienta de una persona a capacidad compartida, mantenida y no dependiente de nadie.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">Pregunta 06</span>
+        <h4>¿Para qué tipo de soluciones?</h4>
+        <p>Qué se habilita a construir libremente y qué exige, por su riesgo, desarrollo y revisión formal.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter" id="s4">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">04</span><span class="lbl">La clave</span></div>
+      <h2 class="ch-title">No puede ser igual para <span class="hl">todo</span></h2>
+      <p class="ch-lede">La trampa sería una sola regla para cualquier caso: o ahoga la autonomía, o deja pasar el riesgo. La respuesta se segmenta por riesgo y estadio — a más riesgo, más gobierno y más Tech; a menos riesgo, más libertad.</p>
+    </div>
+
+    <div class="stack">
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Nivel 1 · Personal</span></div>
+        <div class="t-items">
+          <div class="cell x"><span class="cn">Productividad individual</span><span class="cs">máxima libertad · sin datos sensibles · no se publica · Tech no interviene</span></div>
+        </div>
+      </div>
+      <div class="flowmark">▼ a más alcance y datos · menos libertad, más gobierno</div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Nivel 2 · Equipo / Área</span></div>
+        <div class="t-items">
+          <div class="cell"><span class="cn">Herramienta compartida</span><span class="cs">carril sancionado · permisos y datos gobernados · plataforma común</span></div>
+        </div>
+      </div>
+      <div class="flowmark">▼</div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Nivel 3 · Compañía / Cliente</span></div>
+        <div class="t-items">
+          <div class="cell"><span class="cn">Datos sensibles, cara al cliente o pública</span><span class="cs">Tech + Compliance obligatorios · revisión formal · máximo control</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">
+      <span class="lbl">La lectura</span>
+      <p>Esta segmentación es lo que permite <strong>ser generoso con la libertad donde el riesgo es bajo</strong> y exigente donde es alto, sin tratar todo con la misma vara. Es lo que hace que gobernar <em>habilite</em> en vez de frenar.</p>
+    </div>
+  </section>
+
+  <section class="chapter" id="s5" style="margin-top:0">
+    <div class="statement">
+      <span class="lbl">El desafío, en una frase</span>
+      <p>El objetivo no es controlar la IA. Es que todos puedan construir con ella <span class="hl">sin que la compañía quede expuesta</span>.</p>
+    </div>
+  </section>
+
+  <div class="colophon">
+    <span>Iñaki · Consultoría · Grupo fyo</span>
+    <span>inaki@alganaras.com.ar · estilo «Plano»</span>
+  </div>
+
+</div></div>
+
+<script src="https://docs.alganaras.com.ar/_editor.js"></script>
+</body></html>

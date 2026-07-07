@@ -759,8 +759,9 @@
       }
       var data = await resp.json();
       var total = data.external_views || 0;
+      var unique = data.unique_visitors || 0;
       var last = data.last_view_at ? new Date(data.last_view_at).toLocaleString('es-AR') : '—';
-      alert('Lecturas externas de ' + path + ': ' + total + '\nÚltima apertura: ' + last);
+      alert('Lecturas externas de ' + path + ': ' + total + '\nVisitantes únicos aprox.: ' + unique + '\nÚltima apertura: ' + last);
     } catch (e) {
       alert('No se pudo consultar lecturas.\n\n' + e.message);
     }

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>fyo · La plataforma de agentes del agro argentino · Por qué invertir</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#f3f2ee;
+    --paper-2:#eceae4;
+    --card:#ffffff;
+    --ink:#111110;
+    --ink-2:#2c2b27;
+    --muted:#56544f;
+    --faint:#78756f;
+    --rule:#d6d4ce;
+    --rule-2:#cbc8c0;
+    --accent:#e22b16; --accent-soft:#e22b160e; --accent-line:#e22b1642; --accent-deep:#c0220f;
+    --disp:'Space Grotesk', system-ui, sans-serif;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--paper);
+    color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--accent); color:#fff; }
+  .lbl{ font-family:var(--mono); font-size:11px; font-weight:500; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--muted); }
+  .fc{ color:var(--accent); }
+
+  .doc{ max-width:1120px; margin:0 auto; padding:0 0 130px; }
+  .sheet{ background:var(--paper); padding:0 52px; position:relative; }
+  @media (max-width:760px){ .sheet{ padding:0 20px; } }
+
+  .titleblock{ display:grid; grid-template-columns:1fr auto; align-items:stretch;
+    border-bottom:1px solid var(--ink); }
+  .titleblock .tb-l{ padding:16px 0; font-family:var(--mono); font-size:11px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--ink-2); display:flex; align-items:center; gap:14px; }
+  .titleblock .tb-l .sq{ width:8px; height:8px; background:var(--accent); }
+  .titleblock .tb-r{ font-family:var(--mono); font-size:11px; letter-spacing:.06em; color:var(--muted);
+    text-transform:uppercase; display:flex; align-items:center; padding:16px 0 16px 22px;
+    border-left:1px solid var(--rule); }
+  .titleblock .tb-r b{ color:var(--accent-deep); font-weight:600; }
+
+  .cover{ padding:70px 0 0; }
+  .cover .ref{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); margin-bottom:30px; display:flex; gap:18px; flex-wrap:wrap; }
+  .cover .ref span{ position:relative; padding-left:16px; }
+  .cover .ref span::before{ content:''; position:absolute; left:0; top:50%; width:8px; height:8px;
+    border:1px solid var(--accent); transform:translateY(-50%); }
+  h1.title{ font-family:var(--disp); font-weight:600; font-size:clamp(40px,6.4vw,82px);
+    line-height:1.0; letter-spacing:-.03em; margin:0; max-width:16ch; color:var(--ink); }
+  h1.title .hl{ color:var(--accent); }
+  .lede{ font-size:clamp(17px,1.8vw,21px); line-height:1.55; color:var(--ink-2); max-width:64ch;
+    margin:30px 0 0; }
+  .lede b{ color:var(--ink); font-weight:600; }
+  .specsheet{ margin-top:48px; border:1px solid var(--rule-2); background:var(--card);
+    display:grid; grid-template-columns:repeat(3,1fr); }
+  @media (max-width:680px){ .specsheet{ grid-template-columns:1fr; } }
+  .specsheet .sc{ padding:18px 20px; border-right:1px solid var(--rule); }
+  .specsheet .sc:last-child{ border-right:none; }
+  .specsheet .sc .k{ display:block; margin-bottom:8px; }
+  .specsheet .sc .v{ font-family:var(--disp); font-weight:500; font-size:16px; color:var(--ink);
+    line-height:1.35; }
+
+  .contents{ margin:72px 0 0; border-top:1px solid var(--ink); padding-top:26px; }
+  .contents .ct{ color:var(--accent); margin-bottom:18px; }
+  .toc{ list-style:none; margin:0; padding:0; }
+  .toc li{ display:grid; grid-template-columns:70px 1fr auto; align-items:center; gap:18px;
+    padding:15px 0; border-bottom:1px solid var(--rule); }
+  .toc .n{ font-family:var(--mono); font-size:12px; color:var(--accent); }
+  .toc a{ color:var(--ink); text-decoration:none; font-family:var(--disp); font-weight:500;
+    font-size:19px; letter-spacing:-.01em; }
+  .toc li:hover a{ color:var(--accent); }
+  .toc .ar{ font-family:var(--mono); color:var(--faint); font-size:12px; }
+
+  .chapter{ margin-top:96px; scroll-margin-top:24px; }
+  .ch-head{ border-bottom:1px solid var(--ink); padding-bottom:26px; }
+  .ch-marker{ display:flex; align-items:center; gap:14px; margin-bottom:20px; }
+  .ch-marker .mn{ font-family:var(--mono); font-size:12px; color:#fff; background:var(--accent);
+    padding:4px 9px; font-weight:600; letter-spacing:.06em; }
+  h2.ch-title{ font-family:var(--disp); font-weight:600; font-size:clamp(28px,4.2vw,52px);
+    line-height:1.02; letter-spacing:-.03em; margin:0; max-width:20ch; }
+  h2.ch-title .hl{ color:var(--accent); }
+  .ch-lede{ font-size:19px; line-height:1.5; color:var(--ink-2); margin:20px 0 0; max-width:64ch; }
+
+  .prose{ max-width:70ch; margin-top:32px; font-size:16.5px; line-height:1.62; color:var(--ink-2); }
+  .prose p{ margin:0 0 18px; }
+  .prose strong{ color:var(--ink); font-weight:600; }
+  .prose em{ font-style:normal; color:var(--accent); font-weight:500; }
+  .subhead{ font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--accent); margin:40px 0 0; }
+
+  .note{ margin:32px 0; border:1px solid var(--rule-2); border-left:3px solid var(--accent);
+    background:var(--card); padding:22px 26px; max-width:78ch; position:relative; }
+  .note .lbl{ color:var(--accent); display:block; margin-bottom:11px; }
+  .note p{ margin:0; font-size:15.5px; line-height:1.58; color:var(--ink-2); }
+  .note p+p{ margin-top:12px; }
+  .note strong{ color:var(--ink); font-weight:600; }
+  .note em{ font-style:normal; color:var(--accent-deep); font-weight:500; }
+  .note.warn{ border-left-color:var(--accent-deep); }
+
+  .bignum{ margin:36px 0 8px; border:1px solid var(--ink); background:var(--card);
+    display:grid; grid-template-columns:repeat(3,1fr); }
+  @media (max-width:680px){ .bignum{ grid-template-columns:1fr; } }
+  .bignum .bn{ padding:26px 24px 24px; border-right:1px solid var(--rule); }
+  .bignum .bn:last-child{ border-right:none; }
+  @media (max-width:680px){ .bignum .bn{ border-right:none; border-bottom:1px solid var(--rule); } .bignum .bn:last-child{ border-bottom:none; } }
+  .bignum .n{ font-family:var(--disp); font-weight:600; font-size:clamp(34px,4vw,48px);
+    letter-spacing:-.03em; color:var(--accent); line-height:1; display:block; }
+  .bignum .d{ font-size:14px; line-height:1.5; color:var(--ink-2); display:block; margin-top:12px; }
+  .bignum .d strong{ color:var(--ink); font-weight:600; }
+  .bignum .s{ font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--faint); display:block; margin-top:12px; }
+
+  .stack{ margin:36px 0 8px; border:1px solid var(--ink); background:var(--card); }
+  .tier{ display:grid; grid-template-columns:178px 1fr; border-bottom:1px solid var(--rule); }
+  .tier:last-child{ border-bottom:none; }
+  @media (max-width:680px){ .tier{ grid-template-columns:1fr; } }
+  .tier .t-lbl{ padding:18px 20px; border-right:1px solid var(--rule); display:flex; align-items:center;
+    background:var(--paper-2); }
+  @media (max-width:680px){ .tier .t-lbl{ border-right:none; border-bottom:1px solid var(--rule); padding-bottom:10px; } }
+  .tier .t-items{ display:flex; }
+  @media (max-width:560px){ .tier .t-items{ flex-direction:column; } }
+  .cell{ flex:1; padding:18px 22px; border-left:1px solid var(--rule); }
+  .cell:first-child{ border-left:none; }
+  .cell .cn{ font-family:var(--disp); font-weight:600; font-size:17px; color:var(--ink); display:block;
+    letter-spacing:-.01em; }
+  .cell .cs{ font-size:14.5px; color:var(--ink-2); display:block; margin-top:8px; line-height:1.55; }
+  .cell.x .cn{ color:var(--accent); }
+
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; margin-top:24px; border:1px solid var(--ink);
+    background:var(--card); }
+  @media (max-width:680px){ .grid2{ grid-template-columns:1fr; } }
+  .card{ padding:26px 28px 28px; border-bottom:1px solid var(--rule); }
+  .card:nth-child(odd){ border-right:1px solid var(--rule); }
+  @media (max-width:680px){ .card:nth-child(odd){ border-right:none; } }
+  .card:nth-last-child(-n+2){ border-bottom:none; }
+  @media (max-width:680px){ .card:nth-last-child(-n+2){ border-bottom:1px solid var(--rule); } .card:last-child{ border-bottom:none; } }
+  .card .cnum{ font-family:var(--mono); font-size:11px; color:var(--accent); display:block; margin-bottom:14px; }
+  .card h4{ font-family:var(--disp); font-weight:600; font-size:21px; letter-spacing:-.015em; margin:0 0 9px; color:var(--ink); }
+  .card p{ font-size:15px; line-height:1.55; color:var(--ink-2); margin:0; }
+  .card p strong{ color:var(--ink); font-weight:600; }
+
+  .statement{ margin:88px 0 0; padding:56px 44px; border:1px solid var(--ink); background:var(--card);
+    position:relative; }
+  .statement::before{ content:''; position:absolute; top:0; left:0; width:6px; height:100%; background:var(--accent); }
+  .statement .lbl{ color:var(--accent); margin-bottom:22px; display:block; }
+  .statement p{ font-family:var(--disp); font-weight:500; font-size:clamp(24px,3.4vw,40px); line-height:1.2;
+    letter-spacing:-.025em; margin:0; max-width:24ch; color:var(--ink); }
+  .statement .hl{ color:var(--accent); }
+
+  .colophon{ margin-top:50px; padding-top:18px; border-top:1px solid var(--ink); display:flex;
+    justify-content:space-between; flex-wrap:wrap; gap:12px; font-family:var(--mono); font-size:11px;
+    color:var(--muted); letter-spacing:.05em; text-transform:uppercase; }
+</style>
+</head>
+<body>
+
+<div class="doc"><div class="sheet">
+
+  <!-- CABECERA -->
+  <div class="titleblock">
+    <div class="tb-l"><span class="sq"></span>Iñaki · Consultoría<span style="color:var(--muted)">inaki@alganaras.com.ar</span></div>
+    <div class="tb-r">DOC. <b>FYO-07</b> · REV. <b>v1</b> · IA APLICADA · DIRECTORIO</div>
+  </div>
+
+  <!-- PORTADA -->
+  <header class="cover">
+    <div class="ref"><span>fyo</span><span>IA aplicada al negocio</span><span>Caso de inversión</span></div>
+    <h1 class="title">El plan ya está aprobado. Los agentes son lo que lo hace <span class="hl">posible</span>.</h1>
+    <p class="lede">El plan estratégico de fyoCapital compromete <b>multiplicar por cuatro los clientes atendidos sumando solo siete personas</b>. Esa cuenta no cierra con el modelo operativo actual — y sí cierra con el sistema de agentes que ya está diseñado, documentado y peloteado con el equipo. Este documento junta las dos cosas: el compromiso que el directorio ya asumió, y la inversión que lo vuelve cumplible. Y muestra por qué esa misma infraestructura transforma a fyo entero, no solo a fyoCapital.</p>
+    <div class="specsheet">
+      <div class="sc"><span class="lbl k">La tesis</span><span class="v">Los agentes no son un proyecto al costado del plan: son la condición para cumplirlo</span></div>
+      <div class="sc"><span class="lbl k">Audiencia</span><span class="v">Directorio fyo — la decisión es del grupo, no de la unidad</span></div>
+      <div class="sc"><span class="lbl k">Lo que se pide</span><span class="v">Encender Fase 0 + dos pilotos acotados, con puntos de decisión por evidencia</span></div>
+    </div>
+  </header>
+
+  <!-- ÍNDICE -->
+  <nav class="contents">
+    <div class="lbl ct">Índice del documento</div>
+    <ol class="toc">
+      <li><span class="n">01</span><a href="#s1">El compromiso · lo que el plan ya promete</a><span class="ar">[↗]</span></li>
+      <li><span class="n">02</span><a href="#s2">La tensión · la cuenta que no cierra con personas solamente</a><span class="ar">[↗]</span></li>
+      <li><span class="n">03</span><a href="#s3">La respuesta · el sistema que ya está diseñado</a><span class="ar">[↗]</span></li>
+      <li><span class="n">04</span><a href="#s4">El moat · la señal que solo fyo tiene</a><span class="ar">[↗]</span></li>
+      <li><span class="n">05</span><a href="#s5">La inversión · qué se pide, en qué orden, con qué evidencia</a><span class="ar">[↗]</span></li>
+      <li><span class="n">06</span><a href="#s6">El costo de no avanzar</a><span class="ar">[↗]</span></li>
+    </ol>
+  </nav>
+
+  <!-- 01 EL COMPROMISO -->
+  <section class="chapter" id="s1">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">01</span><span class="lbl">El compromiso</span></div>
+      <h2 class="ch-title">Lo que el plan ya <span class="hl">promete</span>.</h2>
+      <p class="ch-lede">Estos no son números nuevos: son los del plan estratégico de fyoCapital que el directorio ya conoce y aprobó. Conviene tenerlos enfrente antes de hablar de tecnología.</p>
+    </div>
+
+    <div class="bignum">
+      <div class="bn"><span class="n">95 → 400</span><span class="d">Clientes activos de Capital Financiero: del <strong>15% al 40% de la pecera fyo</strong> hacia el 28/29.</span><span class="s">Plan estratégico · Etapa I</span></div>
+      <div class="bn"><span class="n">4,9 M US$</span><span class="d">Comisiones de Capital Financiero al 28/29, desde 1,2 M — con el <strong>EBITDA pasando del 24% al 47%</strong>.</span><span class="s">Plan estratégico · Etapa I</span></div>
+      <div class="bn"><span class="n">90 → 500 M</span><span class="d">AUM en US$: la penetración de la cartera fyo pasa del <strong>6% al 23%</strong>. Multiplicar por 3,6.</span><span class="s">Plan estratégico · Etapa I</span></div>
+    </div>
+
+    <div class="prose">
+      <p>El plan además fija <strong>cómo</strong> se atiende esa cartera: clientes A con atención senior personalizada (~50 k US$ de comisión por cliente), clientes B con atención estándar y carteras tipo (~15 k), y una base amplia en autogestión con extranet y research (~3 k). Tres niveles de servicio, cada uno con su economía. Y fija con qué equipo: <strong>siete incorporaciones</strong> en cinco años.</p>
+      <p>El roadmap aprobado ya nombra las capacidades que hay que construir: <em>research propio</em>, aumento de seniority comercial, consolidación vertical financiera, y hacia adelante mesa propia y fondos. Es decir: el directorio ya decidió que fyoCapital juega a ser un jugador serio del negocio financiero. Lo que este documento discute es <strong>con qué apalancamiento</strong> se cumple esa decisión.</p>
+    </div>
+  </section>
+
+  <!-- 02 LA TENSIÓN -->
+  <section class="chapter" id="s2">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">02</span><span class="lbl">La tensión</span></div>
+      <h2 class="ch-title">La cuenta que no cierra con personas <span class="hl">solamente</span>.</h2>
+      <p class="ch-lede">Cuatro veces más clientes, la misma rentabilidad por cliente, siete personas más. Alguna de las tres cosas cede — salvo que cambie el modelo operativo.</p>
+    </div>
+
+    <div class="prose">
+      <p>La rentabilidad por cliente del plan se mantiene casi constante: <strong>13 k US$ hoy, 12 k al final</strong>. O sea que el crecimiento no viene de cobrar más por cliente, sino de <strong>atender bien a muchos más clientes con casi la misma estructura</strong>. Con el modelo actual —donde la relación vive en la cabeza del comercial, el research en un PDF y la minuta en el mejor de los casos en el CRM— eso tiene solo tres salidas, y las tres son malas: se contrata mucho más de lo presupuestado (y el EBITDA del 47% no existe), se baja la calidad de atención (y con eso el argumento del fee frente a la comisión cero), o se resigna el objetivo de clientes (y el plan no se cumple).</p>
+      <p>La cuarta salida es cambiar cuánto rinde cada persona. Y ahí no hay que teorizar: el propio FODA del plan nombra el gap de fyo contra las ALyCs en <strong>cuatro cosas: procesos, producto, seniority y research</strong>. El sistema de agentes ataca exactamente esas cuatro.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card"><span class="cnum">Gap FODA · Research</span><h4>De PDF a cerebro vivo</h4><p><strong>fyoCortex</strong> convierte el research en una base viva, consultable y con memoria — la capacidad que el roadmap 25/26 ya presupuesta como «research propio», construida para rendir todos los días y no evaporarse en un informe.</p></div>
+      <div class="card"><span class="cnum">Gap FODA · Procesos</span><h4>El comercial sin plomo administrativo</h4><p>El <strong>Agente Comercial</strong> escucha la reunión, carga el CRM solo, detecta clientes que se enfrían y plata sin capturar, y ordena la lista del día por impacto. El proceso deja de depender de la disciplina individual.</p></div>
+      <div class="card"><span class="cnum">Gap FODA · Producto</span><h4>Propuesta con argumento, a escala</h4><p>El <strong>Agente de Portafolio</strong> cruza cada señal de mercado con cada cartera y deja la recomendación argumentada y el mensaje listo. La sofisticación de producto deja de ser un lujo de los clientes grandes.</p></div>
+      <div class="card"><span class="cnum">Gap FODA · Seniority</span><h4>Un Ssr que rinde como Sr</h4><p>Con briefing 360, house view a mano y recomendación trazable, el equipo semi-senior atiende con calidad senior. El «aumento de seniority» del plan se compra en parte con software, no solo con sueldos.</p></div>
+    </div>
+
+    <div class="note">
+      <span class="lbl">El punto</span>
+      <p>Los agentes no compiten con el plan por presupuesto: <strong>son la única forma de que el plan se cumpla con el presupuesto que tiene</strong>. Sin apalancamiento, «400 clientes con +7 personas» es una expresión de deseo.</p>
+    </div>
+  </section>
+
+  <!-- 03 LA RESPUESTA -->
+  <section class="chapter" id="s3">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">03</span><span class="lbl">La respuesta</span></div>
+      <h2 class="ch-title">El sistema ya está <span class="hl">diseñado</span>.</h2>
+      <p class="ch-lede">No se pide aprobar una idea en el aire. La arquitectura está definida, documentada y peloteada con el equipo: cuatro agentes, un cerebro, un contrato de datos y una secuencia de fases.</p>
+    </div>
+
+    <div class="stack">
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">El cimiento</span></div>
+        <div class="t-items"><div class="cell x"><span class="cn">MCP de posiciones</span><span class="cs">El contrato estable entre cualquier agente y la posición real del cliente: granos, cartera, caja. Los agentes se cambian; el contrato queda. Es el activo estratégico de toda la construcción — y es de fyo, no de la unidad.</span></div></div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">El cerebro</span></div>
+        <div class="t-items"><div class="cell"><span class="cn">fyoCortex</span><span class="cs">La visión de fyo sobre el mercado, viva y consultable: qué pensamos de cada instrumento, con la fuente, la fecha y la historia. Alimenta a todos los demás. El conocimiento deja de irse con la gente.</span></div></div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Los agentes internos</span></div>
+        <div class="t-items">
+          <div class="cell"><span class="cn">Comercial</span><span class="cs">A quién llamar y por qué: debrief automático, radar defensivo y ofensivo, próxima mejor acción.</span></div>
+          <div class="cell"><span class="cn">Portafolio</span><span class="cs">Qué hacer con cada cartera, con argumento trazable a la house view y mensaje listo para revisar y mandar.</span></div>
+        </div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">La cara al cliente</span></div>
+        <div class="t-items"><div class="cell"><span class="cn">fyo AI</span><span class="cs">Crece en modos, de informar a conversar, acercándose a la línea regulatoria de forma deliberada. Extiende al comercial; nunca lo reemplaza. Cuando aparece una decisión, el camino es siempre hacia el humano.</span></div></div>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>Y el sistema calza uno a uno con el <strong>modelo de servicio del plan</strong>: los clientes A reciben al comercial senior potenciado con briefing 360 y simulación de escenarios; los clientes B reciben la revisión periódica de posición que hoy es un lujo de los grandes, redactada por el agente y aprobada por el humano; la base de autogestión conversa con fyo AI las 24 horas. <strong>Tres niveles de servicio, una sola infraestructura.</strong></p>
+    </div>
+
+    <div class="grid2">
+      <div class="card"><span class="cnum">Principio 01</span><h4>Propone, no ejecuta</h4><p>Ningún agente mueve un peso ni contacta solo. El humano decide. La autonomía se gana con historial, no se diseña de entrada.</p></div>
+      <div class="card"><span class="cnum">Principio 02</span><h4>Grounded y auditable</h4><p>Nunca se inventa un número: todo se traza a la fuente. Nada sale sin pasar por un framework de evaluación. En una industria regulada, esto es la licencia para operar.</p></div>
+      <div class="card"><span class="cnum">Principio 03</span><h4>Ayudar nunca es evaluar</h4><p>El agente que ayuda al comercial no es el que lo mide. Si huele a vigilancia, no lo usa nadie — y la adopción es todo.</p></div>
+      <div class="card"><span class="cnum">Principio 04</span><h4>Que aprenda</h4><p>Cada agente registra qué propuso, qué se hizo y qué resultó. Es de las pocas inversiones que valen más cuanto más se usan: un activo que compone.</p></div>
+    </div>
+
+    <div class="note">
+      <span class="lbl">El mundo ya validó el camino</span>
+      <p>Los líderes globales de wealth management recorrieron exactamente esta secuencia y publican los resultados: el <strong>98% de los equipos de asesores de Morgan Stanley</strong> usa a diario su asistente de IA sobre el research interno, y su framework de evaluación fue lo que le permitió desplegar IA en una industria regulada. McKinsey midió <strong>13 veces más probabilidad</strong> de captar activos cuando el contacto del asesor coincide con un evento de vida del cliente. El playbook está probado; la pregunta no es si funciona, es quién lo construye primero en el agro argentino.</p>
+    </div>
+  </section>
+
+  <!-- 04 EL MOAT -->
+  <section class="chapter" id="s4">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">04</span><span class="lbl">El moat</span></div>
+      <h2 class="ch-title">La señal que solo fyo tiene — y por qué esto es una decisión de <span class="hl">fyo</span>.</h2>
+      <p class="ch-lede">Allaria o Macro pueden contratar mejores mesas y comprimir comisiones. Lo que no pueden hacer es ver la cosecha cobrada antes de que la plata llegue. Ese es el diferencial que la IA convierte en negocio.</p>
+    </div>
+
+    <div class="prose">
+      <p>Las amenazas del FODA son reales: nuevos players del mercado de granos entrando a competir, y presión a la baja de comisiones. Contra eso, fyo tiene un solo activo que nadie puede copiar ni comprar: <strong>el movimiento pasa por fyo</strong>. La venta de granos, el canje, la compra de insumos, el crédito — el ecosistema ve la caja del productor antes de que exista. Afuera, los wealth managers le compran esa señal de «dinero en movimiento» a proveedores de datos; fyo la tiene en casa y hoy no la usa.</p>
+      <p>El <em>Radar de dinero en movimiento</em> convierte ese privilegio en acción: el comercial llega con la propuesta cuando la plata llega, no semanas después de que quedó dormida en una cuenta a la vista. Y acá está el punto que excede a fyoCapital: <strong>esta señal nace en Granos, se monetiza en Capital y fideliza para todo el ecosistema</strong>. El productor al que fyo le resuelve la cosecha, la cobertura y la inversión de la caja en un solo lugar es un cliente que no se va — de ninguna de las unidades.</p>
+    </div>
+
+    <div class="note warn">
+      <span class="lbl">La pregunta que hay que resolver en el directorio, no en la unidad</span>
+      <p>Cuando el productor cobra la cosecha y tiene caja ociosa, ¿ese momento es del comercial de Granos o de fyoCapital? Si se plantea como disputa de cartera, el embedded no existe. La respuesta correcta es de <strong>suma positiva</strong>: la señal la origina Granos, la propuesta la ejecuta Capital, y el cliente —más atendido, más fidelizado, con más share of wallet en fyo— es del grupo. Los permisos de datos, el secreto y la CNV se resuelven con diseño; <strong>lo que no se resuelve solo es la decisión política de que las unidades jueguen juntas</strong>. Por eso este documento es para el directorio.</p>
+    </div>
+
+    <div class="prose">
+      <p>Y hay un segundo horizonte que ya no es ciencia ficción: <strong>el cliente no siempre va a ser humano</strong>. Morgan Stanley ya abre sus plataformas para que los agentes de IA de sus clientes consulten datos directamente. Cuando el cliente sofisticado del agro quiera que su propia IA le pregunte a fyo por su posición —granos, cobertura, cartera—, el MCP de posiciones ya es esa puerta. Construirlo hoy para los agentes propios es, sin costo extra, construir la interfaz del negocio de mañana.</p>
+    </div>
+  </section>
+
+  <!-- 05 LA INVERSIÓN -->
+  <section class="chapter" id="s5">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">05</span><span class="lbl">La inversión</span></div>
+      <h2 class="ch-title">Qué se pide, en qué orden, con qué <span class="hl">evidencia</span>.</h2>
+      <p class="ch-lede">No se pide aprobar el sistema entero: se pide encender lo primero, medir, y decidir cada escalón con datos. La apuesta grande se gana el derecho con pruebas chicas.</p>
+    </div>
+
+    <div class="prose">
+      <p>Sobre la arquitectura hay seis funcionalidades identificadas cruzando el diseño propio con los benchmarks globales. No son seis apuestas sueltas: <strong>dos construyen el moat, dos mueven el ingreso, dos compran la confianza</strong> para todo lo demás.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card"><span class="cnum">Estratégicas · moat</span><h4>01 · Radar de dinero en movimiento</h4><p>La caja del cliente detectada antes de que llegue. El diferencial que ningún competidor puede comprar, porque el movimiento pasa por fyo.</p></div>
+      <div class="card"><span class="cnum">Estratégicas · moat</span><h4>02 · Página viva del cliente</h4><p>La memoria de la relación, compilada: qué sabemos, qué se prometió, qué se recomendó, qué hizo. La relación deja de irse con la gente; un book se hereda leyendo.</p></div>
+      <div class="card"><span class="cnum">Comerciales · ingreso</span><h4>03 · Simulador de escenarios</h4><p>El «¿qué pasa si?» —soja, dólar, tasa— sobre la posición real de cada cliente. El argumento que mueve al cliente hacia la decisión: vender, cubrir, invertir.</p></div>
+      <div class="card"><span class="cnum">Comerciales · ingreso</span><h4>05 · Revisión de posición a escala</h4><p>La revisión formal periódica para todos los clientes, no solo los grandes. El servicio tangible y recurrente que justifica el fee frente a la comisión cero.</p></div>
+      <div class="card"><span class="cnum">De confianza · licencia</span><h4>04 · Libro de señales</h4><p>Track record auditable de cada recomendación: qué se dijo, qué se hizo, qué rindió. «Nuestra señal sobre X rindió Y» — algo que un broker de comisión cero no puede mostrar.</p></div>
+      <div class="card"><span class="cnum">De confianza · licencia</span><h4>06 · Reglas hechas sistema</h4><p>Perfil, normativa y políticas comerciales convertidas en chequeo automático antes de que algo salga. El compliance a favor, no en contra — lo que aceleró a Morgan Stanley.</p></div>
+    </div>
+
+    <div class="subhead">La secuencia — cada fase compra el derecho a la siguiente</div>
+    <div class="stack">
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Hoy · Fase 0</span></div>
+        <div class="t-items"><div class="cell x"><span class="cn">Cimientos + dos pilotos</span><span class="cs">MCP de posiciones, control de identidad, framework de evals. En paralelo, dos pilotos acotados: fyoCortex sobre una sola mesa con semanas de informes reales, y el Debrief del comercial. Cada uno responde una sola pregunta: ¿el equipo lo usa, y le sirve?</span></div></div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Punto de decisión 1</span></div>
+        <div class="t-items"><div class="cell"><span class="cn">Con evidencia de adopción</span><span class="cs">Si la mesa usa fyoCortex y el comercial usa el Debrief, se enciende el sistema completo: Comercial y Portafolio con la señal del Research, briefing 360, revisión a escala.</span></div></div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Punto de decisión 2</span></div>
+        <div class="t-items"><div class="cell"><span class="cn">Con el gate regulatorio construido</span><span class="cs">fyo AI frente al cliente, de informar a conversar, empezando por los autogestores. El piloto del Radar de dinero en movimiento con un grupo de clientes y permisos en regla — la evidencia concreta de cuánta caja ociosa se captura.</span></div></div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Horizonte</span></div>
+        <div class="t-items"><div class="cell x"><span class="cn">La plataforma del ecosistema</span><span class="cs">fyoCapital como capital markets embebido del agro, el MCP de posiciones como puerta para los agentes de los propios clientes. Se plantea con las fases anteriores ya caminando atrás.</span></div></div>
+      </div>
+    </div>
+
+    <div class="note">
+      <span class="lbl">Orden de magnitud</span>
+      <p>La decisión que se pide hoy no es el presupuesto total del sistema: es la Fase 0 con sus dos pilotos, cuyo costo es del <strong>orden de la asesoría externa que el plan ya aprobó</strong> (300 k US$) — y muy por debajo del WC de 1,4 a 1,8 M US$ previsto para la mesa de posición propia. Cada punto de decisión posterior se toma con evidencia propia de adopción y captura, no en abstracto. El presupuesto de escala se dimensiona cuando los pilotos hablen.</p>
+    </div>
+
+    <div class="note">
+      <span class="lbl">La disciplina que evita el cementerio de pilotos</span>
+      <p>Gartner proyecta que <strong>más del 40% de los proyectos de IA agéntica se cancela hacia 2027</strong> por costos o valor difuso. La respuesta no es no invertir: es invertir con regla. Acá la regla está escrita desde el día uno: <strong>se construye solo lo que mueve ingreso o protege la licencia para operar</strong>, cada pieza tiene su métrica, y ninguna función se suelta sin evaluación. El framework de evals no es un gasto técnico: es lo que separa esta inversión de las que se cancelan.</p>
+    </div>
+  </section>
+
+  <!-- 06 EL COSTO DE NO AVANZAR -->
+  <section class="chapter" id="s6">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">06</span><span class="lbl">Sin decisión</span></div>
+      <h2 class="ch-title">El costo de <span class="hl">no</span> avanzar.</h2>
+      <p class="ch-lede">No decidir también es una decisión, y tiene precio. Tres relojes corren en contra, y ninguno espera al presupuesto del año que viene.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card"><span class="cnum">Reloj 01 · La competencia</span><h4>Cocos ya ejecuta con un bot</h4><p>El extremo de la desintermediación ya opera en el mercado argentino, y la presión sobre las comisiones es un hecho del FODA, no una hipótesis. Competir en precio contra eso es una carrera perdida; competir en <strong>cercanía a escala</strong> exige los agentes.</p></div>
+      <div class="card"><span class="cnum">Reloj 02 · El gap</span><h4>El gap con las ALyCs no se cierra contratando</h4><p>Procesos, producto, seniority y research: cerrarlo solo con incorporaciones no entra en el P&amp;L del plan. Cada trimestre sin apalancamiento, el gap se financia con esfuerzo del equipo — y el esfuerzo no escala.</p></div>
+      <div class="card"><span class="cnum">Reloj 03 · El conocimiento</span><h4>Cada salida se lleva un pedazo de fyo</h4><p>Mientras el research viva en PDFs y la relación en cabezas, cada rotación de un senior o de un comercial es una pérdida de capital que no figura en ninguna planilla. fyoCortex y la página viva del cliente convierten ese costo invisible en un activo que se acumula.</p></div>
+      <div class="card"><span class="cnum">Reloj 04 · La ventana</span><h4>El primero que construye, acumula</h4><p>Estos sistemas valen más cuanto más se usan: cada ciclo afina la señal siguiente. El que arranca antes no tiene solo ventaja de tiempo — tiene ventaja compuesta. En el agro argentino, esa posición está vacante hoy.</p></div>
+    </div>
+
+    <div class="statement">
+      <span class="lbl">La apuesta, en una frase</span>
+      <p>fyo no tiene que ser una corredora con IA. Tiene que ser la <span class="hl">plataforma de agentes del agro argentino</span> — y el plan para serlo ya está diseñado. Lo que falta es la decisión de invertir en avanzar.</p>
+    </div>
+  </section>
+
+  <!-- COLOFÓN -->
+  <div class="colophon">
+    <span>Iñaki · Consultoría</span>
+    <span>inaki@alganaras.com.ar · estilo «Plano»</span>
+  </div>
+
+</div></div>
+
+<script src="https://docs.alganaras.com.ar/_editor.js"></script>
+</body></html>

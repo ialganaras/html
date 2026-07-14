@@ -63,6 +63,9 @@
   .subtab.active{color:var(--teal);font-weight:600;border-bottom-color:var(--teal)}
   .subtab .cnt{font-family:var(--mono);font-size:11px;font-weight:600;background:var(--teal-100);color:var(--teal-dd);border-radius:99px;padding:0 6px}
   .subtab.active .cnt{background:var(--teal);color:#fff}
+  .subtab .tabx{margin-left:2px;color:var(--muted-2);font-size:16px;line-height:1;border-radius:4px;padding:1px 4px;transition:.12s}
+  .subtab .tabx:hover{background:var(--neu-bg);color:var(--neg)}
+  .subtab.hidden{display:none}
 
   /* context strip */
   .ctxstrip{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--border-2);background:#fcfcfd;flex-wrap:wrap}
@@ -246,6 +249,54 @@
   .fb-thanks.show{display:flex}
   .fb-thanks svg{width:14px;height:14px}
 
+  /* ===== PER-PIECE HOVER FEEDBACK BAR ===== */
+  .hovtarget{position:relative}
+  .hovbar{position:absolute;top:7px;right:7px;display:flex;align-items:center;gap:2px;opacity:0;transform:translateY(-3px);pointer-events:none;transition:.13s;z-index:8;background:rgba(255,255,255,.94);backdrop-filter:blur(3px);border:1px solid var(--border);border-radius:8px;padding:3px;box-shadow:var(--sh)}
+  .hovtarget:hover>.hovbar,.hovbar:hover,.hovbar.pinned{opacity:1;transform:none;pointer-events:auto}
+  .hovbar.row{top:50%;transform:translateY(-50%) translateX(4px);right:8px}
+  tr.hasbar:hover .hovbar.row,.hovbar.row.pinned{opacity:1;transform:translateY(-50%);pointer-events:auto}
+  .hovbar button{width:26px;height:26px;border:none;background:transparent;border-radius:6px;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.12s;padding:0}
+  .hovbar button svg{width:14px;height:14px}
+  .hovbar button:hover{background:var(--teal-50);color:var(--teal)}
+  .hovbar button.on-up{background:var(--pos-bg);color:var(--pos)}
+  .hovbar button.on-down{background:var(--neg-bg);color:var(--neg)}
+  .hovbar .sep{width:1px;align-self:stretch;background:var(--border);margin:3px 2px}
+  td.hovcell{position:relative}
+  .hovnote{position:absolute;top:40px;right:7px;width:272px;display:none;flex-direction:column;gap:8px;background:var(--teal-50);border:1px solid var(--teal-200);border-radius:9px;padding:11px;box-shadow:var(--sh-lg);z-index:9;text-align:left}
+  .hovbar.row + .hovnote{top:50%}
+  .hovnote.show{display:flex}
+  .hovnote textarea{border:1px solid var(--teal-200);border-radius:6px;padding:8px 10px;font-size:12.5px;line-height:1.45;font-family:var(--sans);color:var(--ink);outline:none;resize:vertical;min-height:76px;width:100%;background:#fff}
+  .hovnote textarea:focus{border-color:var(--teal)}
+  .hovnote .row2{display:flex;justify-content:flex-end;gap:6px}
+  .hovnote button{border:none;background:var(--teal);color:#fff;border-radius:6px;padding:5px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans)}
+  .hovnote .done{font-size:12px;color:var(--pos);font-weight:600;display:flex;align-items:center;gap:6px}
+  .hovnote .done svg{width:14px;height:14px}
+
+  /* ===== SOURCES ACCESS ===== */
+  .sources{cursor:pointer;transition:.13s}
+  .sources:hover{border-color:var(--teal-200);background:var(--teal-50);color:var(--teal-dd)}
+  .sources .srcopen{margin-left:auto;color:var(--teal);font-weight:600;white-space:nowrap;align-self:center}
+  .srcov{position:fixed;inset:0;background:rgba(20,30,38,.34);opacity:0;visibility:hidden;transition:.2s;z-index:110;display:flex;align-items:center;justify-content:center;padding:20px}
+  .srcov.open{opacity:1;visibility:visible}
+  .srcbox{background:#fff;border-radius:12px;box-shadow:var(--sh-lg);width:460px;max-width:100%;max-height:82vh;overflow:auto;transform:translateY(8px);transition:.2s}
+  .srcov.open .srcbox{transform:none}
+  .srchead{display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid var(--border);position:sticky;top:0;background:#fff}
+  .srchead .ic{width:32px;height:32px;border-radius:8px;background:var(--teal-50);color:var(--teal-dd);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .srchead .ic svg{width:16px;height:16px}
+  .srchead .tt{font-weight:700;font-size:14.5px;color:var(--ink-strong)}
+  .srchead .x{margin-left:auto;cursor:pointer;color:var(--muted);width:20px;height:20px}
+  .srchead .x:hover{color:var(--ink)}
+  .srclist{padding:11px 12px;display:flex;flex-direction:column;gap:8px}
+  .srcitem{display:flex;align-items:center;gap:11px;padding:11px 13px;border:1px solid var(--border);border-radius:9px;transition:.13s}
+  .srcitem:hover{border-color:var(--teal-200);background:var(--teal-50)}
+  .srcitem .ic{width:34px;height:34px;border-radius:8px;background:var(--teal-50);color:var(--teal-dd);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .srcitem .ic svg{width:17px;height:17px}
+  .srcitem .nm{font-size:13px;color:var(--ink);font-weight:500;flex:1;line-height:1.4}
+  .srcitem .op{border:1px solid var(--teal-200);background:#fff;color:var(--teal-dd);border-radius:7px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:.12s}
+  .srcitem .op:hover{background:var(--teal-100)}
+  .srcitem .op.done{border-color:var(--pos);color:var(--pos);background:var(--pos-bg);cursor:default}
+  .srcnote{font-size:11.5px;color:var(--muted-2);padding:2px 16px 16px;line-height:1.5}
+
   /* sources */
   .sources{margin-top:14px;padding:10px 14px;border:1px dashed var(--border);border-radius:var(--r-sm);font-size:11.5px;color:var(--muted-2);display:flex;gap:8px;align-items:flex-start}
   .sources svg{flex-shrink:0;margin-top:1px;width:13px;height:13px}
@@ -338,11 +389,11 @@
 
     <!-- SUB-TABS -->
     <div class="subtabs" id="tabs">
-      <div class="subtab active" data-view="mercado">Pulso de mercado</div>
-      <div class="subtab" data-view="llamar">A quién llamar <span class="cnt">15</span></div>
-      <div class="subtab" data-view="vto">Vencimientos <span class="cnt">61</span></div>
-      <div class="subtab" data-view="briefing">Briefing</div>
-      <div class="subtab" data-view="acciones">Acciones</div>
+      <div class="subtab active" data-view="mercado">Mercado</div>
+      <div class="subtab" data-view="llamar">Cuentas <span class="cnt">15</span></div>
+      <div class="subtab" data-view="vto">Oportunidades <span class="cnt">61</span></div>
+      <div class="subtab client-tab" data-view="briefing">Micino <span class="tabx" title="Cerrar">×</span></div>
+      <div class="subtab client-tab" data-view="acciones">Accionables <span class="tabx" title="Cerrar">×</span></div>
     </div>
 
     <!-- CONTEXT STRIP -->
@@ -361,7 +412,7 @@
         <div class="vhead">
           <div class="eyebrow">Pulso de mercado · al 05/06</div>
           <h1>Qué cambió, y qué mirar hoy</h1>
-          <p>Síntesis de research para arrancar la rueda: global, equity y soberanos AR, más la cartera modelo conservadora del View FyO.</p>
+          <p>Síntesis de research para arrancar la rueda basada en <b>fyoCortex</b>: global, equity y soberanos AR, más la cartera modelo conservadora del View FyO.</p>
         </div>
 
         <div class="grid g4">
@@ -407,18 +458,6 @@
           </table>
         </div>
 
-        <div class="agentbar" data-ctx="mercado">
-          <div class="id"><span class="dot"></span>Generado por <b>Feed de research</b> · Delphos + View FyO</div>
-          <div class="acts">
-            <span class="ask">¿Te sirvió?</span>
-            <button class="fb" data-v="up" title="Útil">{{UP}}</button>
-            <button class="fb" data-v="down" title="No útil">{{DOWN}}</button>
-            <span class="fb-thanks">{{CHK}} Gracias — calibra al agente</span>
-            <button class="chatbtn" data-ctx="mercado">{{CHAT}} Preguntar al agente</button>
-          </div>
-        </div>
-        <div class="fb-note"><input type="text" placeholder="¿Qué ajustarías? (opcional, suma al RL)"><button>Enviar</button></div>
-
         <div class="sources"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><span><b>Fuentes:</b> Delphos Investment Semanales 1564–1566 (22-may a 05-jun) · View FyO bisemanal MDC (05/06/2026).</span></div>
 
         <div style="margin-top:18px;display:flex;justify-content:flex-end"><button class="nextbtn" data-goto="llamar">Ver a quién llamar con esto →</button></div>
@@ -429,7 +468,7 @@
         <div class="vhead">
           <div class="eyebrow">A quién llamar hoy</div>
           <h1>Prioridades de la rueda</h1>
-          <p>Las novedades del feed cruzadas con el ranking NBA. Primero el top de prioridad; abajo, el ruteo por ángulo de conversación.</p>
+          <p>Las novedades del feed cruzadas con el ranking NBA de <b>fyoCortex</b>. Primero el top de prioridad; abajo, el ruteo por ángulo de conversación.</p>
         </div>
 
         <div class="seyebrow"><span class="n">★</span> Top 3 para llamar hoy</div>
@@ -494,27 +533,15 @@
           </tbody></table>
         </div>
 
-        <div class="agentbar" data-ctx="llamar">
-          <div class="id"><span class="dot"></span>Generado por <b>Agente Comercial</b></div>
-          <div class="acts">
-            <span class="ask">¿Te sirvió?</span>
-            <button class="fb" data-v="up" title="Útil">{{UP}}</button>
-            <button class="fb" data-v="down" title="No útil">{{DOWN}}</button>
-            <span class="fb-thanks">{{CHK}} Gracias — calibra al agente</span>
-            <button class="chatbtn" data-ctx="llamar">{{CHAT}} Preguntar al agente</button>
-          </div>
-        </div>
-        <div class="fb-note"><input type="text" placeholder="¿Faltó algún cliente o el ángulo no cierra? (opcional)"><button>Enviar</button></div>
-
         <div class="sources"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><span><b>Cómo se construye:</b> ranking NBA del sistema FyO cruzado con las tesis del Pulso de mercado. El contacto y la conversación los define el asesor.</span></div>
       </section>
 
       <!-- ============ 03 · VENCIMIENTOS (research inverso) ============ -->
       <section class="view" id="view-vto">
         <div class="vhead">
-          <div class="eyebrow">Mesa de Renta Fija · research inverso</div>
+          <div class="eyebrow">Agente de Research · research inverso</div>
           <h1>Vencimiento 30/06/2026 — concentración de calendario</h1>
-          <p>Emitido 24/06/2026 · vence el martes 30/06. Cuatro instrumentos cortos vencen el mismo día sobre la cartera.</p>
+          <p>Emitido 24/06/2026 · vence el martes 30/06. Cuatro instrumentos cortos vencen el mismo día sobre la cartera, priorizados por <b>fyoCortex</b>.</p>
         </div>
 
         <div class="inverse">
@@ -606,18 +633,6 @@
           <b>(1)</b> Los valores en USD son aproximados a FX 1.300 y a nominales (no incluyen parity de LECAP/DUAL ni CER capitalizado al 30/06). Para Top-10 conviene correr tenencias-cliente por id y validar el monto exacto con la mesa. <b>(2)</b> 39 clientes no resolvieron id_grupo automático (Bossio, GALLEANO, Ada Susman, MASCOTENA, Irastorza…) — son individuales / PF.
         </div>
 
-        <div class="agentbar" data-ctx="vto">
-          <div class="id"><span class="dot"></span>Generado por <b>Mesa de Renta Fija · research</b></div>
-          <div class="acts">
-            <span class="ask">¿Te sirvió?</span>
-            <button class="fb" data-v="up" title="Útil">{{UP}}</button>
-            <button class="fb" data-v="down" title="No útil">{{DOWN}}</button>
-            <span class="fb-thanks">{{CHK}} Gracias — calibra al agente</span>
-            <button class="chatbtn" data-ctx="vto">{{CHAT}} Preguntar al agente</button>
-          </div>
-        </div>
-        <div class="fb-note"><input type="text" placeholder="¿Falta un cliente, o querés otro corte del listado? (opcional)"><button>Enviar</button></div>
-
         <div class="sources"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><span><b>Fuentes:</b> tenencias-cliente + calendario de vencimientos (sistema FyO Capital) · View FyO MDC (05/06) · Delphos Informe 1332 (17/06/2026). Confidencial · uso interno.</span></div>
       </section>
 
@@ -626,7 +641,7 @@
         <div class="vhead">
           <div class="eyebrow">Briefing del cliente · Agente Comercial</div>
           <h1>Ponce Micino R.</h1>
-          <p style="font-size:13px;color:var(--muted-2);margin-top:4px">René Arnaldo Leonel · <span class="idt">ID 1045</span> · Productor · Cliente Presupuestado</p>
+          <p style="font-size:13px;color:var(--muted-2);margin-top:4px">René Arnaldo Leonel · <span class="idt">ID 1045</span> · Productor · Cliente Presupuestado · perfil generado por <b>fyoCortex</b></p>
           <div style="display:flex;gap:7px;margin-top:11px;flex-wrap:wrap"><span class="chip cat">CAT A</span><span class="chip info">ARQUETIPO 4 · sofisticado</span><span class="chip warn">Acción sugerida · REVISAR</span></div>
         </div>
 
@@ -710,18 +725,6 @@
           </div>
         </div>
 
-        <div class="agentbar" data-ctx="briefing">
-          <div class="id"><span class="dot"></span>Generado por <b>Agente Comercial</b> · 10 jun 2026</div>
-          <div class="acts">
-            <span class="ask">¿Te sirvió?</span>
-            <button class="fb" data-v="up" title="Útil">{{UP}}</button>
-            <button class="fb" data-v="down" title="No útil">{{DOWN}}</button>
-            <span class="fb-thanks">{{CHK}} Gracias — calibra al agente</span>
-            <button class="chatbtn" data-ctx="briefing">{{CHAT}} Preguntar al agente</button>
-          </div>
-        </div>
-        <div class="fb-note"><input type="text" placeholder="¿El briefing erró en algo del cliente? (opcional)"><button>Enviar</button></div>
-
         <div class="sources"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><span><b>Fuentes:</b> perfil-cliente · tenencias-cliente · recomendar-rotación (sistema FyO Capital) · Delphos Semanal 1566 (05-jun), 1565, 1564.</span></div>
 
         <div style="margin-top:18px;display:flex;justify-content:flex-end"><button class="nextbtn" data-goto="acciones">Ver acciones concretas a proponer →</button></div>
@@ -730,9 +733,9 @@
       <!-- ============ 05 · ACCIONES ============ -->
       <section class="view" id="view-acciones">
         <div class="vhead">
-          <div class="eyebrow">Acciones a proponer · Ponce Micino R. · Agente de Carteras</div>
+          <div class="eyebrow">Acciones a proponer · Ponce Micino R. · Agente de Portfolio</div>
           <h1>Qué sumar, qué aumentar, qué cuidar</h1>
-          <p>Recomendaciones de equity ancladas en el research de la semana y en las tenencias reales del cliente. Dejá feedback por recomendación: cada 👍/👎 calibra al agente.</p>
+          <p>Recomendaciones de equity generadas con <b>fyoCortex</b>, ancladas en el research de la semana y en las tenencias reales del cliente. Dejá feedback por recomendación: cada 👍/👎 calibra al agente.</p>
         </div>
 
         <div class="rec add" style="margin-bottom:14px">
@@ -746,7 +749,7 @@
             <li>Encaja con el perfil: ya tiene Pampa y energía local; VIST agrega oil &amp; gas de calidad con valuación comprimida.</li>
           </ul>
           <div class="callout warn" style="margin-top:12px"><b>Cautela táctica:</b> el crudo es el principal riesgo. YPF volvió a correlacionar con el Brent — Vista hedgea mejor ese riesgo por su política comercial. Mencionarlo al cliente.</div>
-          <div class="agentbar compact" data-ctx="acc-vist"><div class="id"><span class="dot"></span><b>Agente de Carteras</b> · recomendación VIST</div><div class="acts"><button class="fb" data-v="up" title="Buena recomendación">{{UP}}</button><button class="fb" data-v="down" title="No comparto">{{DOWN}}</button><span class="fb-thanks">{{CHK}} Anotado</span><button class="chatbtn" data-ctx="acc-vist">{{CHAT}} Preguntar</button></div></div>
+          <div class="agentbar compact" data-ctx="acc-vist"><div class="id"><span class="dot"></span><b>Agente de Portfolio</b> · recomendación VIST</div><div class="acts"><button class="fb" data-v="up" title="Buena recomendación">{{UP}}</button><button class="fb" data-v="down" title="No comparto">{{DOWN}}</button><span class="fb-thanks">{{CHK}} Anotado</span><button class="chatbtn" data-ctx="acc-vist">{{CHAT}} Chatear</button></div></div>
           <div class="fb-note"><input type="text" placeholder="¿Por qué no? (suma al RL del agente)"><button>Enviar</button></div>
         </div>
 
@@ -760,7 +763,7 @@
             <li><b>Cobertura 109,8%</b> — único banco que la sostuvo &gt;100%. Alineado a pares, su ROE habría sido 15,7%.</li>
             <li>Único de los 4 grandes que <b>mantuvo el guidance de préstamos</b>. Early delinquencies mejorando → pico de costo de riesgo ya pasó.</li>
           </ul>
-          <div class="agentbar compact" data-ctx="acc-bma"><div class="id"><span class="dot"></span><b>Agente de Carteras</b> · recomendación BMA</div><div class="acts"><button class="fb" data-v="up" title="Buena recomendación">{{UP}}</button><button class="fb" data-v="down" title="No comparto">{{DOWN}}</button><span class="fb-thanks">{{CHK}} Anotado</span><button class="chatbtn" data-ctx="acc-bma">{{CHAT}} Preguntar</button></div></div>
+          <div class="agentbar compact" data-ctx="acc-bma"><div class="id"><span class="dot"></span><b>Agente de Portfolio</b> · recomendación BMA</div><div class="acts"><button class="fb" data-v="up" title="Buena recomendación">{{UP}}</button><button class="fb" data-v="down" title="No comparto">{{DOWN}}</button><span class="fb-thanks">{{CHK}} Anotado</span><button class="chatbtn" data-ctx="acc-bma">{{CHAT}} Chatear</button></div></div>
           <div class="fb-note"><input type="text" placeholder="¿Por qué no? (suma al RL del agente)"><button>Enviar</button></div>
         </div>
 
@@ -773,7 +776,7 @@
             <li class="x">Delphos (1562, 09-may) <b>redujo exposición táctica</b> por correlación con el crudo y riesgo bajista ante distensión en Medio Oriente.</li>
             <li class="x">Es para largo plazo, <b>no para un trade de acá a 60 días</b>.</li>
           </ul>
-          <div class="agentbar compact" data-ctx="acc-ypfd"><div class="id"><span class="dot"></span><b>Agente de Carteras</b> · recomendación YPFD</div><div class="acts"><button class="fb" data-v="up" title="Buena recomendación">{{UP}}</button><button class="fb" data-v="down" title="No comparto">{{DOWN}}</button><span class="fb-thanks">{{CHK}} Anotado</span><button class="chatbtn" data-ctx="acc-ypfd">{{CHAT}} Preguntar</button></div></div>
+          <div class="agentbar compact" data-ctx="acc-ypfd"><div class="id"><span class="dot"></span><b>Agente de Portfolio</b> · recomendación YPFD</div><div class="acts"><button class="fb" data-v="up" title="Buena recomendación">{{UP}}</button><button class="fb" data-v="down" title="No comparto">{{DOWN}}</button><span class="fb-thanks">{{CHK}} Anotado</span><button class="chatbtn" data-ctx="acc-ypfd">{{CHAT}} Chatear</button></div></div>
           <div class="fb-note"><input type="text" placeholder="¿Por qué no? (suma al RL del agente)"><button>Enviar</button></div>
         </div>
 
@@ -785,7 +788,7 @@
             <li class="x">El research advierte: la IA demanda capital de forma históricamente elevada y <b>un corte del ciclo sería dramático</b>.</li>
             <li>No es para salir, pero sí para <b>no agregar más a ese bloque</b> y tenerlo en el radar.</li>
           </ul>
-          <div class="agentbar compact" data-ctx="acc-cedears"><div class="id"><span class="dot"></span><b>Agente de Carteras</b> · alerta CEDEARs</div><div class="acts"><button class="fb" data-v="up" title="Buena recomendación">{{UP}}</button><button class="fb" data-v="down" title="No comparto">{{DOWN}}</button><span class="fb-thanks">{{CHK}} Anotado</span><button class="chatbtn" data-ctx="acc-cedears">{{CHAT}} Preguntar</button></div></div>
+          <div class="agentbar compact" data-ctx="acc-cedears"><div class="id"><span class="dot"></span><b>Agente de Portfolio</b> · alerta CEDEARs</div><div class="acts"><button class="fb" data-v="up" title="Buena recomendación">{{UP}}</button><button class="fb" data-v="down" title="No comparto">{{DOWN}}</button><span class="fb-thanks">{{CHK}} Anotado</span><button class="chatbtn" data-ctx="acc-cedears">{{CHAT}} Chatear</button></div></div>
           <div class="fb-note"><input type="text" placeholder="¿Por qué no? (suma al RL del agente)"><button>Enviar</button></div>
         </div>
 
@@ -811,7 +814,7 @@
 <footer>
   <span>© fyoDigital 2026</span>
   <span>Production · v 87.00.03 · módulo Copiloto (beta)</span>
-  <a href="#">equipo@fyodigital.com</a>
+  <a href="#"><span class="__cf_email__" data-cfemail="c4a1b5b1adb4ab84a2bdaba0ada3adb0a5a8eaa7aba9">[email&#160;protected]</span></a>
 </footer>
 
 <!-- CHAT DRAWER -->
@@ -833,14 +836,15 @@
   <div class="dr-disc">Prototipo · respuestas simuladas sobre los datos de la vista. En producción el agente consulta fyoDigital vía el MCP server.</div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 (function(){
   // ---- icons injected into template placeholders ----
   var ICON = {
     UP:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 10v11M2 11h5v10H2zM7 10l4.6-8.1a2 2 0 0 1 3.4 2.1L13 9h5.5a2 2 0 0 1 2 2.3l-1.4 8A2 2 0 0 1 17 21H7"/></svg>',
     DOWN:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 14V3M22 13h-5V3h5zM17 14l-4.6 8.1a2 2 0 0 1-3.4-2.1L11 15H5.5a2 2 0 0 1-2-2.3l1.4-8A2 2 0 0 1 7 3h10"/></svg>',
     CHK:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>',
-    CHAT:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>'
+    CHAT:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+    EDIT:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>'
   };
   document.body.innerHTML = document.body.innerHTML
     .replace(/\{\{UP\}\}/g, ICON.UP).replace(/\{\{DOWN\}\}/g, ICON.DOWN)
@@ -857,6 +861,7 @@
   };
   function gauges(v){var b=v.querySelectorAll('.gauge>i');b.forEach(function(x){x.style.width='0'});requestAnimationFrame(function(){setTimeout(function(){b.forEach(function(x){x.style.width=(x.getAttribute('data-w')||0)+'%'})},60)})}
   function go(name){
+    if(name==='briefing'||name==='acciones') setClientTabs(true);
     tabs.forEach(function(t){t.classList.toggle('active',t.dataset.view===name)});
     views.forEach(function(v){v.classList.toggle('active',v.id==='view-'+name)});
     ctxClient.lastChild.textContent = ' ' + (clientScope[name]||'');
@@ -864,6 +869,19 @@
     window.scrollTo({top:0,behavior:'smooth'});
   }
   tabs.forEach(function(t){t.addEventListener('click',function(){go(t.dataset.view)})});
+  // client-context tabs (Micino / Accionables) open on client click and can be closed
+  var clientTabs = document.querySelectorAll('.subtab.client-tab');
+  function setClientTabs(show){ clientTabs.forEach(function(t){ t.classList.toggle('hidden', !show); }); }
+  clientTabs.forEach(function(t){
+    var x=t.querySelector('.tabx'); if(!x) return;
+    x.addEventListener('click',function(e){
+      e.stopPropagation();
+      setClientTabs(false);
+      var act=document.querySelector('.subtab.active');
+      if(!act || act.classList.contains('hidden')) go('llamar');
+    });
+  });
+  setClientTabs(true);
   document.querySelectorAll('[data-goto]').forEach(function(el){el.addEventListener('click',function(e){e.stopPropagation();go(el.getAttribute('data-goto'))})});
   document.querySelectorAll('tr.clickable').forEach(function(r){r.addEventListener('click',function(){go(r.getAttribute('data-goto'))})});
 
@@ -893,7 +911,7 @@
 
   // ---- chat drawer ----
   var CTX = {
-    mercado:{agent:'Feed de research',ctx:'Pulso de mercado · al 05/06',sugs:[
+    mercado:{agent:'Agente de Research',ctx:'Pulso de mercado · al 05/06',sugs:[
       {q:'¿Cómo impacta el IPO de SpaceX en mis CEDEARs?',a:'El IPO de SpaceX activa la regla "Fast Entry" del Nasdaq 100: entra al día 15 y fuerza demanda pasiva de QQQ. Para tus CEDEARs juega a favor de corto plazo en <b>Microsoft</b> y <b>Meta</b>. Es flujo técnico, no un cambio de tesis: la señal de fondo sigue siendo no agregar al bloque IA/cripto.'},
       {q:'Resumime la tesis de bancos AR',a:'Delphos <b>sobrepondera</b> bancos AR: cotizan a −17% P/BV vs Latam cuando a inicios de 2025 tenían +100% de premium. El costo de riesgo ya hizo pico (4T25–1T26) y la recuperación de rentabilidad se espera para 2S26. Dentro del sector, <b>Macro</b> lidera el 1T26 con ROE ajustado 11,6%.'}
     ]},
@@ -901,7 +919,7 @@
       {q:'¿Por qué Crosetti está primero?',a:'Crosetti queda primero porque combina el <b>NBA más alto del día (0,855)</b> con dos gatillos: lleva 589 días sin operar y la View MDC bisemanal (rotación CER + Duales) es la excusa concreta para retomar. Es Cat. A, así que el upside de reactivarlo es alto.'},
       {q:'Armame el guion para llamar a Yeruti',a:'<b>Apertura:</b> "Se viene el cupón de julio y quería pasarte una idea antes." <b>Gancho:</b> es productor Cat. A con wallet gap de USD 3.547 y 132 días sin operar. <b>Propuesta:</b> sumar HD soberanos (AO28) pre-cupón. <b>Cierre:</b> ofrecer mandar el detalle por mail y agendar.'}
     ]},
-    vto:{agent:'Mesa de Renta Fija · research',ctx:'Vencimiento 30/06/2026',sugs:[
+    vto:{agent:'Agente de Research',ctx:'Vencimiento 30/06/2026',sugs:[
       {q:'¿Cuánto cobra exactamente YABITO?',a:'El estimado de YABITO es <b>USD 14,2 M</b>, pero es aproximado: está a FX 1.300 y sobre nominales, sin incluir parity de LECAP/DUAL ni el CER capitalizado al 30/06. Está expuesto en los 3 tramos en pesos + USD-linked. Para el monto exacto conviene correr tenencias-cliente por id y validarlo con la mesa antes de la reunión.'},
       {q:'¿Qué le ofrezco a Cresud al cobrar TZV26?',a:'Cresud cobra ~USD 4 M de TZV26 (dollar-linked) y su NBA es OPTIMIZAR_YIELD (comisión USD 187k) → ventana ideal para subir mix. Roll en moneda dura sugerido: <b>AO28</b> (HD corto, BUY, premio 0,05% TIR) o <b>GD35/GD41</b> si quiere soberano largo con tesis de compresión. Si prefiere quedarse en DL, nuevo tramo TZV26.'},
       {q:'Armá el comunicado estándar para los 41 restantes',a:'Para los 41 que suman &lt; USD 1,5 M: comunicado avisando el vencimiento del 30/06, el monto estimado y dos opciones de roll (mantener DL con nuevo TZV26 o pasar a AO28 en moneda dura). En el prototipo te dejo el borrador; en producción lo personalizo por cliente con el monto exacto de fyoDigital.'}
@@ -910,18 +928,18 @@
       {q:'¿Por qué REVISAR si no tiene riesgo de churn?',a:'REVISAR no es por fuga: su churn es ≈ 0,00003. La señal es de <b>actividad</b>: el cumplimiento de presupuesto 25/26 cayó al 83,7% contra un histórico promedio de 367%, con anomaly score 5,1. Es un cliente muy valioso (CLV USD 1,47 M) que bajó el ritmo — vale entender si hay wallet externo no capturado.'},
       {q:'Ordená los 6 puntos por urgencia',a:'<b>Primero (time-sensitive):</b> (1) Pagaré Acindar USD 250k vence el 19/06. (2) Pagaré Red Surcos vencido en dic-2024, confirmar estado. <b>Después:</b> (3) Rofex Dólar 28% con tasa comprimida, (4) CEDEARs tech/cripto, (5) bancos locales, (6) la caída de cumplimiento.'}
     ]},
-    'acc-vist':{agent:'Agente de Carteras',ctx:'Acciones · VIST',sugs:[
+    'acc-vist':{agent:'Agente de Portfolio',ctx:'Acciones · VIST',sugs:[
       {q:'¿Por qué VIST y no YPF ahora?',a:'VIST hedgea mejor el riesgo crudo: hedgeó ventas un mes forward, así que el beneficio del rally pasa al 2T26. YPF, en cambio, volvió a correlacionar con el Brent y Delphos le redujo exposición táctica. Por valuación, VIST está a 3,8× EV/EBITDA fwd, −17% vs comparables, con flujo institucional entrando (JPM, Duquesne).'},
       {q:'¿Qué peso sugerís para entrar?',a:'El informe no fija un peso objetivo — es una decisión tuya y de la mesa. Como referencia: el cliente ya tiene Pampa y energía local, así que VIST suma calidad sin duplicar tesis. En producción puedo cruzarlo con su cartera real en fyoDigital y proponerte un sizing concreto.'}
     ]},
-    'acc-bma':{agent:'Agente de Carteras',ctx:'Acciones · BMA',sugs:[
+    'acc-bma':{agent:'Agente de Portfolio',ctx:'Acciones · BMA',sugs:[
       {q:'¿Por qué Macro y no Galicia?',a:'Dentro de los bancos que ya tiene (BMA, GGAL, SUPV), Macro es el de mayor calidad en el 1T26: ROE ajustado 11,6% (vs GGAL 3,2% y SUPV 2,5%), cobertura 109,8% (único &gt;100%) y el único de los 4 grandes que mantuvo el guidance de préstamos. Por eso la sugerencia es aumentar Macro, no Galicia.'},
       {q:'¿Cuánto pesa el FX en el NIM 25,3%?',a:'El NIM de 25,3% incluye el resultado por posición en FX, así que parte es no recurrente. Aun normalizando, Macro queda mejor parado que sus pares por cobertura y por haber sostenido el guidance. En producción puedo traerte la apertura del NIM del último balance.'}
     ]},
-    'acc-ypfd':{agent:'Agente de Carteras',ctx:'Acciones · YPFD',sugs:[
+    'acc-ypfd':{agent:'Agente de Portfolio',ctx:'Acciones · YPFD',sugs:[
       {q:'¿Cuándo dejaría de ser "esperar"?',a:'El freno es táctico: la correlación de YPF con el crudo y el riesgo bajista ante una distensión en Medio Oriente. El "esperar" se levantaría si el crudo se estabiliza o si aparece un catalizador propio (avances firmes en LNG). El valor estructural ya está: mejor EBITDA 1T de su historia, lifting cost shale USD 4/bbl.'}
     ]},
-    'acc-cedears':{agent:'Agente de Carteras',ctx:'Acciones · CEDEARs tech/cripto',sugs:[
+    'acc-cedears':{agent:'Agente de Portfolio',ctx:'Acciones · CEDEARs tech/cripto',sugs:[
       {q:'¿Cuánto pesa el bloque IA/cripto en su cartera?',a:'Tiene doble cripto (MicroStrategy + IBIT) más Meta, Microsoft, Palantir, Oracle y Netflix: mucho peso relativo en tech/IA dentro de los CEDEARs. La tesis "IA aspiradora de capital" marca que un corte del ciclo sería dramático. No es para salir, sí para no agregar más y monitorearlo. En producción te doy el % exacto sobre la cartera total.'}
     ]}
   };
@@ -968,6 +986,97 @@
   document.addEventListener('keydown',function(e){if(e.key==='Escape')closeChat()});
   drSend.addEventListener('click',function(){send(drInput.value);drInput.value=''});
   drInput.addEventListener('keydown',function(e){if(e.key==='Enter'){send(drInput.value);drInput.value=''}});
+
+  // ---- per-piece hover feedback + chat overlay ----
+  var VIEWCTX = { 'view-mercado':'mercado', 'view-llamar':'llamar', 'view-vto':'vto', 'view-briefing':'briefing' };
+  function makeBar(row){
+    var bar=document.createElement('div');
+    bar.className='hovbar'+(row?' row':'');
+    bar.innerHTML='<button class="hb up" title="Útil">'+ICON.UP+'</button>'
+      +'<button class="hb down" title="No útil">'+ICON.DOWN+'</button>'
+      +'<span class="sep"></span>'
+      +'<button class="hb chat" title="Chatear con el agente">'+ICON.CHAT+'</button>';
+    return bar;
+  }
+  function wireBar(bar, ctxKey){
+    var up=bar.querySelector('.up'), down=bar.querySelector('.down'), chat=bar.querySelector('.chat');
+    var agent=(CTX[ctxKey]||{}).agent||'agente';
+    var note=document.createElement('div');
+    note.className='hovnote';
+    note.innerHTML='<textarea placeholder="Tu comentario sobre esta pieza contribuye al aprendizaje del '+agent+' que la generó."></textarea><div class="row2"><button>Enviar</button></div>';
+    bar.parentNode.appendChild(note);
+    var ta=note.querySelector('textarea'), send=note.querySelector('button');
+    function close(){ note.classList.remove('show'); bar.classList.remove('pinned'); }
+    function pick(btn,cls){
+      [up,down].forEach(function(b){b.classList.remove('on-up','on-down')}); btn.classList.add(cls);
+      document.querySelectorAll('.hovbar.pinned').forEach(function(b){if(b!==bar)b.classList.remove('pinned')});
+      document.querySelectorAll('.hovnote.show').forEach(function(n){if(n!==note)n.classList.remove('show')});
+      note.classList.add('show'); bar.classList.add('pinned');
+      setTimeout(function(){ta.focus()},40);
+    }
+    up.addEventListener('click',function(e){e.stopPropagation();pick(up,'on-up');});
+    down.addEventListener('click',function(e){e.stopPropagation();pick(down,'on-down');});
+    chat.addEventListener('click',function(e){e.stopPropagation(); if(ctxKey) openChat(ctxKey);});
+    note.addEventListener('click',function(e){e.stopPropagation();});
+    send.addEventListener('click',function(e){
+      e.stopPropagation();
+      note.innerHTML='<div class="done">'+ICON.CHK+' Comentario recibido — se considera en el próximo ajuste del agente.</div>';
+      setTimeout(close,1400);
+    });
+  }
+  Object.keys(VIEWCTX).forEach(function(vid){
+    var view=document.getElementById(vid); if(!view) return;
+    var ctxKey=VIEWCTX[vid];
+    view.querySelectorAll('.kpi, .box, .call, .callout, .inverse, .abanner, .roll').forEach(function(el){
+      el.classList.add('hovtarget');
+      var bar=makeBar(false); el.appendChild(bar); wireBar(bar, ctxKey);
+    });
+    view.querySelectorAll('.tablecard tbody tr').forEach(function(tr){
+      var cell=tr.querySelector('td:last-child'); if(!cell) return;
+      cell.classList.add('hovcell'); tr.classList.add('hasbar');
+      var bar=makeBar(true); cell.appendChild(bar); wireBar(bar, ctxKey);
+    });
+  });
+
+  // ---- sources access (open a viewer per cited document) ----
+  var FILEICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
+  var srcov=document.createElement('div');
+  srcov.className='srcov';
+  srcov.innerHTML='<div class="srcbox"><div class="srchead"><span class="ic">'+FILEICON+'</span><span class="tt">Fuentes del informe</span><svg class="x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></div><div class="srclist"></div><div class="srcnote"></div></div>';
+  document.body.appendChild(srcov);
+  var srcList=srcov.querySelector('.srclist'), srcNote=srcov.querySelector('.srcnote');
+  function closeSrc(){srcov.classList.remove('open');}
+  srcov.addEventListener('click',function(e){if(e.target===srcov)closeSrc();});
+  srcov.querySelector('.x').addEventListener('click',closeSrc);
+
+  document.querySelectorAll('.sources').forEach(function(block){
+    var span=block.querySelector('span'); if(!span) return;
+    var raw=span.textContent||'';
+    var label=(span.querySelector('b')?span.querySelector('b').textContent:'');
+    var rest=raw.replace(label,'').trim();
+    // split cited documents on the middot separator
+    var docs=rest.split('·').map(function(s){return s.trim().replace(/\.$/,'')}).filter(function(s){
+      return s && !/^confidencial/i.test(s) && !/uso interno/i.test(s);
+    });
+    block.dataset.docs=JSON.stringify(docs);
+    var open=document.createElement('span'); open.className='srcopen'; open.textContent='Abrir fuentes →';
+    block.appendChild(open);
+    block.addEventListener('click',function(){
+      var list=JSON.parse(block.dataset.docs||'[]');
+      srcList.innerHTML='';
+      if(!list.length){ list=[raw.trim()]; }
+      list.forEach(function(d){
+        var it=document.createElement('div'); it.className='srcitem';
+        it.innerHTML='<span class="ic">'+FILEICON+'</span><span class="nm">'+d+'</span>';
+        var op=document.createElement('button'); op.className='op'; op.textContent='Abrir';
+        op.addEventListener('click',function(){ op.className='op done'; op.textContent='✓ Abierto'; });
+        it.appendChild(op); srcList.appendChild(it);
+      });
+      srcNote.textContent='Prototipo · en producción cada documento abre en el visor de research de fyoDigital con permisos por rol.';
+      srcov.classList.add('open');
+    });
+  });
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeSrc();});
 
   gauges(document.getElementById('view-mercado'));
 })();

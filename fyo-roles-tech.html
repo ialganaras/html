@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perfiles y líneas de reporte · FDS, FDE, PO, PMgr y AF · fyo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#f3f2ee;
+    --paper-2:#eceae4;
+    --card:#ffffff;
+    --ink:#111110;
+    --ink-2:#2c2b27;
+    --muted:#56544f;
+    --faint:#78756f;
+    --rule:#d6d4ce;
+    --rule-2:#cbc8c0;
+    --accent:#e22b16; --accent-soft:#e22b160e; --accent-line:#e22b1642; --accent-deep:#c0220f;
+    --disp:'Space Grotesk', system-ui, sans-serif;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--paper);
+    color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--accent); color:#fff; }
+  .lbl{ font-family:var(--mono); font-size:11px; font-weight:500; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--muted); }
+
+  .doc{ max-width:1120px; margin:0 auto; padding:0 0 130px; }
+  .sheet{ background:var(--paper); padding:0 52px; position:relative; }
+  @media (max-width:760px){ .sheet{ padding:0 20px; } }
+
+  /* ── Title block (cabecera tipo carátula de plano) ─────── */
+  .titleblock{ display:grid; grid-template-columns:1fr auto; align-items:stretch;
+    border-bottom:1px solid var(--ink); }
+  .titleblock .tb-l{ padding:16px 0; font-family:var(--mono); font-size:11px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--ink-2); display:flex; align-items:center; gap:14px; }
+  .titleblock .tb-l .sq{ width:8px; height:8px; background:var(--accent); }
+  .titleblock .tb-r{ font-family:var(--mono); font-size:11px; letter-spacing:.06em; color:var(--muted);
+    text-transform:uppercase; display:flex; align-items:center; padding:16px 0 16px 22px;
+    border-left:1px solid var(--rule); }
+  .titleblock .tb-r b{ color:var(--accent-deep); font-weight:600; }
+
+  /* ── Cover (portada) ─────────────────────────── */
+  .cover{ padding:70px 0 0; }
+  .cover .ref{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); margin-bottom:30px; display:flex; gap:18px; }
+  .cover .ref span{ position:relative; padding-left:16px; }
+  .cover .ref span::before{ content:''; position:absolute; left:0; top:50%; width:8px; height:8px;
+    border:1px solid var(--accent); transform:translateY(-50%); }
+  h1.title{ font-family:var(--disp); font-weight:600; font-size:clamp(40px,6.4vw,82px);
+    line-height:1.0; letter-spacing:-.03em; margin:0; max-width:15ch; color:var(--ink); }
+  h1.title .hl{ color:var(--accent); }
+  .lede{ font-size:clamp(17px,1.8vw,21px); line-height:1.55; color:var(--ink-2); max-width:62ch;
+    margin:30px 0 0; }
+  .specsheet{ margin-top:48px; border:1px solid var(--rule-2); background:var(--card);
+    display:grid; grid-template-columns:repeat(3,1fr); }
+  @media (max-width:680px){ .specsheet{ grid-template-columns:1fr; } }
+  .specsheet .sc{ padding:18px 20px; border-right:1px solid var(--rule); }
+  .specsheet .sc:last-child{ border-right:none; }
+  .specsheet .sc .k{ display:block; margin-bottom:8px; }
+  .specsheet .sc .v{ font-family:var(--disp); font-weight:500; font-size:16px; color:var(--ink);
+    line-height:1.35; }
+
+  /* ── Index (índice) ──────────────────────────── */
+  .contents{ margin:72px 0 0; border-top:1px solid var(--ink); padding-top:26px; }
+  .contents .ct{ color:var(--accent); margin-bottom:18px; }
+  .toc{ list-style:none; margin:0; padding:0; }
+  .toc li{ display:grid; grid-template-columns:70px 1fr auto; align-items:center; gap:18px;
+    padding:15px 0; border-bottom:1px solid var(--rule); }
+  .toc .n{ font-family:var(--mono); font-size:12px; color:var(--accent); }
+  .toc a{ color:var(--ink); text-decoration:none; font-family:var(--disp); font-weight:500;
+    font-size:19px; letter-spacing:-.01em; }
+  .toc li:hover a{ color:var(--accent); }
+  .toc .ar{ font-family:var(--mono); color:var(--faint); font-size:12px; }
+
+  /* ── Chapter (capítulo / sección) ────────────── */
+  .chapter{ margin-top:96px; scroll-margin-top:24px; }
+  .ch-head{ border-bottom:1px solid var(--ink); padding-bottom:26px; }
+  .ch-marker{ display:flex; align-items:center; gap:14px; margin-bottom:20px; }
+  .ch-marker .mn{ font-family:var(--mono); font-size:12px; color:#fff; background:var(--accent);
+    padding:4px 9px; font-weight:600; letter-spacing:.06em; }
+  h2.ch-title{ font-family:var(--disp); font-weight:600; font-size:clamp(28px,4.2vw,52px);
+    line-height:1.02; letter-spacing:-.03em; margin:0; max-width:18ch; }
+  h2.ch-title .hl{ color:var(--accent); }
+  .ch-lede{ font-size:19px; line-height:1.5; color:var(--ink-2); margin:20px 0 0; max-width:64ch; }
+
+  /* ── Prose (cuerpo de texto) ─────────────────── */
+  .prose{ max-width:70ch; margin-top:32px; font-size:16.5px; line-height:1.62; color:var(--ink-2); }
+  .prose p{ margin:0 0 18px; }
+  .prose strong{ color:var(--ink); font-weight:600; }
+  .prose em{ font-style:normal; color:var(--accent); font-weight:500; }
+
+  /* ── Note (callout / nota al margen) ─────────── */
+  .note{ margin:32px 0; border:1px solid var(--rule-2); border-left:3px solid var(--accent);
+    background:var(--card); padding:22px 26px; max-width:78ch; position:relative; }
+  .note .lbl{ color:var(--accent); display:block; margin-bottom:11px; }
+  .note p{ margin:0; font-size:15.5px; line-height:1.58; color:var(--ink-2); }
+  .note strong{ color:var(--ink); font-weight:600; }
+  .note.warn{ border-left-color:var(--accent-deep); }
+
+  /* ── Stack (diagrama por niveles / jerarquía) ── */
+  .stack{ margin:36px 0 8px; border:1px solid var(--ink); background:var(--card); }
+  .tier{ display:grid; grid-template-columns:158px 1fr; border-bottom:1px solid var(--rule); }
+  .tier:last-child{ border-bottom:none; }
+  @media (max-width:680px){ .tier{ grid-template-columns:1fr; } }
+  .tier .t-lbl{ padding:18px 20px; border-right:1px solid var(--rule); display:flex; align-items:center;
+    background:var(--paper-2); }
+  .tier .t-items{ display:flex; }
+  @media (max-width:560px){ .tier .t-items{ flex-direction:column; } }
+  .cell{ flex:1; padding:18px 20px; border-left:1px solid var(--rule); }
+  .cell:first-child{ border-left:none; }
+  .cell .cn{ font-family:var(--disp); font-weight:600; font-size:18px; color:var(--ink); display:block;
+    letter-spacing:-.01em; }
+  .cell .cs{ font-family:var(--mono); font-size:11px; color:var(--muted); display:block; margin-top:7px;
+    line-height:1.45; }
+  .cell.x .cn{ color:var(--accent); }
+  .flowmark{ font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; color:var(--faint);
+    text-transform:uppercase; padding:7px 20px; text-align:center; border-bottom:1px solid var(--rule);
+    background:var(--paper-2); }
+
+  /* ── Entity (ficha de un elemento: persona, módulo, fase…) ── */
+  .entity{ margin:38px 0; border:1px solid var(--ink); background:var(--card); }
+  .entity-head{ padding:26px 30px 22px; border-bottom:1px solid var(--rule); border-top:3px solid var(--accent); }
+  .entity-head .lbl{ color:var(--accent); display:block; margin-bottom:12px; }
+  .entity-name{ font-family:var(--disp); font-weight:600; font-size:28px; line-height:1.05;
+    letter-spacing:-.02em; margin:0 0 11px; }
+  .entity-name .hl{ color:var(--accent); }
+  .entity-purpose{ font-size:16px; line-height:1.55; color:var(--ink-2); margin:0; max-width:72ch; }
+  .entity-purpose strong{ color:var(--ink); font-weight:600; }
+  .entity-body{ padding:4px 30px; }
+  .fn{ display:grid; grid-template-columns:36px 1fr; gap:18px; padding:16px 0; border-bottom:1px solid var(--rule); }
+  .fn:last-child{ border-bottom:none; }
+  .fn .fi{ font-family:var(--mono); font-size:12px; color:var(--accent); border:1px solid var(--accent-line);
+    width:30px; height:30px; display:flex; align-items:center; justify-content:center; }
+  .fn .ft strong{ color:var(--ink); font-weight:600; }
+  .fn .ft .d{ color:var(--ink-2); }
+  .fn .ft .sub{ display:block; margin-top:6px; font-size:14px; color:var(--muted); line-height:1.5;
+    padding-left:12px; border-left:2px solid var(--rule-2); }
+  .entity-foot{ display:flex; flex-wrap:wrap; gap:9px; padding:18px 30px 22px; border-top:1px solid var(--rule);
+    background:var(--paper-2); }
+  .tag{ font-family:var(--mono); font-size:11px; color:var(--ink-2); padding:7px 12px; border:1px solid var(--rule-2);
+    background:var(--card); }
+  .tag strong{ color:var(--ink); font-weight:600; }
+  .tag.key{ border-color:var(--accent-line); color:var(--accent); background:var(--accent-soft); }
+  .tag.key strong{ color:var(--accent-deep); }
+  .tag.lnk{ border-color:var(--accent); color:var(--accent); }
+  .tag.lnk strong{ color:var(--accent-deep); }
+
+  /* ── Grid2 (grilla de tarjetas, p. ej. principios) ── */
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; margin-top:36px; border:1px solid var(--ink);
+    background:var(--card); }
+  @media (max-width:680px){ .grid2{ grid-template-columns:1fr; } }
+  .card{ padding:26px 28px 28px; border-bottom:1px solid var(--rule); }
+  .card:nth-child(odd){ border-right:1px solid var(--rule); }
+  @media (max-width:680px){ .card:nth-child(odd){ border-right:none; } }
+  .card:nth-last-child(-n+2){ border-bottom:none; }
+  @media (max-width:680px){ .card:nth-last-child(-n+2){ border-bottom:1px solid var(--rule); } .card:last-child{ border-bottom:none; } }
+  .card .cnum{ font-family:var(--mono); font-size:11px; color:var(--accent); display:block; margin-bottom:14px; }
+  .card h4{ font-family:var(--disp); font-weight:600; font-size:21px; letter-spacing:-.015em; margin:0 0 9px; color:var(--ink); }
+  .card p{ font-size:15px; line-height:1.55; color:var(--ink-2); margin:0; }
+
+  /* ── Statement (frase de cierre / pull-quote) ── */
+  .statement{ margin:88px 0 0; padding:56px 44px; border:1px solid var(--ink); background:var(--card);
+    position:relative; }
+  .statement::before{ content:''; position:absolute; top:0; left:0; width:6px; height:100%; background:var(--accent); }
+  .statement .lbl{ color:var(--accent); margin-bottom:22px; display:block; }
+  .statement p{ font-family:var(--disp); font-weight:500; font-size:clamp(24px,3.4vw,42px); line-height:1.18;
+    letter-spacing:-.025em; margin:0; max-width:22ch; color:var(--ink); }
+  .statement .hl{ color:var(--accent); }
+
+  /* ── Footer (colofón) ────────────────────────── */
+  .colophon{ margin-top:50px; padding-top:18px; border-top:1px solid var(--ink); display:flex;
+    justify-content:space-between; flex-wrap:wrap; gap:12px; font-family:var(--mono); font-size:11px;
+    color:var(--muted); letter-spacing:.05em; text-transform:uppercase; }
+
+  /* contenedor de diagrama (carátula técnica) */
+  .plan{ margin:38px 0 8px; border:1px solid var(--ink); background:var(--card); padding:30px 26px 20px; overflow-x:auto; }
+  .plan svg{ display:block; margin:0 auto; max-width:100%; height:auto; }
+  .plan .cap{ font-family:var(--mono); font-size:11px; line-height:1.5; color:var(--muted); letter-spacing:.02em;
+    margin:18px auto 0; max-width:74ch; text-align:center; }
+
+  /* ── Tabla comparativa (matriz de roles) ────── */
+  .tbl-wrap{ margin:36px 0 8px; border:1px solid var(--ink); background:var(--card); overflow-x:auto; }
+  table.matrix{ border-collapse:collapse; width:100%; min-width:760px; }
+  table.matrix th, table.matrix td{ text-align:left; vertical-align:top; padding:15px 16px;
+    border-bottom:1px solid var(--rule); border-right:1px solid var(--rule); }
+  table.matrix th:last-child, table.matrix td:last-child{ border-right:none; }
+  table.matrix tr:last-child td{ border-bottom:none; }
+  table.matrix thead th{ background:var(--paper-2); font-family:var(--mono); font-size:10.5px;
+    letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:500;
+    border-bottom:1px solid var(--ink); }
+  table.matrix tbody th{ font-family:var(--disp); font-weight:600; font-size:15.5px; color:var(--ink);
+    letter-spacing:-.01em; background:var(--paper-2); white-space:nowrap; }
+  table.matrix tbody th .rs{ display:block; font-family:var(--mono); font-size:10px; font-weight:400;
+    color:var(--muted); letter-spacing:.06em; text-transform:uppercase; margin-top:5px; }
+  table.matrix td{ font-size:14.5px; line-height:1.5; color:var(--ink-2); }
+  table.matrix td.hi{ color:var(--accent); font-weight:500; }
+  table.matrix tr.key th, table.matrix tr.key td{ background:var(--accent-soft); }
+  table.matrix tr.key th{ color:var(--accent-deep); }
+  .tbl-cap{ font-family:var(--mono); font-size:11px; line-height:1.5; color:var(--muted);
+    margin:14px 0 0; letter-spacing:.02em; }
+
+  /* ── Grid3 (tres columnas) ──────────────────── */
+  .grid3{ display:grid; grid-template-columns:repeat(3,1fr); margin-top:36px; border:1px solid var(--ink);
+    background:var(--card); }
+  @media (max-width:820px){ .grid3{ grid-template-columns:1fr; } }
+  .grid3 .card{ border-right:1px solid var(--rule); border-bottom:none; }
+  .grid3 .card:last-child{ border-right:none; }
+  @media (max-width:820px){ .grid3 .card{ border-right:none; border-bottom:1px solid var(--rule); }
+    .grid3 .card:last-child{ border-bottom:none; } }
+
+  /* ── Arquetipo (ficha de tipo de área) ──────── */
+  .arch{ display:grid; grid-template-columns:56px 1fr; border-bottom:1px solid var(--rule); }
+  .arch:last-child{ border-bottom:none; }
+  .arch .ak{ background:var(--paper-2); border-right:1px solid var(--rule); display:flex;
+    align-items:center; justify-content:center; font-family:var(--disp); font-weight:600;
+    font-size:26px; color:var(--accent); }
+  .arch .ab{ padding:20px 24px; }
+  .arch .ab h4{ font-family:var(--disp); font-weight:600; font-size:19px; margin:0 0 7px;
+    letter-spacing:-.015em; color:var(--ink); }
+  .arch .ab p{ margin:0 0 12px; font-size:15px; line-height:1.55; color:var(--ink-2); }
+  .arch .ab .verdict{ font-family:var(--mono); font-size:11.5px; letter-spacing:.04em; color:var(--accent);
+    border-top:1px dashed var(--rule-2); padding-top:11px; display:block; }
+  .archbox{ margin:36px 0 8px; border:1px solid var(--ink); background:var(--card); }
+
+  /* ── Pregunta (bloque de decisión) ──────────── */
+  .qbox{ margin:34px 0; border:1px solid var(--rule-2); background:var(--card); }
+  .qrow{ display:grid; grid-template-columns:38px 1fr; border-bottom:1px solid var(--rule); }
+  .qrow:last-child{ border-bottom:none; }
+  .qrow .qn{ font-family:var(--mono); font-size:12px; color:var(--accent); display:flex;
+    align-items:center; justify-content:center; border-right:1px solid var(--rule); background:var(--paper-2); }
+  .qrow .qt{ padding:16px 20px; }
+  .qrow .qt strong{ display:block; font-family:var(--disp); font-weight:600; font-size:16.5px;
+    color:var(--ink); margin-bottom:5px; letter-spacing:-.01em; }
+  .qrow .qt span{ font-size:14.5px; line-height:1.5; color:var(--muted); }
+</style>
+
+</head>
+<body>
+
+<div class="doc"><div class="sheet">
+
+  <!-- CABECERA -->
+  <div class="titleblock">
+    <div class="tb-l"><span class="sq"></span><span style="color:var(--muted)">inaki@alganaras.com.ar</span></div>
+    <div class="tb-r">FYO-06 · REV. <b>v1</b> · Documento de trabajo</div>
+  </div>
+
+  <!-- PORTADA -->
+  <div class="cover">
+    <div class="ref"><span>fyo · Transformación e IA</span><span>Para Facundo</span></div>
+    <h1 class="title">Quién define el problema: cinco perfiles, tres <span class="hl">jefes</span>.</h1>
+    <p class="lede">Cómo se reparten FDS, FDE, Product Owner, Project Manager y Analista funcional entre el negocio, Tech y Transformación. Y por qué la respuesta no es la misma en todas las áreas. Documento para discutir, no para aprobar.</p>
+
+    <div class="specsheet">
+      <div class="sc"><span class="k lbl">Estado</span><span class="v">Borrador para discusión</span></div>
+      <div class="sc"><span class="k lbl">Depende de</span><span class="v">Modelo de duplas · FYO-05 v4</span></div>
+      <div class="sc"><span class="k lbl">Qué necesita</span><span class="v">Lectura de las áreas y sus líderes</span></div>
+    </div>
+
+    <div class="contents">
+      <div class="ct lbl">Contenido</div>
+      <ul class="toc">
+        <li><span class="n">01</span><a href="#s1">El eje que ordena todo</a><span class="ar">→</span></li>
+        <li><span class="n">02</span><a href="#s2">Los cinco perfiles, lado a lado</a><span class="ar">→</span></li>
+        <li><span class="n">03</span><a href="#s3">Lo común y lo que no se negocia</a><span class="ar">→</span></li>
+        <li><span class="n">04</span><a href="#s4">De quién depende cada uno</a><span class="ar">→</span></li>
+        <li><span class="n">05</span><a href="#s5">Cuatro arquetipos de área</a><span class="ar">→</span></li>
+        <li><span class="n">06</span><a href="#s6">Los dos huecos del organigrama</a><span class="ar">→</span></li>
+        <li><span class="n">07</span><a href="#s7">Riesgos de la convivencia</a><span class="ar">→</span></li>
+        <li><span class="n">08</span><a href="#s8">Lo que necesito de vos</a><span class="ar">→</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 01 EL EJE -->
+  <section class="chapter" id="s1">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">01</span><span class="lbl">El criterio</span></div>
+      <h2 class="ch-title">La pregunta que separa los cinco roles: ¿quién <span class="hl">define el problema</span>?</h2>
+      <p class="ch-lede">No es el nivel de seniority, ni cuánta tecnología maneja cada uno, ni si es más de negocio o más técnico. Es una sola cosa: si el problema le llega definido o si tiene que descubrirlo.</p>
+    </div>
+
+    <div class="prose">
+      <p>El FDS es el único de los cinco cuyo trabajo <strong>empieza antes de que exista un requerimiento</strong>. Los otros cuatro arrancan cuando alguien ya decidió qué hay que hacer. Esa diferencia explica casi todo lo demás: qué entregan, cómo se los mide, qué autoridad necesitan y por qué no se pueden reconvertir de uno a otro con un cambio de título.</p>
+      <p>De ahí también sale el criterio de reporte que se usa en la sección 04: <em>manda quien paga el costo del error</em>. Cada uno de los tres hogares posibles —área, Tech, Transformación— paga un costo distinto cuando algo sale mal, y eso define qué le corresponde decidir.</p>
+    </div>
+  </section>
+
+  <!-- 02 LOS CINCO PERFILES -->
+  <section class="chapter" id="s2">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">02</span><span class="lbl">Comparación</span></div>
+      <h2 class="ch-title">Los cinco perfiles, <span class="hl">lado a lado</span></h2>
+      <p class="ch-lede">La misma pregunta aplicada a cada rol. Leída de arriba hacia abajo, la primera columna ordena todo lo demás.</p>
+    </div>
+
+    <div class="tbl-wrap">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th>Rol</th>
+            <th>¿Quién define el problema?</th>
+            <th>Entregable</th>
+            <th>Se mide por</th>
+            <th>Frente al status quo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="key">
+            <th>FDS<span class="rs">Agent Manager · Echo</span></th>
+            <td class="hi">Lo descubre él. Nadie se lo dio.</td>
+            <td>Un problema de negocio resuelto y adoptado</td>
+            <td>Movió la métrica del área</td>
+            <td>Lo cuestiona — ese <em>es</em> su valor</td>
+          </tr>
+          <tr class="key">
+            <th>FDE<span class="rs">Agent Engineer · Delta</span></th>
+            <td class="hi">No lo define: lo resuelve mientras se descubre</td>
+            <td>Un agente desplegado y en uso</td>
+            <td>Velocidad de problema a solución en uso</td>
+            <td>Lo rompe en la práctica, construyendo</td>
+          </tr>
+          <tr>
+            <th>Product Owner<span class="rs">Product Manager</span></th>
+            <td>Lo interpreta del usuario y la estrategia</td>
+            <td>Un producto que sirve a muchos, en el tiempo</td>
+            <td>Uso y valor sostenido del producto</td>
+            <td>Lo mejora dentro de un marco dado</td>
+          </tr>
+          <tr>
+            <th>Project Manager<span class="rs">Tech</span></th>
+            <td>Se lo dan cerrado</td>
+            <td>El alcance entregado</td>
+            <td>Plazo, costo, alcance</td>
+            <td>Neutral — cuestionarlo es riesgo</td>
+          </tr>
+          <tr>
+            <th>Analista funcional<span class="rs">Tech</span></th>
+            <td>Se lo dan cerrado, a veces con la solución incluida</td>
+            <td>Una especificación correcta</td>
+            <td>Fidelidad entre lo pedido y lo construido</td>
+            <td>Lo preserva y lo documenta</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="tbl-cap">La primera columna es la que ordena. Las otras cuatro son consecuencia de ella.</p>
+
+    <div class="note warn">
+      <span class="lbl">Una aclaración que importa para fyo</span>
+      <p><strong>"Product Owner" y "Product Manager" no son lo mismo en la práctica argentina.</strong> En la mayoría de las empresas locales el PO terminó siendo un analista funcional con backlog: ejecuta, no descubre. El Product Manager de verdad —el que hace discovery y define estrategia de producto— sí es primo hermano del FDS. Cuando mapeemos quién en fyo está cerca del perfil, hay que mirar <em>qué hace la persona</em>, no cómo se llama el puesto.</p>
+    </div>
+  </section>
+
+  <!-- 03 COMÚN Y DISTINTO -->
+  <section class="chapter" id="s3">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">03</span><span class="lbl">Núcleo y divergencia</span></div>
+      <h2 class="ch-title">Qué le pedimos a los cinco, y las tres cosas que <span class="hl">no se negocian</span></h2>
+      <p class="ch-lede">Hay un núcleo común real —y sirve para ampliar el pool de candidatos—. Pero todo lo demás diverge, y diverge fuerte.</p>
+    </div>
+
+    <div class="grid3">
+      <div class="card"><span class="cnum">Común 01</span><h4>Traducir</h4><p>Moverse entre negocio y técnica sin ser desarrollador. Los cinco viven en esa frontera.</p></div>
+      <div class="card"><span class="cnum">Común 02</span><h4>Priorizar</h4><p>Criterio propio para ordenar, no atender por orden de llegada.</p></div>
+      <div class="card"><span class="cnum">Común 03</span><h4>Manejar stakeholders</h4><p>Sostener conversaciones con intereses en conflicto sin romper el vínculo.</p></div>
+    </div>
+
+    <div class="entity">
+      <div class="entity-head">
+        <span class="lbl">Divergencia · lo que no se negocia</span>
+        <h3 class="entity-name">Tres diferencias <span class="hl">estructurales</span></h3>
+        <p class="entity-purpose"><strong>Ninguna se resuelve con capacitación ni con un cambio de título.</strong> Son diferencias de entrenamiento, de incentivo y de autoridad.</p>
+      </div>
+      <div class="entity-body">
+        <div class="fn"><div class="fi">01</div><div class="ft"><strong>La relación con el pedido. </strong><span class="d">Al AF y al Project Manager los formaron para <em>no</em> cuestionar el alcance: la disciplina del oficio es cumplir lo acordado. Al FDS le pedimos exactamente lo contrario — que nos diga que lo que le pedimos está mal.</span><span class="sub">No es falta de capacidad: es entrenamiento inverso. Por eso no se recalifica un AF como FDS cambiándole el título.</span></div></div>
+        <div class="fn"><div class="fi">02</div><div class="ft"><strong>Qué se mide. </strong><span class="d">Al Project Manager lo medimos por certeza; al FDS por impacto. Son métricas incompatibles.</span><span class="sub">Si le ponemos métricas de plazo y alcance a un FDS, en seis meses tenemos un Project Manager con otro nombre. Es el modo de falla 03 del modelo de duplas.</span></div></div>
+        <div class="fn"><div class="fi">03</div><div class="ft"><strong>La autoridad. </strong><span class="d">El FDS decide qué se construye, por mandato delegado. El PO decide el backlog. El Project Manager decide el plan, no el qué. El AF no decide: traduce.</span><span class="sub">Si el FDS no tiene poder de decisión real, el rol directamente no existe.</span></div></div>
+      </div>
+      <div class="entity-foot">
+        <span class="tag key"><strong>Consecuencia:</strong> los roles conviven, no se reemplazan</span>
+        <span class="tag">No hay ruta de conversión directa</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 REPORTES -->
+  <section class="chapter" id="s4">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">04</span><span class="lbl">Líneas de reporte</span></div>
+      <h2 class="ch-title">Manda quien paga el costo del <span class="hl">error</span></h2>
+      <p class="ch-lede">Un principio único para no discutir cada área de cero. Cada hogar posible paga un costo distinto cuando algo sale mal, y eso define qué le corresponde decidir.</p>
+    </div>
+
+    <div class="stack">
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Área / negocio</span></div>
+        <div class="t-items"><div class="cell"><span class="cn">Paga el problema equivocado</span><span class="cs">le corresponden prioridades, presupuesto y validación del outcome</span></div></div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Transformación</span></div>
+        <div class="t-items"><div class="cell x"><span class="cn">Paga la fragmentación</span><span class="cs">le corresponden el oficio, los estándares y la plataforma</span></div></div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Tech</span></div>
+        <div class="t-items"><div class="cell"><span class="cn">Paga la caída y el dato mal gobernado</span><span class="cs">le corresponden producción, integración y continuidad</span></div></div>
+      </div>
+    </div>
+    <p class="tbl-cap">Todo reporte que contradiga este principio genera fricción permanente. No es una preferencia de diseño: es dónde duele el error.</p>
+
+    <div class="tbl-wrap">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th>Rol</th>
+            <th>Línea sólida</th>
+            <th>Línea punteada</th>
+            <th>Estado hoy en fyo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>FDS · Agent Manager</th>
+            <td class="hi">Área (prioridades y presupuesto)</td>
+            <td>Chapter FDS · Transformación (oficio)</td>
+            <td>A crear</td>
+          </tr>
+          <tr>
+            <th>FDE · Agent Engineer</th>
+            <td class="hi">Área (prioridades y presupuesto)</td>
+            <td>Chapter FDE · Transformación (oficio)</td>
+            <td>A crear</td>
+          </tr>
+          <tr>
+            <th>Chapter Leads FDS / FDE</th>
+            <td class="hi">Transformación</td>
+            <td>—</td>
+            <td>Previsto · sin gente a cargo en línea sólida</td>
+          </tr>
+          <tr class="key">
+            <th>PO de plataforma de agentes</th>
+            <td class="hi">Transformación</td>
+            <td>Tech (para producción)</td>
+            <td>No existe · hueco crítico</td>
+          </tr>
+          <tr class="key">
+            <th>PO de producto digital</th>
+            <td class="hi">Unidad de negocio dueña del producto</td>
+            <td>Tech</td>
+            <td>No existe · no debería ir en Tech</td>
+          </tr>
+          <tr>
+            <th>Project Manager</th>
+            <td>Tech</td>
+            <td>Área que patrocina</td>
+            <td>Como hoy</td>
+          </tr>
+          <tr>
+            <th>Analista funcional</th>
+            <td>Tech</td>
+            <td>Área</td>
+            <td>Como hoy</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note">
+      <span class="lbl">Por qué la dupla reporta al área y no al CoE</span>
+      <p>Es contraintuitivo, porque el CoE es quien la forma y quien cuida el oficio. Pero si la dupla reporta a Transformación, el área la trata como <strong>un proveedor interno más</strong> — y ahí vuelve la mesa de pedidos. La doble pertenencia existe justamente para eso: el área pone las prioridades porque paga el costo de equivocarse de problema; el chapter pone el estándar porque paga el costo de que cada dupla invente lo suyo.</p>
+    </div>
+  </section>
+
+  <!-- 05 ARQUETIPOS -->
+  <section class="chapter" id="s5">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">05</span><span class="lbl">Segmentación</span></div>
+      <h2 class="ch-title">No todas las áreas necesitan lo mismo: cuatro <span class="hl">arquetipos</span></h2>
+      <p class="ch-lede">En vez de decidir área por área, clasificarlas. Cuatro preguntas y sale el perfil.</p>
+    </div>
+
+    <div class="qbox">
+      <div class="qrow"><div class="qn">1</div><div class="qt"><strong>¿El área sabe lo que quiere?</strong><span>Si el problema ya está definido y acotado, no hace falta descubrimiento: hace falta capacidad de entrega.</span></div></div>
+      <div class="qrow"><div class="qn">2</div><div class="qt"><strong>¿El líder llega con la pregunta o con la respuesta?</strong><span>La variable que más pesa. Un líder que delega el cómo hace florecer al FDS. Uno que ya tiene su lista necesita un Project Manager.</span></div></div>
+      <div class="qrow"><div class="qn">3</div><div class="qt"><strong>¿El proceso es de regla o de juicio?</strong><span>Regulado y documentado, o conocimiento tácito que vive en la cabeza de la gente. En fyoCapital esto separa bastante limpio el front del back office.</span></div></div>
+      <div class="qrow"><div class="qn">4</div><div class="qt"><strong>¿Hay un hereje con dominio disponible adentro?</strong><span>Si la persona no existe en esa área, no se inventa con un título.</span></div></div>
+    </div>
+
+    <div class="archbox">
+      <div class="arch">
+        <div class="ak">A</div>
+        <div class="ab">
+          <h4>Proceso de juicio, líder motor</h4>
+          <p>Mesa, research, comercial. Conocimiento tácito: nadie puede escribir la especificación desde afuera porque el saber no está escrito en ninguna parte. El líder llega con preguntas, no con una lista.</p>
+          <span class="verdict">→ Dupla completa embebida. Tech aparece solo como proveedor de datos y accesos. No lleva Project Manager.</span>
+        </div>
+      </div>
+      <div class="arch">
+        <div class="ak">B</div>
+        <div class="ab">
+          <h4>Proceso de regla, alto volumen</h4>
+          <p>Liquidación, custodia, operaciones, riesgos. El problema ya está definido, el proceso documentado y la mejora es de eficiencia, no de criterio.</p>
+          <span class="verdict">→ AF + Project Manager de Tech, con el kit del CoE. No lleva dupla: sería desperdiciarla. El CoE aporta estándares, no personas.</span>
+        </div>
+      </div>
+      <div class="arch">
+        <div class="ak">C</div>
+        <div class="ab">
+          <h4>Producto digital con cliente afuera</h4>
+          <p>fyoDigital, canales, la app. Hay un usuario externo, un roadmap y un producto que vive en el tiempo — no un proyecto que termina.</p>
+          <span class="verdict">→ Necesita Product Owner de verdad, reportando al negocio. Es donde la ausencia de PO más se nota hoy.</span>
+        </div>
+      </div>
+      <div class="arch">
+        <div class="ak">D</div>
+        <div class="ab">
+          <h4>Área en transición</h4>
+          <p>Hay algo por descubrir, pero una vez descubierto se vuelve proceso estable. El descubrimiento tiene fecha de vencimiento.</p>
+          <span class="verdict">→ Dupla temporal que descubre, Tech que industrializa después. La dupla se va cuando el caso está probado.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 HUECOS -->
+  <section class="chapter" id="s6">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">06</span><span class="lbl">Lo que falta</span></div>
+      <h2 class="ch-title">Hoy fyo entrega proyectos. No sostiene <span class="hl">productos</span>.</h2>
+      <p class="ch-lede">El hueco más grave no es de headcount: es estructural. Y no se ve hasta el segundo año.</p>
+    </div>
+
+    <div class="prose">
+      <p>Un Project Manager termina. Un Analista especifica y se va. <strong>Ninguno de los dos es dueño de algo en el tiempo.</strong> Y un agente no es un proyecto: es un producto. Tiene drift, evals, adopción que sube y baja, un modelo que se actualiza abajo sin avisar, un negocio que cambia arriba.</p>
+      <p>El FDS tampoco es el dueño de largo plazo: cuando pasa al caso siguiente —que es lo que tiene que hacer— el agente queda huérfano. Sin Product Owner, en dos años tenemos exactamente los <em>veinte bots que nadie usa</em> que el modelo de duplas dice querer evitar.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card"><span class="cnum">Hueco 01</span><h4>PO de plataforma de agentes</h4><p>Dueño de lo que el CoE generaliza: la autopista, no el camino de grava. Sin este rol, cada dupla acumula soluciones propias y el loop nunca cierra — que es el síntoma de "esto era consultoría interna disfrazada". Reporta a Transformación.</p></div>
+      <div class="card"><span class="cnum">Hueco 02</span><h4>PO de producto digital</h4><p>Dueño de los productos que ve el cliente. Hoy esa función está repartida entre Tech y el negocio sin dueño único, que es la forma más común de que un roadmap lo termine definiendo la capacidad del proveedor. Reporta al negocio, no a Tech.</p></div>
+    </div>
+
+    <div class="note warn">
+      <span class="lbl">Por qué el PO de plataforma no puede ser un Project Manager reasignado</span>
+      <p>McGrew cuenta que Palantir tardó años en poder contratar product managers, porque los muy buenos que venían de otras empresas <strong>no lograban subir el nivel de abstracción</strong>: veían el flujo de un cliente, no el patrón que se repite en diez. Es exactamente la competencia que necesita este rol — mirar lo que una dupla construyó para el área X y ver qué versión de eso sirve para las próximas cinco.</p>
+    </div>
+  </section>
+
+  <!-- 07 RIESGOS -->
+  <section class="chapter" id="s7">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">07</span><span class="lbl">Convivencia</span></div>
+      <h2 class="ch-title">Dos organizaciones construyendo software en la <span class="hl">misma área</span></h2>
+      <p class="ch-lede">Tech con Project Manager y AF; Transformación con FDS y FDE. Métricas distintas, jefes distintos, misma área. Es el problema clásico de IT a dos velocidades.</p>
+    </div>
+
+    <div class="entity">
+      <div class="entity-head">
+        <span class="lbl">Riesgos · a resolver antes de arrancar</span>
+        <h3 class="entity-name">Tres fricciones <span class="hl">previsibles</span></h3>
+        <p class="entity-purpose"><strong>Ninguna es inevitable, pero todas necesitan una regla escrita.</strong> Si la frontera queda implícita, se resuelve por política y no por criterio.</p>
+      </div>
+      <div class="entity-body">
+        <div class="fn"><div class="fi">01</div><div class="ft"><strong>La frontera ambigua. </strong><span class="d">La regla tiene que ser sobre la <em>naturaleza del problema</em>, no sobre la tecnología: problema definido va a Tech, problema por descubrir va a la dupla.</span><span class="sub">Si la frontera es "lo que tiene IA va a Transformación", en un año no queda nada en Tech y la guerra es segura.</span></div></div>
+        <div class="fn"><div class="fi">02</div><div class="ft"><strong>Producción tiene que seguir siendo de Tech. </strong><span class="d">Somos un ALyC: el riesgo regulatorio y operativo no se delega a un CoE. La graduación tiene <strong>tres saltos, no uno</strong> — la dupla prueba en sandbox y staging, el CoE certifica la capacidad como reutilizable, Tech la opera en producción.</span><span class="sub">El modelo de duplas hoy dice "producción solo vía graduación al CoE" y ahí falta el tercer salto. Sin eso, es shadow IT con datos de clientes.</span></div></div>
+        <div class="fn"><div class="fi">03</div><div class="ft"><strong>El FDE sale de Tech, y Tech pierde. </strong><span class="d">Los mejores constructores están ahí. Si se van a Transformación y Tech no recibe nada a cambio, vamos a tener resistencia pasiva justo del área que nos tiene que dar accesos y datos.</span><span class="sub">Se compensa con rotación explícita —el FDE vuelve a Tech con oficio nuevo— o con secondment en vez de transferencia.</span></div></div>
+      </div>
+      <div class="entity-foot">
+        <span class="tag key"><strong>Regla raíz:</strong> problema definido → Tech · por descubrir → dupla</span>
+        <span class="tag">Producción nunca sale de Tech</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 QUÉ NECESITO -->
+  <section class="chapter" id="s8">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">08</span><span class="lbl">Próximo paso</span></div>
+      <h2 class="ch-title">Para armar la matriz área por <span class="hl">área</span></h2>
+      <p class="ch-lede">Cuatro datos por cada unidad o área que entre en juego. Con eso sale el perfil recomendado y la línea de reporte de cada una.</p>
+    </div>
+
+    <div class="qbox">
+      <div class="qrow"><div class="qn">1</div><div class="qt"><strong>Arquetipo</strong><span>A, B, C o D según la sección 05.</span></div></div>
+      <div class="qrow"><div class="qn">2</div><div class="qt"><strong>El líder: ¿llega con la pregunta o con la respuesta?</strong><span>La variable que más pesa y la única que no se puede inferir de la documentación.</span></div></div>
+      <div class="qrow"><div class="qn">3</div><div class="qt"><strong>¿Hay un hereje con dominio disponible adentro?</strong><span>Si no lo hay, no hay dupla — mejor un PO fuerte desde el CoE más un AF del área que forzar un FDS de mentira.</span></div></div>
+      <div class="qrow"><div class="qn">4</div><div class="qt"><strong>¿Tiene superficie digital propia?</strong><span>Producto que ve el cliente, o consume sistemas compartidos.</span></div></div>
+    </div>
+
+    <div class="statement">
+      <span class="lbl">La idea, en una frase</span>
+      <p>Los cinco roles <span class="hl">conviven</span>. Lo que cambia por área es el mix, no el modelo.</p>
+    </div>
+  </section>
+
+  <!-- COLOFÓN -->
+  <div class="colophon">
+    <span>Iñaki · Consultoría</span>
+    <span>inaki@alganaras.com.ar · estilo «Plano»</span>
+  </div>
+
+</div></div>
+
+<script src="https://docs.alganaras.com.ar/_editor.js"></script>
+</body></html>

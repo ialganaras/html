@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Autoservicio gobernado · Stack y políticas para riesgo bajo · FyO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!--
+  ░░ Documento estilo Plano ░░
+-->
+<style>
+  :root{
+    /* ── PALETA (no inventar colores nuevos: usar SOLO estos tokens) ── */
+    --paper:#f3f2ee;     /* fondo de la hoja (papel cálido)          */
+    --paper-2:#eceae4;   /* fondo de filas/etiquetas internas        */
+    --card:#ffffff;      /* fondo de tarjetas, tablas, callouts       */
+    --ink:#111110;       /* texto principal y bordes fuertes          */
+    --ink-2:#2c2b27;     /* texto de cuerpo / párrafos                */
+    --muted:#56544f;     /* etiquetas, subtítulos, texto secundario   */
+    --faint:#78756f;     /* texto terciario, flechas                  */
+    --rule:#d6d4ce;      /* líneas finas internas                     */
+    --rule-2:#cbc8c0;    /* bordes suaves de tarjetas                 */
+    /* Acento — rojo. Es el ÚNICO color vivo del sistema; usar con moderación */
+    --accent:#e22b16; --accent-soft:#e22b160e; --accent-line:#e22b1642; --accent-deep:#c0220f;
+    /* ── TIPOGRAFÍA ── display=titulares · sans=cuerpo · mono=etiquetas/datos ── */
+    --disp:'Space Grotesk', system-ui, sans-serif;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--paper);
+    color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--accent); color:#fff; }
+  /* etiqueta monoespaciada en mayúsculas: el sello del sistema */
+  .lbl{ font-family:var(--mono); font-size:11px; font-weight:500; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--muted); }
+
+  .doc{ max-width:1120px; margin:0 auto; padding:0 0 130px; }
+  .sheet{ background:var(--paper); padding:0 52px; position:relative; }
+  @media (max-width:760px){ .sheet{ padding:0 20px; } }
+
+  /* ── Title block (cabecera tipo carátula de plano) ─────── */
+  .titleblock{ display:grid; grid-template-columns:1fr auto; align-items:stretch;
+    border-bottom:1px solid var(--ink); }
+  .titleblock .tb-l{ padding:16px 0; font-family:var(--mono); font-size:11px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--ink-2); display:flex; align-items:center; gap:14px; }
+  .titleblock .tb-l .sq{ width:8px; height:8px; background:var(--accent); }
+  .titleblock .tb-r{ font-family:var(--mono); font-size:11px; letter-spacing:.06em; color:var(--muted);
+    text-transform:uppercase; display:flex; align-items:center; padding:16px 0 16px 22px;
+    border-left:1px solid var(--rule); }
+  .titleblock .tb-r b{ color:var(--accent-deep); font-weight:600; }
+
+  /* ── Cover (portada) ─────────────────────────── */
+  .cover{ padding:70px 0 0; }
+  .cover .ref{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); margin-bottom:30px; display:flex; gap:18px; }
+  .cover .ref span{ position:relative; padding-left:16px; }
+  .cover .ref span::before{ content:''; position:absolute; left:0; top:50%; width:8px; height:8px;
+    border:1px solid var(--accent); transform:translateY(-50%); }
+  h1.title{ font-family:var(--disp); font-weight:600; font-size:clamp(40px,6.4vw,82px);
+    line-height:1.0; letter-spacing:-.03em; margin:0; max-width:15ch; color:var(--ink); }
+  h1.title .hl{ color:var(--accent); }
+  .lede{ font-size:clamp(17px,1.8vw,21px); line-height:1.55; color:var(--ink-2); max-width:62ch;
+    margin:30px 0 0; }
+  .specsheet{ margin-top:48px; border:1px solid var(--rule-2); background:var(--card);
+    display:grid; grid-template-columns:repeat(3,1fr); }
+  @media (max-width:680px){ .specsheet{ grid-template-columns:1fr; } }
+  .specsheet .sc{ padding:18px 20px; border-right:1px solid var(--rule); }
+  .specsheet .sc:last-child{ border-right:none; }
+  .specsheet .sc .k{ display:block; margin-bottom:8px; }
+  .specsheet .sc .v{ font-family:var(--disp); font-weight:500; font-size:16px; color:var(--ink);
+    line-height:1.35; }
+
+  /* ── Index (índice) ──────────────────────────── */
+  .contents{ margin:72px 0 0; border-top:1px solid var(--ink); padding-top:26px; }
+  .contents .ct{ color:var(--accent); margin-bottom:18px; }
+  .toc{ list-style:none; margin:0; padding:0; }
+  .toc li{ display:grid; grid-template-columns:70px 1fr auto; align-items:center; gap:18px;
+    padding:15px 0; border-bottom:1px solid var(--rule); }
+  .toc .n{ font-family:var(--mono); font-size:12px; color:var(--accent); }
+  .toc a{ color:var(--ink); text-decoration:none; font-family:var(--disp); font-weight:500;
+    font-size:19px; letter-spacing:-.01em; }
+  .toc li:hover a{ color:var(--accent); }
+  .toc .ar{ font-family:var(--mono); color:var(--faint); font-size:12px; }
+
+  /* ── Chapter (capítulo / sección) ────────────── */
+  .chapter{ margin-top:96px; scroll-margin-top:24px; }
+  .ch-head{ border-bottom:1px solid var(--ink); padding-bottom:26px; }
+  .ch-marker{ display:flex; align-items:center; gap:14px; margin-bottom:20px; }
+  .ch-marker .mn{ font-family:var(--mono); font-size:12px; color:#fff; background:var(--accent);
+    padding:4px 9px; font-weight:600; letter-spacing:.06em; }
+  h2.ch-title{ font-family:var(--disp); font-weight:600; font-size:clamp(28px,4.2vw,52px);
+    line-height:1.02; letter-spacing:-.03em; margin:0; max-width:18ch; }
+  h2.ch-title .hl{ color:var(--accent); }
+  .ch-lede{ font-size:19px; line-height:1.5; color:var(--ink-2); margin:20px 0 0; max-width:64ch; }
+
+  /* ── Prose (cuerpo de texto) ─────────────────── */
+  .prose{ max-width:70ch; margin-top:32px; font-size:16.5px; line-height:1.62; color:var(--ink-2); }
+  .prose p{ margin:0 0 18px; }
+  .prose strong{ color:var(--ink); font-weight:600; }
+  .prose em{ font-style:normal; color:var(--accent); font-weight:500; }   /* resalta una idea en rojo */
+
+  /* ── Note (callout / nota al margen) ─────────── */
+  .note{ margin:32px 0; border:1px solid var(--rule-2); border-left:3px solid var(--accent);
+    background:var(--card); padding:22px 26px; max-width:78ch; position:relative; }
+  .note .lbl{ color:var(--accent); display:block; margin-bottom:11px; }
+  .note p{ margin:0; font-size:15.5px; line-height:1.58; color:var(--ink-2); }
+  .note strong{ color:var(--ink); font-weight:600; }
+  .note.warn{ border-left-color:var(--accent-deep); }   /* variante de advertencia */
+
+  /* ── Stack (diagrama por niveles / jerarquía) ── */
+  .stack{ margin:36px 0 8px; border:1px solid var(--ink); background:var(--card); }
+  .tier{ display:grid; grid-template-columns:158px 1fr; border-bottom:1px solid var(--rule); }
+  .tier:last-child{ border-bottom:none; }
+  @media (max-width:680px){ .tier{ grid-template-columns:1fr; } }
+  .tier .t-lbl{ padding:18px 20px; border-right:1px solid var(--rule); display:flex; align-items:center;
+    background:var(--paper-2); }
+  .tier .t-items{ display:flex; }
+  @media (max-width:560px){ .tier .t-items{ flex-direction:column; } }
+  .cell{ flex:1; padding:18px 20px; border-left:1px solid var(--rule); }
+  .cell:first-child{ border-left:none; }
+  .cell .cn{ font-family:var(--disp); font-weight:600; font-size:18px; color:var(--ink); display:block;
+    letter-spacing:-.01em; }
+  .cell .cs{ font-family:var(--mono); font-size:11px; color:var(--muted); display:block; margin-top:7px;
+    line-height:1.45; }
+  .cell.x .cn{ color:var(--accent); }   /* destaca una celda */
+  .flowmark{ font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; color:var(--faint);
+    text-transform:uppercase; padding:7px 20px; text-align:center; border-bottom:1px solid var(--rule);
+    background:var(--paper-2); }
+
+  /* ── Entity (ficha de un elemento: persona, módulo, fase…) ── */
+  .entity{ margin:38px 0; border:1px solid var(--ink); background:var(--card); }
+  .entity-head{ padding:26px 30px 22px; border-bottom:1px solid var(--rule); border-top:3px solid var(--accent); }
+  .entity-head .lbl{ color:var(--accent); display:block; margin-bottom:12px; }
+  .entity-name{ font-family:var(--disp); font-weight:600; font-size:28px; line-height:1.05;
+    letter-spacing:-.02em; margin:0 0 11px; }
+  .entity-name .hl{ color:var(--accent); }
+  .entity-purpose{ font-size:16px; line-height:1.55; color:var(--ink-2); margin:0; max-width:72ch; }
+  .entity-purpose strong{ color:var(--ink); font-weight:600; }
+  .entity-body{ padding:4px 30px; }
+  .fn{ display:grid; grid-template-columns:36px 1fr; gap:18px; padding:16px 0; border-bottom:1px solid var(--rule); }
+  .fn:last-child{ border-bottom:none; }
+  .fn .fi{ font-family:var(--mono); font-size:12px; color:var(--accent); border:1px solid var(--accent-line);
+    width:30px; height:30px; display:flex; align-items:center; justify-content:center; }
+  .fn .ft strong{ color:var(--ink); font-weight:600; }
+  .fn .ft .d{ color:var(--ink-2); }
+  .fn .ft .sub{ display:block; margin-top:6px; font-size:14px; color:var(--muted); line-height:1.5;
+    padding-left:12px; border-left:2px solid var(--rule-2); }
+  .entity-foot{ display:flex; flex-wrap:wrap; gap:9px; padding:18px 30px 22px; border-top:1px solid var(--rule);
+    background:var(--paper-2); }
+  .tag{ font-family:var(--mono); font-size:11px; color:var(--ink-2); padding:7px 12px; border:1px solid var(--rule-2);
+    background:var(--card); }
+  .tag strong{ color:var(--ink); font-weight:600; }
+  .tag.key{ border-color:var(--accent-line); color:var(--accent); background:var(--accent-soft); }
+  .tag.key strong{ color:var(--accent-deep); }
+  .tag.lnk{ border-color:var(--accent); color:var(--accent); }
+  .tag.lnk strong{ color:var(--accent-deep); }
+
+  /* ── Grid2 (grilla de tarjetas, p. ej. principios) ── */
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; margin-top:36px; border:1px solid var(--ink);
+    background:var(--card); }
+  @media (max-width:680px){ .grid2{ grid-template-columns:1fr; } }
+  .card{ padding:26px 28px 28px; border-bottom:1px solid var(--rule); }
+  .card:nth-child(odd){ border-right:1px solid var(--rule); }
+  @media (max-width:680px){ .card:nth-child(odd){ border-right:none; } }
+  .card:nth-last-child(-n+2){ border-bottom:none; }
+  @media (max-width:680px){ .card:nth-last-child(-n+2){ border-bottom:1px solid var(--rule); } .card:last-child{ border-bottom:none; } }
+  .card .cnum{ font-family:var(--mono); font-size:11px; color:var(--accent); display:block; margin-bottom:14px; }
+  .card h4{ font-family:var(--disp); font-weight:600; font-size:21px; letter-spacing:-.015em; margin:0 0 9px; color:var(--ink); }
+  .card p{ font-size:15px; line-height:1.55; color:var(--ink-2); margin:0; }
+
+  /* ── Statement (frase de cierre / pull-quote) ── */
+  .statement{ margin:88px 0 0; padding:56px 44px; border:1px solid var(--ink); background:var(--card);
+    position:relative; }
+  .statement::before{ content:''; position:absolute; top:0; left:0; width:6px; height:100%; background:var(--accent); }
+  .statement .lbl{ color:var(--accent); margin-bottom:22px; display:block; }
+  .statement p{ font-family:var(--disp); font-weight:500; font-size:clamp(24px,3.4vw,42px); line-height:1.18;
+    letter-spacing:-.025em; margin:0; max-width:22ch; color:var(--ink); }
+  .statement .hl{ color:var(--accent); }
+
+  /* ── Footer (colofón) ────────────────────────── */
+  .colophon{ margin-top:50px; padding-top:18px; border-top:1px solid var(--ink); display:flex;
+    justify-content:space-between; flex-wrap:wrap; gap:12px; font-family:var(--mono); font-size:11px;
+    color:var(--muted); letter-spacing:.05em; text-transform:uppercase; }
+</style>
+</head>
+<body>
+
+<div class="doc"><div class="sheet">
+
+  <div class="titleblock">
+    <div class="tb-l"><span class="sq"></span>FyO · Autoservicio gobernado<span style="color:var(--muted)">inaki@alganaras.com.ar</span></div>
+    <div class="tb-r">DOC. <b>FYO-01</b> · REV. <b>v3</b> · PROPUESTA</div>
+  </div>
+
+  <header class="cover">
+    <div class="ref"><span>Programa de autonomía digital</span><span>Stack y políticas</span></div>
+    <h1 class="title">Autoservicio gobernado: construir desde el negocio sin <span class="hl">pedir permiso</span>.</h1>
+    <p class="lede">Stack y políticas para el nivel de riesgo más bajo. El objetivo es que cualquier persona de FyO pueda construir, iterar y publicar sus propias soluciones internas sin pasar por Tecnología — con el riesgo controlado por diseño, no por aprobación previa.</p>
+    <div class="specsheet">
+      <div class="sc"><span class="lbl k">Alcance</span><span class="v">Riesgo bajo</span></div>
+      <div class="sc"><span class="lbl k">Complemento de</span><span class="v">Procedimiento IA</span></div>
+      <div class="sc"><span class="lbl k">Principio rector</span><span class="v">Barandas, no portones</span></div>
+    </div>
+  </header>
+
+  <nav class="contents">
+    <div class="lbl ct">Índice del documento</div>
+    <ol class="toc">
+      <li><span class="n">00</span><a href="#s0">El principio: barandas en lugar de portones</a><span class="ar">[↗]</span></li>
+      <li><span class="n">01</span><a href="#s1">Las cuatro capacidades que se habilitan</a><span class="ar">[↗]</span></li>
+      <li><span class="n">02</span><a href="#s2">La paradoja del control: el riesgo del Excel</a><span class="ar">[↗]</span></li>
+      <li><span class="n">03</span><a href="#s3">Las seis condiciones del autoservicio</a><span class="ar">[↗]</span></li>
+      <li><span class="n">04</span><a href="#s4">La capa de datos: MCP y Microsoft 365</a><span class="ar">[↗]</span></li>
+      <li><span class="n">05</span><a href="#s5">¿Son estas las herramientas correctas?</a><span class="ar">[↗]</span></li>
+      <li><span class="n">06</span><a href="#s6">Políticas de operación</a><span class="ar">[↗]</span></li>
+      <li><span class="n">07</span><a href="#s7">La doble provocación</a><span class="ar">[↗]</span></li>
+      <li><span class="n">08</span><a href="#s8">Qué hay que construir antes de abrir</a><span class="ar">[↗]</span></li>
+    </ol>
+  </nav>
+
+  <section class="chapter" id="s0">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">00</span><span class="lbl">Principio de diseño</span></div>
+      <h2 class="ch-title">Barandas en lugar de <span class="hl">portones</span></h2>
+      <p class="ch-lede">La diferencia entre un proceso que se cumple y uno que se evade.</p>
+    </div>
+
+    <div class="prose">
+      <p>Un portón es un control previo: alguien revisa y autoriza antes de que pases. Una baranda es un control estructural: podés moverte libremente, pero no podés caerte porque el borde está cerrado.</p>
+      <p>El procedimiento actual está construido con portones. Para el riesgo alto y crítico eso es correcto y no debería cambiar. Para el riesgo bajo genera un efecto perverso: <strong>el usuario que quiere iterar veinte veces no abre veinte tickets.</strong> O construye por fuera del proceso, o no itera y entrega algo mediocre.</p>
+      <p>La propuesta invierte el mecanismo para el nivel más bajo. En lugar de revisar cada publicación, se define un perímetro donde <em>nada de lo que se puede hacer es peligroso</em>. Dentro de ese perímetro, autonomía total y sin espera. Salir del perímetro requiere el proceso formal.</p>
+      <p>Hay un segundo motivo, más profundo. Los usuarios de negocio no saben qué quieren al empezar. El requerimiento se descubre construyendo, mostrando, probando y corrigiendo. Un proceso que trata cada iteración como un pase a producción no está midiendo mal el riesgo: está negando cómo funciona el descubrimiento.</p>
+    </div>
+  </section>
+
+  <section class="chapter" id="s1">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">01</span><span class="lbl">Alcance</span></div>
+      <h2 class="ch-title">Las cuatro capacidades que se <span class="hl">habilitan</span></h2>
+      <p class="ch-lede">Qué puede construir un área por su cuenta, sin depender de Tecnología.</p>
+    </div>
+
+    <div class="prose">
+      <p>La autonomía no es abstracta. Se traduce en cuatro tipos de solución que hoy requieren un pedido formal y que pasarían a estar al alcance directo de cada área.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <span class="cnum">01</span>
+        <h4>Flujos de automatización</h4>
+        <p>Tareas repetitivas que se disparan solas: consolidar información de varias fuentes, avisar cuando algo cambia, preparar un reporte recurrente. Elimina trabajo manual sin escribir código.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">02</span>
+        <h4>Webapps internas</h4>
+        <p>Herramientas a medida del proceso real del área: formularios, seguimientos, consultas, calculadoras. Lo que hoy vive en planillas compartidas con macros y convenciones no escritas.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">03</span>
+        <h4>Dashboards de datos</h4>
+        <p>Visualización de información del negocio, armada por quien entiende el negocio. Con la interactividad y el recorte que necesita ese equipo, no el que alguien supuso desde afuera.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">04</span>
+        <h4>Agentes de IA</h4>
+        <p>Asistentes que responden preguntas sobre información interna, clasifican texto no estructurado o preparan borradores. Es la capacidad más nueva y la menos explorada.</p>
+      </div>
+    </div>
+
+    <div class="note">
+      <span class="lbl">Sobre los dashboards</span>
+      <p>Existe ya una herramienta corporativa de reportería y no se propone reemplazarla. La diferencia es de propósito: <strong>lo institucional y auditado sigue donde está</strong>; lo que se habilita es el tablero exploratorio que un equipo arma para sí mismo, itera cinco veces en una semana y descarta si no sirve.</p>
+    </div>
+  </section>
+
+  <section class="chapter" id="s2">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">02</span><span class="lbl">Riesgo de diseño</span></div>
+      <h2 class="ch-title">La paradoja del control: el riesgo del <span class="hl">Excel</span></h2>
+      <p class="ch-lede">Qué pasa cuando el camino seguro está cerrado y el inseguro no.</p>
+    </div>
+
+    <div class="prose">
+      <p>Hoy las herramientas de construcción no pueden conectarse al MCP corporativo por razones de seguridad. La restricción es razonable en su intención, pero conviene mirar hacia dónde empuja al usuario que igual necesita los datos.</p>
+      <p>El camino que queda disponible es manual: <strong>bajar los datos a un Excel y subirlo a donde sea que esté construyendo.</strong> No hace falta que sea una práctica extendida para que importe — alcanza con que sea el camino de menor resistencia, porque tarde o temprano alguien lo va a tomar.</p>
+      <p>Vale detenerse en lo que implicaría. La restricción no impediría que los datos salgan: cambiaría el mecanismo por el que salen, por uno peor en las seis dimensiones que importan.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <span class="cnum">01</span>
+        <h4>Permisos</h4>
+        <p>Con gateway, el usuario ve solo lo que ya puede ver. Con un archivo suelto, lo ve cualquiera que reciba el link.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">02</span>
+        <h4>Trazabilidad</h4>
+        <p>Con gateway, queda registro de qué se consultó y cuándo. Con un archivo suelto, no hay registro de que el dato salió.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">03</span>
+        <h4>Vigencia</h4>
+        <p>Con gateway, el dato es el actual. Con un archivo suelto, es una foto que puede seguir usándose para decidir meses después.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">04</span>
+        <h4>Revocación</h4>
+        <p>Con gateway, si alguien deja FyO pierde el acceso. Con un archivo suelto, este sobrevive en su descarga y en su correo.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">05</span>
+        <h4>Destino</h4>
+        <p>Con gateway, los datos no salen del perímetro. Con un archivo suelto, pueden terminar en cualquier plataforma, sin contrato ni acuerdo.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">06</span>
+        <h4>Alcance</h4>
+        <p>Con gateway, se consulta lo necesario. Con un archivo suelto, se tiende a exportar la tabla entera porque filtrar después es más cómodo.</p>
+      </div>
+    </div>
+
+    <div class="note warn">
+      <span class="lbl">El punto central de esta propuesta</span>
+      <p>Bloquear la conexión controlada <strong>no elimina el riesgo si no elimina también la necesidad: lo empuja hacia un canal sin gobierno.</strong> Habilitar el MCP de solo lectura con identidad personal no es aflojar el control — es asegurarse de que el camino gobernado sea también el más cómodo, para que nadie tenga motivo de buscar otro.</p>
+    </div>
+
+    <div class="prose">
+      <p>El mismo razonamiento aplica al resto del documento. Cada vez que el proceso formal resulta más caro que la alternativa informal, la organización no gana seguridad: se expone a perder <em>visibilidad</em>.</p>
+    </div>
+  </section>
+
+  <section class="chapter" id="s3">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">03</span><span class="lbl">Perímetro</span></div>
+      <h2 class="ch-title">Las seis condiciones del <span class="hl">autoservicio</span></h2>
+      <p class="ch-lede">Si se cumplen las seis, el usuario publica solo. Si falla una, entra al proceso formal.</p>
+    </div>
+
+    <div class="prose">
+      <p>Estas condiciones no dependen de la buena voluntad del usuario ni de su criterio. <strong>Están garantizadas por configuración de la plataforma.</strong> El usuario no puede violarlas aunque quiera, porque la opción no existe en su entorno.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <span class="cnum">01</span>
+        <h4>Publicación solo interna</h4>
+        <p>Accesible únicamente para usuarios autenticados del dominio de FyO. La opción de exponer a internet está deshabilitada a nivel workspace.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">02</span>
+        <h4>Solo lectura de datos corporativos</h4>
+        <p>El acceso a sistemas internos pasa por un gateway que expone exclusivamente operaciones de lectura. La escritura no está disponible como capacidad.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">03</span>
+        <h4>Identidad corporativa obligatoria</h4>
+        <p>Autenticación por Entra ID. Los permisos sobre datos se heredan del usuario que consulta, no de una cuenta de servicio compartida.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">04</span>
+        <h4>Sin impacto contable ni SOX</h4>
+        <p>No genera, modifica ni soporta registraciones, conciliaciones o evidencia de controles. Si lo hace, sale del perímetro por la regla de elevación.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">05</span>
+        <h4>Sin terceros ni salida de datos</h4>
+        <p>No intercambia información con clientes, proveedores, bancos ni APIs externas. Los conectores externos están restringidos por lista blanca.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">06</span>
+        <h4>Sin decisiones automáticas</h4>
+        <p>No aprueba, rechaza, ejecuta ni comunica sin intervención humana. Puede sugerir y mostrar; la acción la toma una persona.</p>
+      </div>
+    </div>
+
+    <div class="note">
+      <span class="lbl">Regla de salida</span>
+      <p><strong>El intento de violar una condición dispara el proceso formal automáticamente.</strong> Si un usuario necesita escribir en un sistema o publicar hacia afuera, la plataforma no se lo permite y le ofrece abrir el ticket. La transición entre regímenes no depende de que alguien se acuerde de hacerla.</p>
+    </div>
+  </section>
+
+  <section class="chapter" id="s4">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">04</span><span class="lbl">Capa de datos</span></div>
+      <h2 class="ch-title">Dos fuentes: <span class="hl">MCP</span> y Microsoft 365</h2>
+      <p class="ch-lede">Los sistemas de negocio y el entorno de trabajo diario son necesidades distintas.</p>
+    </div>
+
+    <div class="prose">
+      <p>Buena parte de las soluciones que el negocio quiere construir no necesitan tocar el ERP: necesitan leer un SharePoint, cruzar un calendario, procesar adjuntos de un correo o consolidar planillas de OneDrive. <strong>Tratar Microsoft 365 como una fuente de segunda categoría es un error de diseño</strong>, porque ahí vive la mitad del trabajo real.</p>
+    </div>
+
+    <div class="stack">
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Fuente A · sistemas de negocio</span></div>
+        <div class="t-items">
+          <div class="cell x"><span class="cn">MCP Gateway de FyO</span><span class="cs">ERP, CRM, bases operativas</span></div>
+          <div class="cell"><span class="cn">Solo lectura</span><span class="cs">escritura fuera del perímetro</span></div>
+        </div>
+      </div>
+      <div class="flowmark">— ambas resuelven identidad contra Entra ID —</div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Fuente B · entorno de trabajo</span></div>
+        <div class="t-items">
+          <div class="cell"><span class="cn">SharePoint</span><span class="cs">documentos y listas</span></div>
+          <div class="cell"><span class="cn">OneDrive</span><span class="cs">archivos personales y de equipo</span></div>
+          <div class="cell"><span class="cn">Outlook</span><span class="cs">correo y calendario</span></div>
+          <div class="cell"><span class="cn">Teams</span><span class="cs">canales y notificaciones</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>El acceso a Microsoft 365 se resuelve por Microsoft Graph con el mismo principio que el gateway: <strong>identidad delegada</strong>. La app consulta como el usuario, con los permisos que ese usuario ya tiene. Si no tiene acceso a un sitio de SharePoint, la app tampoco lo tiene.</p>
+      <p>Hay una diferencia importante de perfil de riesgo. La lectura de Microsoft 365 es equiparable a la del gateway. La escritura, en cambio, incluye acciones que llegan a terceros — mandar un correo, crear un evento en la agenda de otro. <em>Enviar correo hacia afuera sale del perímetro de autoservicio</em>, aunque técnicamente sea la misma API.</p>
+    </div>
+
+    <div class="note">
+      <span class="lbl">Regla práctica para Microsoft 365</span>
+      <p><strong>Lectura de todo, escritura solo hacia adentro y sin destinatarios externos.</strong> Leer SharePoint, OneDrive, calendario y correo: dentro del perímetro. Publicar en un canal de Teams del propio equipo: dentro. Enviar correo, invitar a externos o modificar sitios: fuera.</p>
+    </div>
+  </section>
+
+  <section class="chapter" id="s5">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">05</span><span class="lbl">Selección</span></div>
+      <h2 class="ch-title">¿Son estas las herramientas <span class="hl">correctas</span>?</h2>
+      <p class="ch-lede">Las que hay hoy llegaron por adopción espontánea, no por evaluación.</p>
+    </div>
+
+    <div class="prose">
+      <p>Lovable, n8n, Claude y Vercel están en uso porque alguien las encontró útiles, no porque se hayan evaluado contra los requisitos de este modelo. Eso no las descalifica — la adopción espontánea es una señal fuerte de utilidad real. Pero conviene revisarlas contra el criterio que ahora importa.</p>
+      <p>Ese criterio cambió. Cuando la conversación era "qué tan rápido genero una app linda", el ranking era uno. Ahora que la conversación es <strong>"qué tan bien se conecta a los datos de la compañía con la identidad de cada persona"</strong>, el ranking se ordena distinto.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <span class="cnum">n8n</span>
+        <h4>El mejor posicionado</h4>
+        <p>Cliente MCP nativo, conectores maduros de Microsoft 365, autohospedable dentro del perímetro. Cubre la capacidad de flujos y hoy corre con menos gobierno que ninguna.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">Claude</span>
+        <h4>El más fuerte en datos</h4>
+        <p>MCP es su protocolo nativo y las credenciales por usuario son parte del diseño. Insuperable para agentes. Limitación: requiere un frontend construido aparte.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">Vercel</span>
+        <h4>La pieza que ya está y se subusa</h4>
+        <p>Hay cuenta activa para publicar frontends. Es la plataforma de despliegue natural para webapps y dashboards que necesiten conexión real, y federa con Entra sin desarrollo adicional.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">Lovable</span>
+        <h4>El más fácil, el más débil en datos</h4>
+        <p>Imbatible en velocidad de prototipado y adopción por usuarios no técnicos. Pero su modelo de conexión a datos corporativos es el más flojo — justo la dimensión crítica.</p>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>La conclusión no es reemplazar Lovable. Es reconocer que <strong>cubre bien una parte del problema y mal otra</strong>, y no forzarla a hacer lo que no hace bien. Lovable para prototipar y validar con datos de prueba; Vercel para publicar lo que necesita conexión real; n8n para flujos; Claude para agentes.</p>
+      <p>Queda una alternativa por evaluar que hoy no está sobre la mesa: <em>v0</em>, la herramienta de generación de Vercel. Merece consideración porque resuelve en una sola plataforma lo que hoy requiere combinar dos — genera como Lovable pero publica en la cuenta de Vercel que ya existe, con la identidad corporativa ya federada.</p>
+    </div>
+
+    <div class="note">
+      <span class="lbl">Recomendación de decisión</span>
+      <p>Antes de comprometer licencias para toda la organización, <strong>una prueba comparada de tres semanas</strong> con usuarios reales no técnicos, el mismo problema y el design system cargado. Comparar Lovable contra v0 sobre el criterio nuevo: facilidad de arranque, respeto del sistema de diseño y conexión efectiva a datos. Tres semanas de evidencia valen más que tres meses de análisis de funcionalidades.</p>
+    </div>
+  </section>
+
+  <section class="chapter" id="s6">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">06</span><span class="lbl">Políticas</span></div>
+      <h2 class="ch-title">Cómo se opera el <span class="hl">perímetro</span></h2>
+      <p class="ch-lede">Ocho reglas. Cuantas menos, más probable que se cumplan.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <span class="cnum">01</span>
+        <h4>Registro automático, no solicitud</h4>
+        <p>Toda solución publicada aparece en el directorio sin que el usuario haga nada. El inventario es consecuencia de publicar, no un trámite aparte.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">02</span>
+        <h4>Dueño con nombre y apellido</h4>
+        <p>Cada solución tiene una persona responsable. Sin dueño identificable, se apaga. Aplica también cuando el dueño deja la empresa.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">03</span>
+        <h4>El design system viene puesto</h4>
+        <p>No es una regla a cumplir: es el punto de partida. Salirse es posible pero incómodo, y no se admite para soluciones que superan el nivel de equipo.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">04</span>
+        <h4>Versionado sin pedirlo</h4>
+        <p>La plataforma guarda versiones automáticamente. Volver atrás es un clic. No hay pipeline de ambientes en este nivel — no se justifica.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">05</span>
+        <h4>Interruptor central</h4>
+        <p>El CoE puede apagar cualquier solución sin depender de quien la construyó. Es la contraparte de no revisar antes de publicar.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">06</span>
+        <h4>Revisión de vigencia trimestral</h4>
+        <p>Sin uso en noventa días, se marca para retiro. El dueño puede reactivarla en un clic. Sin respuesta, se archiva.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">07</span>
+        <h4>Techo de gasto por área</h4>
+        <p>Límite de consumo configurado por adelantado, con alerta antes del tope. Un agente mal configurado no puede generar una sorpresa de factura.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">08</span>
+        <h4>Prohibida la copia de datos</h4>
+        <p>Los datos corporativos se consultan, no se replican en la base de la solución. Es la regla que hace innecesaria la descarga manual y la que más hay que sostener.</p>
+      </div>
+    </div>
+
+    <div class="note">
+      <span class="lbl">Lo que no hay en este nivel</span>
+      <p>No hay ticket, no hay aprobación previa, no hay revisión técnica, no hay UAT formal, no hay pipeline de ambientes y no hay plan de rollback documentado. <strong>Nada de eso se justifica cuando la solución no puede escribir, no puede salir a internet y no toca procesos contables.</strong> Todo eso vuelve a aplicar apenas se cruza el perímetro.</p>
+    </div>
+  </section>
+
+  <section class="chapter" id="s7">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">07</span><span class="lbl">Condición de éxito</span></div>
+      <h2 class="ch-title">La doble <span class="hl">provocación</span></h2>
+      <p class="ch-lede">Este modelo incomoda a las dos partes. Si solo incomoda a una, no va a funcionar.</p>
+    </div>
+
+    <div class="prose">
+      <p>Es tentador leer esta propuesta como un reclamo del negocio hacia Tecnología: <em>aflojen los controles</em>. Sería una lectura incompleta y llevaría al fracaso.</p>
+      <p>Lo que se propone es un intercambio. Tecnología cede el control sobre la publicación, pero asume una responsabilidad más difícil que la que tiene hoy. Y el negocio gana autonomía, pero acepta una carga que hasta ahora podía delegar. <strong>Ninguna de las dos partes sale de esto sin cambiar.</strong></p>
+    </div>
+
+    <div class="entity">
+      <div class="entity-head">
+        <span class="lbl">Provocación · Tecnología</span>
+        <h3 class="entity-name">De guardián a <span class="hl">arquitecto de barandas</span></h3>
+        <p class="entity-purpose"><strong>Ceder el control de la publicación es la parte fácil.</strong> Lo difícil es asumir que definir un stack que no trabe es ahora parte del mandato, y que un proceso que se evade es una falla de diseño propia.</p>
+      </div>
+      <div class="entity-body">
+        <div class="fn"><div class="fi">01</div><div class="ft"><strong>Deja de aprobar cada publicación. </strong><span class="d">En el nivel bajo, no hay revisión previa. La confianza se deposita en el perímetro, no en el criterio de cada usuario.</span></div></div>
+        <div class="fn"><div class="fi">02</div><div class="ft"><strong>Asume construir y sostener las barandas. </strong><span class="d">El gateway, la identidad delegada, los límites de consumo y el interruptor central. Es más trabajo de ingeniería, no menos.</span><span class="sub">La responsabilidad no baja: cambia de forma y se vuelve más exigente.</span></div></div>
+        <div class="fn"><div class="fi">03</div><div class="ft"><strong>Se hace cargo de la facilidad, no solo de la seguridad. </strong><span class="d">Si el camino gobernado es incómodo, la gente busca otro. La ergonomía del stack pasa a ser un requisito de seguridad, no una cortesía.</span></div></div>
+        <div class="fn"><div class="fi">04</div><div class="ft"><strong>Habilita en lugar de ejecutar. </strong><span class="d">Plantillas, catálogo de conectores, kit de arranque y acompañamiento. El éxito se mide por lo que otros construyen, no por lo que construye el área.</span></div></div>
+        <div class="fn"><div class="fi">05</div><div class="ft"><strong>Acepta que va a haber cosas feas. </strong><span class="d">Soluciones mal armadas, duplicadas o abandonadas. Es el costo de la exploración y se gestiona con revisión periódica, no impidiéndolas.</span></div></div>
+      </div>
+      <div class="entity-foot">
+        <span class="tag key"><strong>Cede:</strong> el control previo</span>
+        <span class="tag"><strong>Asume:</strong> el diseño del perímetro</span>
+        <span class="tag lnk"><strong>Riesgo:</strong> volver a ser cuello de botella</span>
+      </div>
+    </div>
+
+    <div class="entity">
+      <div class="entity-head">
+        <span class="lbl">Provocación · Negocio</span>
+        <h3 class="entity-name">De solicitante a <span class="hl">productor</span></h3>
+        <p class="entity-purpose"><strong>La autonomía no es un permiso: es una obligación.</strong> Si las áreas reciben las herramientas y siguen esperando que otro construya, el modelo fracasa y la culpa no va a ser de Tecnología.</p>
+      </div>
+      <div class="entity-body">
+        <div class="fn"><div class="fi">01</div><div class="ft"><strong>Pone tiempo real de personas reales. </strong><span class="d">No se construye "además de todo lo demás". Requiere asignación explícita de horas y aceptar que ese tiempo sale de otra cosa.</span></div></div>
+        <div class="fn"><div class="fi">02</div><div class="ft"><strong>Identifica y banca a los perfiles adecuados. </strong><span class="d">No cualquiera va a producir. El líder del área tiene que detectar quiénes sí, darles espacio y protegerlos de la urgencia diaria.</span><span class="sub">Es una decisión de asignación, no un llamado al voluntariado.</span></div></div>
+        <div class="fn"><div class="fi">03</div><div class="ft"><strong>Se hace dueño del mantenimiento, no solo de la construcción. </strong><span class="d">Lo que el área crea, el área lo sostiene, lo actualiza y lo apaga cuando deja de servir. No se transfiere a Tecnología al terminar.</span></div></div>
+        <div class="fn"><div class="fi">04</div><div class="ft"><strong>Asume el resultado. </strong><span class="d">Si la solución no se usa o no genera valor, el problema es del área que la definió. La herramienta deja de ser una excusa disponible.</span></div></div>
+        <div class="fn"><div class="fi">05</div><div class="ft"><strong>Acepta iterar en público. </strong><span class="d">Mostrar algo a medio hacer, recibir críticas y rehacerlo. Es incómodo en una cultura acostumbrada a presentar solo lo terminado.</span></div></div>
+      </div>
+      <div class="entity-foot">
+        <span class="tag key"><strong>Gana:</strong> velocidad y control del resultado</span>
+        <span class="tag"><strong>Asume:</strong> producir y sostener</span>
+        <span class="tag lnk"><strong>Riesgo:</strong> pedir autonomía y no usarla</span>
+      </div>
+    </div>
+
+    <div class="note warn">
+      <span class="lbl">El modo de falla más probable</span>
+      <p>No es un incidente de seguridad. Es que <strong>Tecnología abra el perímetro y no pase nada</strong>: unas pocas soluciones aisladas, entusiasmo inicial y vuelta al pedido formal en seis meses. Ese resultado no se evita con mejores herramientas, sino con líderes de negocio que se apropien de la capacidad y la conviertan en una expectativa de su equipo.</p>
+    </div>
+  </section>
+
+  <section class="chapter" id="s8">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">08</span><span class="lbl">Prerrequisitos</span></div>
+      <h2 class="ch-title">Qué hay que construir antes de <span class="hl">abrir</span></h2>
+      <p class="ch-lede">El orden importa: abrir sin las barandas construidas es shadow IT con bendición oficial.</p>
+    </div>
+
+    <div class="entity">
+      <div class="entity-head">
+        <span class="lbl">Prerrequisito · crítico</span>
+        <h3 class="entity-name">Gateway de datos de <span class="hl">solo lectura</span></h3>
+        <p class="entity-purpose"><strong>Es la pieza que más demora y de la que depende todo lo demás.</strong> Cubre las dos fuentes: sistemas de negocio vía MCP y entorno de trabajo vía Microsoft Graph.</p>
+      </div>
+      <div class="entity-body">
+        <div class="fn"><div class="fi">01</div><div class="ft"><strong>Punto único de acceso. </strong><span class="d">Un endpoint que agrega los sistemas internos y expone solo operaciones de consulta.</span></div></div>
+        <div class="fn"><div class="fi">02</div><div class="ft"><strong>Identidad delegada. </strong><span class="d">El usuario se autentica contra Entra y el gateway resuelve las credenciales de cada sistema de destino.</span><span class="sub">La aplicación nunca ve credenciales de los sistemas.</span></div></div>
+        <div class="fn"><div class="fi">03</div><div class="ft"><strong>Alcances de lectura. </strong><span class="d">El control se aplica en el gateway, antes de llegar a los sistemas. Una operación de escritura se rechaza y se registra.</span></div></div>
+        <div class="fn"><div class="fi">04</div><div class="ft"><strong>Cobertura de Microsoft 365. </strong><span class="d">SharePoint, OneDrive, Outlook y Teams como fuentes de primera clase, no como excepción.</span></div></div>
+        <div class="fn"><div class="fi">05</div><div class="ft"><strong>Baja centralizada. </strong><span class="d">Cuando alguien deja FyO, se revoca en un solo lugar y pierde acceso en todas las soluciones.</span></div></div>
+      </div>
+      <div class="entity-foot">
+        <span class="tag key"><strong>Prioridad:</strong> empezar ahora</span>
+        <span class="tag"><strong>Dueño:</strong> Tecnología</span>
+        <span class="tag lnk"><strong>Evita:</strong> la descarga manual</span>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <span class="cnum">02</span>
+        <h4>Design system empaquetado</h4>
+        <p>El sistema de fyoDigital convertido en plantilla cargable: tokens, componentes y reglas, listos para que cada solución arranque con ellos puestos.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">03</span>
+        <h4>Consolidación de n8n</h4>
+        <p>Migrar los flujos que hoy corren fuera de control a una instancia corporativa. Es el riesgo abierto más grande y el más fácil de cerrar.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">04</span>
+        <h4>Directorio de soluciones</h4>
+        <p>Inventario con dueño, área, último uso y fuentes consultadas. Con buscador, para que nadie construya tres veces lo mismo.</p>
+      </div>
+      <div class="card">
+        <span class="cnum">05</span>
+        <h4>Compromiso de las áreas piloto</h4>
+        <p>Antes de abrir: qué áreas entran, con qué personas asignadas y qué esperan lograr. Sin ese compromiso escrito, es abrir una puerta a un pasillo vacío.</p>
+      </div>
+    </div>
+
+    <div class="note">
+      <span class="lbl">Secuencia sugerida</span>
+      <p>El gateway y la consolidación de n8n pueden avanzar <strong>en paralelo a la decisión de herramienta</strong>, porque no dependen de ella. Empezar por ahí gana tiempo y cierra riesgo real desde el primer mes, mientras la prueba comparada define el resto.</p>
+    </div>
+  </section>
+
+  <section class="chapter" id="s9" style="margin-top:0">
+    <div class="statement">
+      <span class="lbl">La idea, en una frase</span>
+      <p>Tecnología tiene que soltar el control previo y el negocio tiene que agarrar lo que se suelta: si solo pasa <span class="hl">una de las dos</span>, no cambia nada.</p>
+    </div>
+  </section>
+
+  <div class="colophon">
+    <span>FyO · Autoservicio gobernado</span>
+    <span>Propuesta FYO-01 · rev. v3</span>
+  </div>
+
+</div></div>
+
+
+<script src="https://docs.alganaras.com.ar/_editor.js"></script>
+</body></html>

@@ -38,15 +38,20 @@
   .sheet{ background:var(--paper); padding:0 52px; position:relative; }
   @media (max-width:760px){ .sheet{ padding:0 20px; } }
 
-  .titleblock{ display:grid; grid-template-columns:1fr auto; align-items:stretch;
-    border-bottom:1px solid var(--ink); }
-  .titleblock .tb-l{ padding:16px 0; font-family:var(--mono); font-size:11px; letter-spacing:.08em;
-    text-transform:uppercase; color:var(--ink-2); display:flex; align-items:center; gap:14px; }
-  .titleblock .tb-l .sq{ width:8px; height:8px; background:var(--accent); }
-  .titleblock .tb-r{ font-family:var(--mono); font-size:11px; letter-spacing:.06em; color:var(--muted);
-    text-transform:uppercase; display:flex; align-items:center; padding:16px 0 16px 22px;
-    border-left:1px solid var(--rule); }
-  .titleblock .tb-r b{ color:var(--accent-deep); font-weight:600; }
+  /* ── Title block (cabecera tipo carátula de plano) ─────── */
+  .titleblock{ display:flex; align-items:stretch; justify-content:space-between; flex-wrap:wrap;
+    border-bottom:1px solid var(--ink); font-family:var(--mono); font-size:11px; letter-spacing:.06em;
+    text-transform:uppercase; }
+  .titleblock .tb-l{ padding:16px 0; color:var(--muted); display:flex; align-items:center; flex-wrap:wrap; }
+  .titleblock .tb-l .sq{ width:8px; height:8px; background:var(--accent); margin-right:16px; flex:none; }
+  .titleblock .tb-field{ display:flex; align-items:baseline; gap:6px; padding:0 16px;
+    border-left:1px solid var(--rule); white-space:nowrap; }
+  .titleblock .tb-field:first-of-type{ border-left:none; padding-left:0; }
+  .titleblock .tb-k{ color:var(--muted); }
+  .titleblock .tb-v{ color:var(--ink); font-weight:600; }
+  .titleblock .tb-type{ color:#fff; background:var(--accent); padding:4px 9px; font-weight:600; letter-spacing:.06em; }
+  .titleblock .tb-r{ color:var(--muted); display:flex; align-items:center; padding:16px 0 16px 22px;
+    border-left:1px solid var(--rule); white-space:nowrap; }
 
   .cover{ padding:70px 0 0; }
   .cover .ref{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
@@ -177,8 +182,8 @@
 <div class="doc"><div class="sheet">
 
   <div class="titleblock">
-    <div class="tb-l"><span class="sq"></span>Iñaki · Consultoría<span style="color:var(--muted)">inaki@alganaras.com.ar</span></div>
-    <div class="tb-r">GRUPO FYO · CTO + IA · ENCUADRE v1</div>
+    <div class="tb-l"><span class="sq"></span><span class="tb-field"><span class="tb-k">Para.</span><span class="tb-v">Grupo fyo</span></span><span class="tb-field"><span class="tb-k">Doc.</span><span class="tb-v">Gobierno de la IA v1</span></span><span class="tb-field"><span class="tb-type">Encuadre</span></span></div>
+    <div class="tb-r">inaki@alganaras.com.ar</div>
   </div>
 
   <header class="cover">
@@ -191,6 +196,8 @@
       <div class="sc"><span class="lbl k">Principio rector</span><span class="v">Autonomía embebida, riesgo gobernado</span></div>
     </div>
   </header>
+
+  <nav class="contents" style="display:none"></nav>
 
   <section class="chapter" id="s0">
     <div class="ch-head">

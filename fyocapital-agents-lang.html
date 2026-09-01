@@ -1,973 +1,314 @@
-<!DOCTYPE html>
-<html lang="es"><head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>fyoCapital · Arquitectura de agentes en LangChain — lo que tenemos, lo que esperamos y el cerebro de datos</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  </section>
 
-<style>
-  :root{
-    --paper:#f3f2ee;
-    --paper-2:#eceae4;
-    --card:#ffffff;
-    --ink:#111110;
-    --ink-2:#2c2b27;
-    --muted:#56544f;
-    --faint:#78756f;
-    --rule:#d6d4ce;
-    --rule-2:#cbc8c0;
-    --accent:#e22b16; --accent-soft:#e22b160e; --accent-line:#e22b1642; --accent-deep:#c0220f;
-    --ok:#1b7a3d; --ok-soft:#1b7a3d12; --ok-line:#1b7a3d3d;
-    --plan:#8a6d00; --plan-soft:#8a6d0010; --plan-line:#8a6d003d;
-    --disp:'Space Grotesk', system-ui, sans-serif;
-    --sans:'IBM Plex Sans', system-ui, sans-serif;
-    --mono:'IBM Plex Mono', monospace;
-  }
-  *{ box-sizing:border-box; }
-  html,body{ margin:0; padding:0; }
-  body{
-    background:var(--paper);
-    color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.6;
-    -webkit-font-smoothing:antialiased;
-  }
-  ::selection{ background:var(--accent); color:#fff; }
-  .lbl{ font-family:var(--mono); font-size:11px; font-weight:500; letter-spacing:.12em;
-    text-transform:uppercase; color:var(--muted); }
-
-  .doc{ max-width:1120px; margin:0 auto; padding:0 0 130px; }
-  .sheet{ background:var(--paper); padding:0 52px; position:relative; }
-  @media (max-width:760px){ .sheet{ padding:0 20px; } }
-
-  /* ── Title block (cabecera tipo carátula de plano) ─────── */
-  .titleblock{ display:flex; align-items:stretch; justify-content:space-between; flex-wrap:wrap;
-    border-bottom:1px solid var(--ink); font-family:var(--mono); font-size:11px; letter-spacing:.06em;
-    text-transform:uppercase; }
-  .titleblock .tb-l{ padding:16px 0; color:var(--muted); display:flex; align-items:center; flex-wrap:wrap; }
-  .titleblock .tb-l .sq{ width:8px; height:8px; background:var(--accent); margin-right:16px; flex:none; }
-  .titleblock .tb-field{ display:flex; align-items:baseline; gap:6px; padding:0 16px;
-    border-left:1px solid var(--rule); white-space:nowrap; }
-  .titleblock .tb-field:first-of-type{ border-left:none; padding-left:0; }
-  .titleblock .tb-k{ color:var(--muted); }
-  .titleblock .tb-v{ color:var(--ink); font-weight:600; }
-  .titleblock .tb-type{ color:#fff; background:var(--accent); padding:4px 9px; font-weight:600; letter-spacing:.06em; }
-  .titleblock .tb-r{ color:var(--muted); display:flex; align-items:center; padding:16px 0 16px 22px;
-    border-left:1px solid var(--rule); white-space:nowrap; }
-
-  .cover{ padding:70px 0 0; }
-  .cover .ref{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
-    color:var(--accent); margin-bottom:30px; display:flex; gap:18px; flex-wrap:wrap; }
-  .cover .ref span{ position:relative; padding-left:16px; }
-  .cover .ref span::before{ content:''; position:absolute; left:0; top:50%; width:8px; height:8px;
-    border:1px solid var(--accent); transform:translateY(-50%); }
-  h1.title{ font-family:var(--disp); font-weight:600; font-size:clamp(38px,6vw,76px);
-    line-height:1.0; letter-spacing:-.03em; margin:0; max-width:16ch; color:var(--ink); }
-  h1.title .hl{ color:var(--accent); }
-  .lede{ font-size:clamp(17px,1.8vw,21px); line-height:1.55; color:var(--ink-2); max-width:64ch;
-    margin:30px 0 0; }
-  .specsheet{ margin-top:48px; border:1px solid var(--rule-2); background:var(--card);
-    display:grid; grid-template-columns:repeat(3,1fr); }
-  @media (max-width:680px){ .specsheet{ grid-template-columns:1fr; } }
-  .specsheet .sc{ padding:18px 20px; border-right:1px solid var(--rule); }
-  .specsheet .sc:last-child{ border-right:none; }
-  .specsheet .sc .k{ display:block; margin-bottom:8px; }
-  .specsheet .sc .v{ font-family:var(--disp); font-weight:500; font-size:16px; color:var(--ink);
-    line-height:1.35; }
-
-  .contents{ margin:72px 0 0; border-top:1px solid var(--ink); padding-top:26px; }
-  .contents .ct{ color:var(--accent); margin-bottom:18px; }
-  .toc{ list-style:none; margin:0; padding:0; }
-  .toc li{ display:grid; grid-template-columns:70px 1fr auto; align-items:center; gap:18px;
-    padding:15px 0; border-bottom:1px solid var(--rule); }
-  .toc .n{ font-family:var(--mono); font-size:12px; color:var(--accent); }
-  .toc a{ color:var(--ink); text-decoration:none; font-family:var(--disp); font-weight:500;
-    font-size:19px; letter-spacing:-.01em; }
-  .toc li:hover a{ color:var(--accent); }
-  .toc .ar{ font-family:var(--mono); color:var(--faint); font-size:12px; }
-
-  .chapter{ margin-top:96px; scroll-margin-top:24px; }
-  .ch-head{ border-bottom:1px solid var(--ink); padding-bottom:26px; }
-  .ch-marker{ display:flex; align-items:center; gap:14px; margin-bottom:20px; }
-  .ch-marker .mn{ font-family:var(--mono); font-size:12px; color:#fff; background:var(--accent);
-    padding:4px 9px; font-weight:600; letter-spacing:.06em; }
-  h2.ch-title{ font-family:var(--disp); font-weight:600; font-size:clamp(28px,4.2vw,50px);
-    line-height:1.02; letter-spacing:-.03em; margin:0; max-width:20ch; }
-  h2.ch-title .hl{ color:var(--accent); }
-  .ch-lede{ font-size:19px; line-height:1.5; color:var(--ink-2); margin:20px 0 0; max-width:66ch; }
-
-  .prose{ max-width:72ch; margin-top:32px; font-size:16.5px; line-height:1.62; color:var(--ink-2); }
-  .prose p{ margin:0 0 18px; }
-  .prose strong{ color:var(--ink); font-weight:600; }
-  .prose em{ font-style:normal; color:var(--accent); font-weight:500; }
-  .prose code, .fn code, .note code, .cell code, .cmp code{
-    font-family:var(--mono); font-size:.86em; background:var(--paper-2);
-    border:1px solid var(--rule); padding:1px 5px; color:var(--ink); white-space:nowrap; }
-
-  .note{ margin:32px 0; border:1px solid var(--rule-2); border-left:3px solid var(--accent);
-    background:var(--card); padding:22px 26px; max-width:80ch; position:relative; }
-  .note .lbl{ color:var(--accent); display:block; margin-bottom:11px; }
-  .note p{ margin:0 0 10px; font-size:15.5px; line-height:1.58; color:var(--ink-2); }
-  .note p:last-child{ margin-bottom:0; }
-  .note strong{ color:var(--ink); font-weight:600; }
-  .note.warn{ border-left-color:var(--accent-deep); }
-  .note.ok{ border-left-color:var(--ok); }
-  .note.ok .lbl{ color:var(--ok); }
-
-  .stack{ margin:36px 0 8px; border:1px solid var(--ink); background:var(--card); }
-  .tier{ display:grid; grid-template-columns:158px 1fr; border-bottom:1px solid var(--rule); }
-  .tier:last-child{ border-bottom:none; }
-  @media (max-width:680px){ .tier{ grid-template-columns:1fr; } }
-  .tier .t-lbl{ padding:18px 20px; border-right:1px solid var(--rule); display:flex; align-items:center;
-    background:var(--paper-2); }
-  .tier .t-items{ display:flex; }
-  @media (max-width:560px){ .tier .t-items{ flex-direction:column; } }
-  .cell{ flex:1; padding:18px 20px; border-left:1px solid var(--rule); }
-  .cell:first-child{ border-left:none; }
-  .cell .cn{ font-family:var(--disp); font-weight:600; font-size:17px; color:var(--ink); display:block;
-    letter-spacing:-.01em; }
-  .cell .cs{ font-family:var(--mono); font-size:11px; color:var(--muted); display:block; margin-top:7px;
-    line-height:1.5; }
-  .cell.x .cn{ color:var(--accent); }
-  .cell.dim{ background:var(--paper-2); }
-  .cell.dim .cn{ color:var(--faint); }
-  .flowmark{ font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; color:var(--faint);
-    text-transform:uppercase; padding:7px 20px; text-align:center; border-bottom:1px solid var(--rule);
-    background:var(--paper-2); }
-
-  .entity{ margin:38px 0; border:1px solid var(--ink); background:var(--card); }
-  .entity-head{ padding:26px 30px 22px; border-bottom:1px solid var(--rule); border-top:3px solid var(--accent); }
-  .entity-head .lbl{ color:var(--accent); display:block; margin-bottom:12px; }
-  .entity-name{ font-family:var(--disp); font-weight:600; font-size:27px; line-height:1.05;
-    letter-spacing:-.02em; margin:0 0 11px; }
-  .entity-name .hl{ color:var(--accent); }
-  .entity-purpose{ font-size:16px; line-height:1.55; color:var(--ink-2); margin:0; max-width:74ch; }
-  .entity-purpose strong{ color:var(--ink); font-weight:600; }
-  .entity-body{ padding:4px 30px; }
-  .fn{ display:grid; grid-template-columns:36px 1fr; gap:18px; padding:16px 0; border-bottom:1px solid var(--rule); }
-  .fn:last-child{ border-bottom:none; }
-  .fn .fi{ font-family:var(--mono); font-size:12px; color:var(--accent); border:1px solid var(--accent-line);
-    width:30px; height:30px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .fn .ft strong{ color:var(--ink); font-weight:600; }
-  .fn .ft .d{ color:var(--ink-2); }
-  .fn .ft .sub{ display:block; margin-top:6px; font-size:14px; color:var(--muted); line-height:1.5;
-    padding-left:12px; border-left:2px solid var(--rule-2); }
-  .entity-foot{ display:flex; flex-wrap:wrap; gap:9px; padding:18px 30px 22px; border-top:1px solid var(--rule);
-    background:var(--paper-2); }
-  .tag{ font-family:var(--mono); font-size:11px; color:var(--ink-2); padding:7px 12px; border:1px solid var(--rule-2);
-    background:var(--card); }
-  .tag strong{ color:var(--ink); font-weight:600; }
-  .tag.key{ border-color:var(--accent-line); color:var(--accent); background:var(--accent-soft); }
-  .tag.key strong{ color:var(--accent-deep); }
-  .tag.lnk{ border-color:var(--accent); color:var(--accent); }
-  .tag.lnk strong{ color:var(--accent-deep); }
-
-  /* Pills de estado */
-  .pill{ font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.1em;
-    text-transform:uppercase; padding:4px 10px; display:inline-block; vertical-align:middle; }
-  .pill.hoy{ color:var(--ok); border:1px solid var(--ok-line); background:var(--ok-soft); }
-  .pill.esp{ color:var(--plan); border:1px solid var(--plan-line); background:var(--plan-soft); }
-  .pill.hor{ color:var(--faint); border:1px solid var(--rule-2); background:var(--paper-2); }
-
-  /* Switchboard prende / no prende */
-  .onoff{ display:grid; grid-template-columns:1fr 1fr; border:1px solid var(--ink); margin:0 30px 26px; }
-  @media (max-width:680px){ .onoff{ grid-template-columns:1fr; margin:0 20px 22px; } }
-  .onoff .col{ padding:18px 22px 20px; }
-  .onoff .col.on{ border-right:1px solid var(--rule); background:var(--ok-soft); }
-  @media (max-width:680px){ .onoff .col.on{ border-right:none; border-bottom:1px solid var(--rule); } }
-  .onoff .col.off{ background:var(--paper-2); }
-  .onoff h5{ font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.12em;
-    text-transform:uppercase; margin:0 0 12px; }
-  .onoff .col.on h5{ color:var(--ok); }
-  .onoff .col.off h5{ color:var(--accent-deep); }
-  .onoff ul{ margin:0; padding:0; list-style:none; }
-  .onoff li{ font-size:14px; line-height:1.5; color:var(--ink-2); padding:7px 0 7px 18px;
-    border-bottom:1px solid var(--rule); position:relative; }
-  .onoff li:last-child{ border-bottom:none; }
-  .onoff .col.on li::before{ content:'▸'; position:absolute; left:0; color:var(--ok); }
-  .onoff .col.off li::before{ content:'▹'; position:absolute; left:0; color:var(--accent-deep); }
-  .onoff li em{ font-style:normal; font-family:var(--mono); font-size:11.5px; color:var(--muted); }
-
-  /* Tabla comparativa */
-  .cmp{ width:100%; border-collapse:collapse; margin:36px 0 8px; border:1px solid var(--ink);
-    background:var(--card); font-size:14.5px; }
-  .cmp th{ font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.1em;
-    text-transform:uppercase; text-align:left; padding:14px 16px; background:var(--paper-2);
-    border-bottom:1px solid var(--ink); border-right:1px solid var(--rule); color:var(--ink-2); vertical-align:top; }
-  .cmp th:last-child{ border-right:none; }
-  .cmp th.hoy{ color:var(--ok); } .cmp th.esp{ color:var(--plan); }
-  .cmp td{ padding:13px 16px; border-bottom:1px solid var(--rule); border-right:1px solid var(--rule);
-    vertical-align:top; line-height:1.5; color:var(--ink-2); }
-  .cmp td:last-child{ border-right:none; }
-  .cmp tr:last-child td{ border-bottom:none; }
-  .cmp td.dim-k{ font-family:var(--disp); font-weight:600; font-size:14.5px; color:var(--ink); white-space:nowrap; }
-  .cmp strong{ color:var(--ink); }
-
-  .grid2{ display:grid; grid-template-columns:1fr 1fr; margin-top:36px; border:1px solid var(--ink);
-    background:var(--card); }
-  @media (max-width:680px){ .grid2{ grid-template-columns:1fr; } }
-  .card{ padding:26px 28px 28px; border-bottom:1px solid var(--rule); }
-  .card:nth-child(odd){ border-right:1px solid var(--rule); }
-  @media (max-width:680px){ .card:nth-child(odd){ border-right:none; } }
-  .card:nth-last-child(-n+2){ border-bottom:none; }
-  @media (max-width:680px){ .card:nth-last-child(-n+2){ border-bottom:1px solid var(--rule); } .card:last-child{ border-bottom:none; } }
-  .card .cnum{ font-family:var(--mono); font-size:11px; color:var(--accent); display:block; margin-bottom:14px; }
-  .card h4{ font-family:var(--disp); font-weight:600; font-size:20px; letter-spacing:-.015em; margin:0 0 9px; color:var(--ink); }
-  .card p{ font-size:15px; line-height:1.55; color:var(--ink-2); margin:0; }
-  .card code{ font-family:var(--mono); font-size:.86em; background:var(--paper-2);
-    border:1px solid var(--rule); padding:1px 5px; }
-
-  .codebox{ margin:34px 0; border:1px solid var(--ink); background:var(--ink); color:#e8e6e0;
-    font-family:var(--mono); font-size:13px; line-height:1.7; padding:24px 28px; overflow-x:auto; }
-  .codebox .cb-t{ color:var(--accent); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase;
-    display:block; margin-bottom:14px; }
-  .codebox b{ color:#fff; font-weight:600; }
-  .codebox i{ font-style:normal; color:#9a978f; }
-  .codebox u{ text-decoration:none; color:#ff8a7a; }
-
-  .statement{ margin:88px 0 0; padding:56px 44px; border:1px solid var(--ink); background:var(--card);
-    position:relative; }
-  .statement::before{ content:''; position:absolute; top:0; left:0; width:6px; height:100%; background:var(--accent); }
-  .statement .lbl{ color:var(--accent); margin-bottom:22px; display:block; }
-  .statement p{ font-family:var(--disp); font-weight:500; font-size:clamp(24px,3.4vw,42px); line-height:1.18;
-    letter-spacing:-.025em; margin:0; max-width:24ch; color:var(--ink); }
-  .statement .hl{ color:var(--accent); }
-
-  .colophon{ margin-top:50px; padding-top:18px; border-top:1px solid var(--ink); display:flex;
-    justify-content:space-between; flex-wrap:wrap; gap:12px; font-family:var(--mono); font-size:11px;
-    color:var(--muted); letter-spacing:.05em; text-transform:uppercase; }
-
-  /* Mapa de estados */
-  .graphwrap{ margin:36px 0 10px; border:1px solid var(--ink); background:var(--card); padding:22px 18px 14px; overflow-x:auto; }
-  .graphwrap svg{ display:block; min-width:760px; width:100%; height:auto; }
-  .glegend{ display:flex; flex-wrap:wrap; gap:14px; padding:12px 6px 4px; border-top:1px solid var(--rule); margin-top:14px;
-    font-family:var(--mono); font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
-  .glegend span{ display:flex; align-items:center; gap:7px; }
-  .glegend i{ width:14px; height:10px; display:inline-block; border:1px solid var(--ink); background:#fff; }
-  .glegend i.g-tool{ background:var(--paper-2); }
-  .glegend i.g-esp{ border:1.5px dashed var(--plan); background:var(--plan-soft); }
-  .glegend i.g-gate{ border-color:var(--accent); background:var(--accent-soft); }
-
-  .srail{ margin:30px 0; border:1px solid var(--ink); background:var(--card); }
-  .srail-h{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding:14px 20px;
-    border-bottom:1px solid var(--rule); background:var(--paper-2); flex-wrap:wrap; }
-  .srail-h .t{ font-family:var(--disp); font-weight:600; font-size:17px; letter-spacing:-.01em; }
-  .srail-b{ padding:20px 20px 16px; }
-  .flowline{ display:flex; align-items:stretch; flex-wrap:wrap; row-gap:14px; }
-  .sn{ border:1px solid var(--ink); background:var(--card); padding:9px 13px; font-family:var(--mono);
-    font-size:11.5px; line-height:1.35; display:flex; flex-direction:column; justify-content:center;
-    min-width:96px; text-align:center; }
-  .sn small{ color:var(--muted); font-size:9.5px; margin-top:3px; }
-  .sn.start{ background:var(--ink); color:#fff; border-color:var(--ink); }
-  .sn.start small{ color:#b9b6ae; }
-  .sn.tool{ background:var(--paper-2); }
-  .sn.dec{ border-color:var(--accent); background:var(--accent-soft); color:var(--accent-deep); }
-  .sn.dec small{ color:var(--accent-deep); opacity:.75; }
-  .sn.fin{ border-width:2px; }
-  .sn.esp{ border-style:dashed; border-color:var(--plan); background:var(--plan-soft); color:var(--plan); }
-  .sn.esp small{ color:var(--plan); opacity:.8; }
-  .sx{ display:flex; flex-direction:column; align-items:center; justify-content:center; padding:2px 7px;
-    font-family:var(--mono); font-size:9px; color:var(--muted); text-transform:uppercase;
-    letter-spacing:.04em; max-width:96px; text-align:center; gap:2px; }
-  .sx::before{ content:'──▶'; color:var(--accent); font-size:11px; letter-spacing:0; }
-  .sbranch{ margin-top:12px; padding-left:30px; display:flex; align-items:stretch; flex-wrap:wrap;
-    row-gap:10px; position:relative; }
-  .sbranch::before{ content:'└'; position:absolute; left:10px; top:50%; transform:translateY(-50%);
-    font-family:var(--mono); font-size:13px; color:var(--accent); }
-  .sbranch .cond{ display:flex; align-items:center; font-family:var(--mono); font-size:10px;
-    color:var(--accent-deep); padding-right:10px; text-transform:uppercase; letter-spacing:.05em; }
-  .sloop{ margin-top:12px; font-family:var(--mono); font-size:10.5px; color:var(--muted); padding-left:30px; }
-  .sloop b{ color:var(--accent); font-weight:600; }
-  /* Animación de las aristas esperadas del grafo estático */
-  @keyframes ants{ to{ stroke-dashoffset:-56; } }
-  .graphwrap svg line[stroke-dasharray]{ animation:ants 2.2s linear infinite; }
-
-
-  /* Explorador interactivo del grafo */
-  .state-explorer{
-    --se-bg:#151412; --se-panel:#1d1c19; --se-panel-2:#24221f; --se-rule:#3b3933;
-    --se-ink:#f7f4eb; --se-muted:#aaa69b; --se-accent:#ff4a34; --se-ok:#70d391; --se-plan:#e4c45f;
-    margin:38px 0 18px; background:var(--se-bg); color:var(--se-ink); border:1px solid var(--ink);
-    box-shadow:0 18px 50px rgba(17,17,16,.14); overflow:hidden;
-  }
-  .se-topbar{ display:flex; align-items:flex-end; justify-content:space-between; gap:26px; padding:28px 30px 24px;
-    border-bottom:1px solid var(--se-rule); background:
-    radial-gradient(circle at 1px 1px, rgba(255,255,255,.065) 1px, transparent 0) 0 0/18px 18px, var(--se-bg); }
-  .se-kicker{ display:block; margin-bottom:8px; color:var(--se-accent); font-family:var(--mono); font-size:10px;
-    font-weight:600; letter-spacing:.16em; text-transform:uppercase; }
-  .se-topbar h3{ margin:0; font-family:var(--disp); font-size:clamp(25px,3vw,36px); line-height:1.05;
-    letter-spacing:-.025em; color:var(--se-ink); }
-  .se-topbar p{ margin:9px 0 0; max-width:58ch; color:var(--se-muted); font-size:14px; line-height:1.5; }
-  .se-live{ flex:0 0 auto; display:flex; align-items:center; gap:9px; color:var(--se-muted); font-family:var(--mono);
-    font-size:9.5px; letter-spacing:.08em; text-transform:uppercase; white-space:nowrap; }
-  .se-live::before{ content:''; width:8px; height:8px; border-radius:50%; background:var(--se-ok);
-    box-shadow:0 0 0 5px rgba(112,211,145,.12); }
-
-  .se-tabs{ display:flex; gap:0; overflow-x:auto; scrollbar-width:thin; border-bottom:1px solid var(--se-rule); background:var(--se-panel); }
-  .se-tab{ min-width:max-content; appearance:none; border:0; border-right:1px solid var(--se-rule); border-bottom:3px solid transparent;
-    padding:13px 17px 11px; background:transparent; color:var(--se-muted); cursor:pointer; font-family:var(--mono);
-    font-size:10.5px; letter-spacing:.045em; text-transform:uppercase; }
-  .se-tab:hover{ color:var(--se-ink); background:rgba(255,255,255,.035); }
-  .se-tab[aria-selected="true"]{ color:var(--se-ink); border-bottom-color:var(--se-accent); background:var(--se-panel-2); }
-  .se-tab:focus-visible, .se-btn:focus-visible, .se-node:focus-visible, .se-select:focus-visible{
-    outline:2px solid var(--se-accent); outline-offset:-3px; }
-
-  .se-workbench{ display:grid; grid-template-columns:minmax(0,1fr) 300px; min-height:540px; }
-  .se-main{ min-width:0; border-right:1px solid var(--se-rule); }
-  .se-summary{ display:grid; grid-template-columns:minmax(0,1fr) auto; gap:24px; padding:24px 26px 20px;
-    border-bottom:1px solid var(--se-rule); }
-  .se-agent-id{ display:flex; align-items:flex-start; gap:14px; min-width:0; }
-  .se-monogram{ width:42px; height:42px; border:1px solid var(--se-rule); display:grid; place-items:center; flex:0 0 auto;
-    color:var(--se-accent); background:var(--se-panel); font-family:var(--mono); font-size:11px; font-weight:600; }
-  .se-agent-name{ margin:0; font-family:var(--disp); font-size:21px; line-height:1.12; letter-spacing:-.015em; color:var(--se-ink); }
-  .se-agent-purpose{ margin:6px 0 0; color:var(--se-muted); font-size:13px; line-height:1.45; max-width:52ch; }
-  .se-meta{ display:flex; align-items:center; flex-wrap:wrap; gap:7px; margin-top:12px; }
-  .se-chip{ padding:3px 7px; border:1px solid var(--se-rule); color:var(--se-muted); font-family:var(--mono);
-    font-size:8.5px; letter-spacing:.07em; text-transform:uppercase; }
-  .se-chip.is-today{ color:var(--se-ok); border-color:rgba(112,211,145,.38); background:rgba(112,211,145,.07); }
-  .se-chip.is-planned{ color:var(--se-plan); border-color:rgba(228,196,95,.36); background:rgba(228,196,95,.06); }
-  .se-field{ display:flex; flex-direction:column; gap:7px; min-width:210px; }
-  .se-label{ color:var(--se-muted); font-family:var(--mono); font-size:8.5px; letter-spacing:.12em; text-transform:uppercase; }
-  .se-select{ width:100%; border:1px solid var(--se-rule); border-radius:0; padding:10px 32px 10px 11px;
-    background:var(--se-panel); color:var(--se-ink); font-family:var(--mono); font-size:10.5px; }
-
-  .se-stage-head{ display:flex; justify-content:space-between; gap:18px; align-items:center; padding:16px 26px 8px; }
-  .se-stage-title{ color:var(--se-muted); font-family:var(--mono); font-size:9px; letter-spacing:.12em; text-transform:uppercase; }
-  .se-counter{ color:var(--se-ink); font-family:var(--mono); font-size:10px; }
-  .se-flow{ display:flex; align-items:stretch; min-height:188px; padding:22px 26px 28px; overflow-x:auto;
-    scrollbar-color:var(--se-rule) transparent; scroll-behavior:smooth; }
-  .se-node{ position:relative; flex:0 0 142px; min-height:118px; padding:16px 14px 13px; border:1px solid var(--se-rule);
-    background:var(--se-panel); color:var(--se-ink); text-align:left; cursor:pointer; font-family:var(--sans);
-    transition:transform .2s ease, border-color .2s ease, background .2s ease, opacity .2s ease; }
-  .se-node:hover{ transform:translateY(-3px); border-color:#666158; }
-  .se-node.is-future{ opacity:.46; }
-  .se-node.is-visited{ border-color:rgba(112,211,145,.45); }
-  .se-node.is-current{ transform:translateY(-5px); border-color:var(--se-accent); background:#261b18;
-    box-shadow:0 9px 28px rgba(0,0,0,.28), inset 0 -3px 0 var(--se-accent); opacity:1; }
-  .se-node.is-planned{ border-style:dashed; }
-  .se-node-no{ display:block; margin-bottom:22px; color:var(--se-muted); font-family:var(--mono); font-size:9px; }
-  .se-node.is-current .se-node-no{ color:var(--se-accent); }
-  .se-node-name{ display:block; font-family:var(--disp); font-size:15px; font-weight:600; line-height:1.18; letter-spacing:-.01em; }
-  .se-node-kind{ display:block; margin-top:7px; color:var(--se-muted); font-family:var(--mono); font-size:8.5px;
-    line-height:1.35; text-transform:uppercase; letter-spacing:.055em; }
-  .se-node-type{ position:absolute; right:9px; top:9px; width:7px; height:7px; border-radius:50%; background:var(--se-muted); }
-  .se-node-type.tool{ background:#74a6ff; }.se-node-type.decision{ background:var(--se-accent); }
-  .se-node-type.guard{ background:var(--se-plan); }.se-node-type.end{ background:var(--se-ok); }
-  .se-node-type.memory{ border:1px solid var(--se-plan); background:transparent; }
-  .se-edge{ flex:0 0 70px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:7px;
-    color:var(--se-muted); font-family:var(--mono); font-size:8px; line-height:1.2; text-align:center; text-transform:uppercase; }
-  .se-edge::after{ content:'\2192'; width:100%; color:var(--se-accent); font-size:18px; line-height:1; }
-  .se-edge.is-past{ color:var(--se-ok); }
-  .se-edge.is-past::after{ color:var(--se-ok); }
-
-  .se-controls{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; padding:14px 26px;
-    border-top:1px solid var(--se-rule); border-bottom:1px solid var(--se-rule); background:var(--se-panel); }
-  .se-control-group{ display:flex; align-items:center; gap:7px; }
-  .se-btn{ appearance:none; border:1px solid var(--se-rule); padding:8px 11px; background:transparent; color:var(--se-ink);
-    cursor:pointer; font-family:var(--mono); font-size:9px; letter-spacing:.06em; text-transform:uppercase; }
-  .se-btn:hover:not(:disabled){ border-color:var(--se-muted); background:rgba(255,255,255,.045); }
-  .se-btn:disabled{ opacity:.3; cursor:not-allowed; }
-  .se-btn.is-primary{ border-color:var(--se-accent); background:var(--se-accent); color:#fff; min-width:98px; }
-  .se-btn.is-primary:hover:not(:disabled){ background:#ff604d; }
-  .se-branch{ color:var(--se-muted); font-family:var(--mono); font-size:9.5px; }
-  .se-branch strong{ color:var(--se-plan); font-weight:500; }
-
-  .se-trace{ padding:16px 26px 22px; background:var(--se-bg); }
-  .se-trace-line{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:9px; }
-  .se-trace-step{ color:var(--se-muted); font-family:var(--mono); font-size:9px; }
-  .se-trace-step.is-current{ color:var(--se-ink); }
-  .se-trace-arrow{ color:var(--se-accent); font-family:var(--mono); font-size:9px; }
-
-  .se-inspector{ padding:24px 22px; background:var(--se-panel); }
-  .se-inspector-sticky{ position:sticky; top:16px; }
-  .se-inspector-eyebrow{ display:flex; justify-content:space-between; gap:10px; align-items:center; padding-bottom:14px;
-    border-bottom:1px solid var(--se-rule); }
-  .se-inspector h4{ margin:18px 0 8px; color:var(--se-ink); font-family:var(--disp); font-size:22px;
-    line-height:1.08; letter-spacing:-.02em; }
-  .se-detail{ margin:0 0 20px; color:var(--se-muted); font-size:13px; line-height:1.5; }
-  .se-contract{ margin:0; }
-  .se-contract-row{ display:grid; grid-template-columns:62px 1fr; gap:10px; padding:10px 0; border-top:1px solid var(--se-rule); }
-  .se-contract dt{ color:var(--se-muted); font-family:var(--mono); font-size:8px; letter-spacing:.08em; text-transform:uppercase; }
-  .se-contract dd{ margin:0; color:var(--se-ink); font-size:11.5px; line-height:1.42; }
-  .se-state-title{ display:block; margin:22px 0 8px; color:var(--se-muted); font-family:var(--mono); font-size:8.5px;
-    letter-spacing:.12em; text-transform:uppercase; }
-  .se-state-list{ margin:0; padding:0; list-style:none; border-top:1px solid var(--se-rule); }
-  .se-state-list li{ display:grid; grid-template-columns:minmax(72px,.8fr) 1.2fr; gap:9px; padding:8px 0;
-    border-bottom:1px solid var(--se-rule); font-family:var(--mono); font-size:9px; line-height:1.35; }
-  .se-state-key{ color:var(--se-muted); overflow-wrap:anywhere; }.se-state-value{ color:var(--se-ok); overflow-wrap:anywhere; }
-  .se-guardrail{ margin-top:18px; padding:12px 13px; border-left:2px solid var(--se-accent); background:rgba(255,74,52,.07);
-    color:var(--se-ink); font-size:11px; line-height:1.45; }
-  .se-guardrail strong{ display:block; margin-bottom:4px; color:var(--se-accent); font-family:var(--mono); font-size:8px;
-    letter-spacing:.1em; text-transform:uppercase; }
-  .se-footer{ display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap; padding:12px 18px;
-    border-top:1px solid var(--se-rule); color:var(--se-muted); font-family:var(--mono); font-size:8.5px; letter-spacing:.035em; }
-  .se-legend{ display:flex; flex-wrap:wrap; gap:13px; }.se-legend span{ display:flex; align-items:center; gap:6px; }
-  .se-legend i{ width:7px; height:7px; border-radius:50%; background:var(--se-muted); }
-  .se-legend i.tool{ background:#74a6ff; }.se-legend i.decision{ background:var(--se-accent); }
-  .se-legend i.guard{ background:var(--se-plan); }.se-legend i.end{ background:var(--se-ok); }
-
-  .legacy-state-spec{ margin:18px 0 0; border-top:1px solid var(--ink); border-bottom:1px solid var(--ink); }
-  .legacy-state-spec > summary{ list-style:none; cursor:pointer; padding:16px 2px; display:flex; align-items:center;
-    justify-content:space-between; gap:20px; color:var(--ink); font-family:var(--mono); font-size:10.5px;
-    letter-spacing:.08em; text-transform:uppercase; }
-  .legacy-state-spec > summary::-webkit-details-marker{ display:none; }
-  .legacy-state-spec > summary::after{ content:'+ abrir especificaci\f3n'; color:var(--accent); }
-  .legacy-state-spec[open] > summary::after{ content:'\2212 cerrar especificaci\f3n'; }
-  .legacy-state-spec[open] > summary{ border-bottom:1px solid var(--rule); }
-
-  @media (max-width:900px){
-    .se-workbench{ grid-template-columns:1fr; }.se-main{ border-right:none; }.se-inspector{ border-top:1px solid var(--se-rule); }
-    .se-inspector-sticky{ position:static; }.se-contract{ display:grid; grid-template-columns:1fr 1fr; column-gap:20px; }
-    .se-summary{ grid-template-columns:1fr; }.se-topbar{ flex-direction:column; align-items:flex-start; }
-  }
-</style>
-</head>
-<body>
-
-<div class="doc"><div class="sheet">
-
-  <!-- CABECERA -->
-  <div class="titleblock">
-    <div class="tb-l"><span class="sq"></span><span class="tb-field"><span class="tb-k">Para.</span><span class="tb-v">fyoCapital</span></span><span class="tb-field"><span class="tb-k">Doc.</span><span class="tb-v">Unidad agéntica LangChain v1</span></span><span class="tb-field"><span class="tb-type">Arquitectura</span></span></div>
-    <div class="tb-r">inaki@alganaras.com.ar</div>
-  </div>
-
-  <!-- PORTADA -->
-  <header class="cover">
-    <div class="ref"><span>fyoCapital</span><span>LangChain · LangGraph</span><span>Zep Cloud · Graphiti</span></div>
-    <h1 class="title">Del scaffold al sistema: la unidad agéntica en <span class="hl">LangGraph</span>.</h1>
-    <p class="lede">Hoy corren tres especialistas y un supervisor sobre seis skills que leen archivos sueltos. Este documento fija la foto exacta de lo que tenemos, define con paso a paso cómo debería funcionar cada agente —cuándo prende, cuándo no, a quién deriva—, incorpora el MCP de FyO Digital como contrato de datos para dejar de depender de los archivos, y en una segunda instancia plantea el cerebro de datos: memoria temporal con Zep Cloud o Graphiti para que el sistema recuerde y aprenda.</p>
-    <div class="specsheet">
-      <div class="sc"><span class="lbl k">Lo que tenemos <span class="pill hoy">hoy</span></span><span class="v">3 especialistas ReAct + supervisor v1 + 6 skills en vivo</span></div>
-      <div class="sc"><span class="lbl k">Lo que esperamos <span class="pill esp">esperado</span></span><span class="v">6 especialistas + MCP FyO Digital + gate de riesgo + memoria + API</span></div>
-      <div class="sc"><span class="lbl k">El cerebro de datos <span class="pill esp">esperado</span></span><span class="v">Knowledge graph temporal — Zep Cloud / Graphiti</span></div>
-    </div>
-  </header>
-
-  <!-- ÍNDICE -->
-  <nav class="contents">
-    <div class="lbl ct">Índice del documento</div>
-    <ol class="toc">
-      <li><span class="n">00</span><a href="#s0">Cómo leer este documento</a><span class="ar">[↗]</span></li>
-      <li><span class="n">01</span><a href="#s1">Lo que tenemos: anatomía del scaffold</a><span class="ar">[↗]</span></li>
-      <li><span class="n">02</span><a href="#s2">Los tres especialistas, paso a paso</a><span class="ar">[↗]</span></li>
-      <li><span class="n">03</span><a href="#s3">El supervisor: el grafo que orquesta</a><span class="ar">[↗]</span></li>
-      <li><span class="n">04</span><a href="#s4">Los que faltan en el grafo</a><span class="ar">[↗]</span></li>
-      <li><span class="n">05</span><a href="#s45">La capa de datos: del archivo suelto al MCP de FyO Digital</a><span class="ar">[↗]</span></li>
-      <li><span class="n">06</span><a href="#s5">Tenemos vs. esperamos: el gap, dimensión por dimensión</a><span class="ar">[↗]</span></li>
-      <li><span class="n">07</span><a href="#s6">El turno perfecto: cómo debería correr end-to-end</a><span class="ar">[↗]</span></li>
-      <li><span class="n">08</span><a href="#smap">El mapa de estados, agente por agente</a><span class="ar">[↗]</span></li>
-      <li><span class="n">09</span><a href="#sevals">Evals y modelos, agente por agente</a><span class="ar">[↗]</span></li>
-      <li><span class="n">10</span><a href="#s7">El cerebro de datos: Zep Cloud y Graphiti</a><span class="ar">[↗]</span></li>
-      <li><span class="n">11</span><a href="#s8">Roadmap de encendido</a><span class="ar">[↗]</span></li>
-    </ol>
-  </nav>
-
-  <!-- 00 CÓMO LEER -->
-  <section class="chapter" id="s0">
+  <!-- 08 MAPA DE ESTADOS -->
+  <section class="chapter" id="smap">
     <div class="ch-head">
-      <div class="ch-marker"><span class="mn">00</span><span class="lbl">Contexto</span></div>
-      <h2 class="ch-title">Cómo leer este <span class="hl">documento</span></h2>
-      <p class="ch-lede">Es el plano técnico de la implementación LangChain: baja a código la visión del documento conceptual (FYO-04, los cuatro agentes y la capa de riesgo). Cada pieza lleva una etiqueta de estado.</p>
+      <div class="ch-marker"><span class="mn">08</span><span class="lbl">Estados</span></div>
+      <h2 class="ch-title">El mapa de <span class="hl">estados</span>, agente por agente</h2>
+      <p class="ch-lede">Un explorador ejecutable del grafo objetivo: elegí un agente, cambiá el escenario y recorré cada transición. En cada estado se ve qué lo dispara, qué campos lee, cuáles escribe, qué entrega y qué regla evita que se salga de su dominio.</p>
+    </div>
+
+    <div class="state-explorer" id="stateExplorer">
+      <div class="se-topbar">
+        <div>
+          <span class="se-kicker">Explorador interactivo · grafo objetivo</span>
+          <h3>Un turno, estado por estado.</h3>
+          <p>El mapa no muestra sólo “qué llama a qué”: deja inspeccionar el contrato de cada nodo y reproducir caminos felices, desvíos y frenos.</p>
+        </div>
+        <div class="se-live">modelo de arquitectura · rev. 02</div>
+      </div>
+
+      <div class="se-tabs" id="seTabs" role="tablist" aria-label="Agentes del sistema"></div>
+
+      <div class="se-workbench">
+        <div class="se-main">
+          <div class="se-summary">
+            <div class="se-agent-id">
+              <div class="se-monogram" id="seMonogram" aria-hidden="true">SYS</div>
+              <div>
+                <h4 class="se-agent-name" id="seAgentName">Sistema completo</h4>
+                <p class="se-agent-purpose" id="seAgentPurpose"></p>
+                <div class="se-meta" id="seMeta"></div>
+              </div>
+            </div>
+            <label class="se-field" for="seScenario">
+              <span class="se-label">Escenario a recorrer</span>
+              <select class="se-select" id="seScenario"></select>
+            </label>
+          </div>
+
+          <div class="se-stage-head">
+            <span class="se-stage-title">Ruta activa</span>
+            <span class="se-counter" id="seCounter" aria-live="polite">Estado 1 de 1</span>
+          </div>
+          <div class="se-flow" id="seFlow" aria-label="Secuencia de estados"></div>
+
+          <div class="se-controls">
+            <div class="se-control-group">
+              <button class="se-btn" id="sePrev" type="button">← anterior</button>
+              <button class="se-btn is-primary" id="sePlay" type="button">▶ reproducir</button>
+              <button class="se-btn" id="seNext" type="button">siguiente →</button>
+              <button class="se-btn" id="seReset" type="button">reiniciar</button>
+            </div>
+            <div class="se-branch" id="seBranch"></div>
+          </div>
+
+          <div class="se-trace">
+            <span class="se-label">Trace acumulado</span>
+            <div class="se-trace-line" id="seTrace" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <aside class="se-inspector" aria-label="Detalle del estado seleccionado">
+          <div class="se-inspector-sticky">
+            <div class="se-inspector-eyebrow">
+              <span class="se-label">Inspector de estado</span>
+              <span class="se-chip" id="sePhase">hoy</span>
+            </div>
+            <h4 id="seDetailTitle">Entrada</h4>
+            <p class="se-detail" id="seDetail"></p>
+            <dl class="se-contract">
+              <div class="se-contract-row"><dt>Dispara</dt><dd id="seTrigger"></dd></div>
+              <div class="se-contract-row"><dt>Lee</dt><dd id="seReads"></dd></div>
+              <div class="se-contract-row"><dt>Escribe</dt><dd id="seWrites"></dd></div>
+              <div class="se-contract-row"><dt>Entrega</dt><dd id="seOutput"></dd></div>
+            </dl>
+            <span class="se-state-title">Mutación del estado</span>
+            <ul class="se-state-list" id="seStateList"></ul>
+            <div class="se-guardrail" id="seGuardrail"><strong>Guardrail</strong><span></span></div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="se-footer">
+        <div class="se-legend" aria-label="Leyenda de tipos de estado">
+          <span><i></i>estado</span><span><i class="tool"></i>tool</span><span><i class="decision"></i>decisión</span><span><i class="guard"></i>gate</span><span><i class="end"></i>salida</span>
+        </div>
+        <span>Seleccioná cualquier nodo para inspeccionarlo</span>
+      </div>
+    </div>
+
+    <details class="legacy-state-spec">
+      <summary>Especificación técnica completa · grafo + rieles</summary>
+
+    <div class="graphwrap">
+      <svg viewBox="0 0 980 652" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace">
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#111110"/></marker>
+          <marker id="arA" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e22b16"/></marker>
+        </defs>
+
+        <!-- START -->
+        <rect x="440" y="8" width="100" height="26" rx="13" fill="#111110"/>
+        <text x="490" y="25" text-anchor="middle" font-size="10" fill="#ffffff" letter-spacing="2">START</text>
+        <line x1="490" y1="34" x2="490" y2="60" stroke="#111110" marker-end="url(#ar)"/>
+
+        <!-- memoria retrieve (esperado) -->
+        <rect x="355" y="62" width="270" height="46" fill="#f7f3e2" stroke="#8a6d00" stroke-dasharray="5 3"/>
+        <text x="490" y="82" text-anchor="middle" font-size="12" font-weight="600" fill="#8a6d00">memoria · retrieve</text>
+        <text x="490" y="98" text-anchor="middle" font-size="8.5" fill="#8a6d00">Zep / Graphiti → bloque de contexto · esperado</text>
+        <line x1="490" y1="108" x2="490" y2="140" stroke="#111110" marker-end="url(#ar)"/>
+
+        <!-- supervisor -->
+        <rect x="355" y="142" width="270" height="58" fill="#ffffff" stroke="#111110" stroke-width="1.5"/>
+        <text x="490" y="167" text-anchor="middle" font-size="14" font-weight="600" fill="#111110">supervisor</text>
+        <text x="490" y="185" text-anchor="middle" font-size="8.5" fill="#56544f">SupervisorDecision · structured output · ≤ 5 delegaciones</text>
+        <text x="636" y="172" font-size="8.5" fill="#78756f">findings + trace</text>
+        <text x="636" y="184" font-size="8.5" fill="#78756f">acumulan por vuelta</text>
+
+        <!-- fan supervisor <-> especialistas -->
+        <line x1="490" y1="200" x2="102" y2="268" stroke="#111110" marker-start="url(#ar)" marker-end="url(#ar)"/>
+        <line x1="490" y1="200" x2="296" y2="268" stroke="#111110" marker-start="url(#ar)" marker-end="url(#ar)"/>
+        <line x1="490" y1="200" x2="490" y2="268" stroke="#111110" marker-start="url(#ar)" marker-end="url(#ar)"/>
+        <line x1="490" y1="200" x2="684" y2="268" stroke="#8a6d00" stroke-dasharray="4 3" marker-start="url(#ar)" marker-end="url(#ar)"/>
+        <line x1="490" y1="200" x2="878" y2="268" stroke="#8a6d00" stroke-dasharray="4 3" marker-start="url(#ar)" marker-end="url(#ar)"/>
+        <text x="662" y="214" font-size="9" fill="#78756f">delega ▼ · vuelve con hallazgo ▲</text>
+
+        <!-- especialistas -->
+        <rect x="14" y="268" width="176" height="54" fill="#eceae4" stroke="#111110"/>
+        <text x="102" y="290" text-anchor="middle" font-size="12" font-weight="600" fill="#111110">research</text>
+        <text x="102" y="306" text-anchor="middle" font-size="8" fill="#56544f">consultar_research</text>
+        <rect x="208" y="268" width="176" height="54" fill="#eceae4" stroke="#111110"/>
+        <text x="296" y="290" text-anchor="middle" font-size="12" font-weight="600" fill="#111110">comercial</text>
+        <text x="296" y="306" text-anchor="middle" font-size="8" fill="#56544f">buscar · perfil · listar · MCP</text>
+        <rect x="402" y="268" width="176" height="54" fill="#eceae4" stroke="#111110"/>
+        <text x="490" y="290" text-anchor="middle" font-size="12" font-weight="600" fill="#111110">portafolio</text>
+        <text x="490" y="306" text-anchor="middle" font-size="8" fill="#56544f">tenencias · rotación · MCP</text>
+        <rect x="596" y="268" width="176" height="54" fill="#f7f3e2" stroke="#8a6d00" stroke-dasharray="5 3"/>
+        <text x="684" y="290" text-anchor="middle" font-size="12" font-weight="600" fill="#8a6d00">onboarding</text>
+        <text x="684" y="306" text-anchor="middle" font-size="8" fill="#8a6d00">sin tools de datos · esperado</text>
+        <rect x="790" y="268" width="176" height="54" fill="#f7f3e2" stroke="#8a6d00" stroke-dasharray="5 3"/>
+        <text x="878" y="290" text-anchor="middle" font-size="12" font-weight="600" fill="#8a6d00">competencia</text>
+        <text x="878" y="306" text-anchor="middle" font-size="8" fill="#8a6d00">harvest + histórico · esperado</text>
+
+        <!-- portafolio <-> gate -->
+        <line x1="470" y1="322" x2="470" y2="378" stroke="#111110" marker-end="url(#ar)"/>
+        <text x="462" y="354" text-anchor="end" font-size="9" fill="#56544f">propuesta</text>
+        <line x1="510" y1="378" x2="510" y2="324" stroke="#e22b16" stroke-dasharray="4 3" marker-end="url(#arA)"/>
+        <text x="520" y="354" font-size="8.5" fill="#c0220f">no pasa: motivo → alternativa (máx. 1 reintento)</text>
+
+        <!-- gate de riesgo -->
+        <rect x="390" y="380" width="200" height="50" fill="#fdf1ef" stroke="#e22b16" stroke-width="1.5"/>
+        <text x="490" y="401" text-anchor="middle" font-size="12.5" font-weight="600" fill="#c0220f">gate de riesgo</text>
+        <text x="490" y="417" text-anchor="middle" font-size="8" fill="#c0220f">suitability · concentración · límites · esperado</text>
+        <line x1="490" y1="430" x2="490" y2="456" stroke="#111110" marker-end="url(#ar)"/>
+
+        <!-- interrupt -->
+        <rect x="400" y="458" width="180" height="36" fill="#f7f3e2" stroke="#8a6d00" stroke-dasharray="5 3"/>
+        <text x="490" y="480" text-anchor="middle" font-size="10.5" fill="#8a6d00">interrupt()? · OK humano · esperado</text>
+        <line x1="490" y1="494" x2="490" y2="520" stroke="#111110" marker-end="url(#ar)"/>
+
+        <!-- finish -->
+        <rect x="355" y="522" width="270" height="48" fill="#ffffff" stroke="#111110" stroke-width="2"/>
+        <text x="490" y="543" text-anchor="middle" font-size="13" font-weight="600" fill="#111110">finish · síntesis</text>
+        <text x="490" y="560" text-anchor="middle" font-size="8.5" fill="#56544f">fuentes + fechas · qué propone el sistema vs. qué decide el humano</text>
+        <line x1="490" y1="570" x2="490" y2="596" stroke="#111110" marker-end="url(#ar)"/>
+
+        <!-- memoria write -->
+        <rect x="355" y="598" width="270" height="40" fill="#f7f3e2" stroke="#8a6d00" stroke-dasharray="5 3"/>
+        <text x="490" y="615" text-anchor="middle" font-size="11" font-weight="600" fill="#8a6d00">memoria · write (async)</text>
+        <text x="490" y="630" text-anchor="middle" font-size="8" fill="#8a6d00">episodio al grafo · esperado</text>
+        <line x1="625" y1="618" x2="698" y2="618" stroke="#111110" marker-end="url(#ar)"/>
+        <rect x="700" y="605" width="76" height="26" rx="13" fill="#111110"/>
+        <text x="738" y="622" text-anchor="middle" font-size="10" fill="#ffffff" letter-spacing="2">END</text>
+      </svg>
+      <div class="glegend">
+        <span><i></i>Corre hoy</span>
+        <span><i class="g-tool"></i>Especialista ReAct (hoy)</span>
+        <span><i class="g-esp"></i>Esperado — se agrega, no se rediseña</span>
+        <span><i class="g-gate"></i>Gate de riesgo — el único nodo que frena</span>
+      </div>
     </div>
 
     <div class="prose">
-      <p>La unidad agéntica de fyoCapital convive en <strong>tres implementaciones</strong> que comparten los mismos scripts de datos: subagentes de Claude Code (en prueba), agentes CMA en platform.claude.com (operativo), y <em>esta</em> — LangChain local, scaffold v1. Las tres leen la misma data en vivo de OneDrive. La implementación LangChain es la candidata a sistema productivo porque es la única donde la orquestación es <strong>código propio</strong>: un grafo explícito que se puede versionar, testear, desplegar como API y extender con memoria y guardrails estructurales.</p>
-      <p>Cada componente del documento lleva una de tres etiquetas: <span class="pill hoy">hoy</span> existe y corre en <code>Langchain_Agents/</code>; <span class="pill esp">esperado</span> está definido y es el próximo paso concreto; <span class="pill hor">horizonte</span> depende de decisiones de negocio que exceden esta carpeta.</p>
+      <p>El grafo objetivo conserva la topología actual (START → supervisor ⇄ especialistas → finish) y le agrega cuatro nodos: <em>retrieve</em> y <em>write</em> de memoria en los bordes, el <em>gate de riesgo</em> entre la propuesta y la síntesis, y el <em>interrupt</em> para el OK humano. Abajo, el riel de estados de cada agente: la línea principal es el camino feliz; las ramas con <span style="font-family:var(--mono);color:var(--accent)">└</span> son los desvíos y su condición.</p>
     </div>
+
+    <!-- RIEL SUPERVISOR -->
+    <div class="srail">
+      <div class="srail-h"><span class="t">Supervisor</span><span><span class="pill hoy">hoy</span></span></div>
+      <div class="srail-b">
+        <div class="flowline">
+          <div class="sn start">messages<small>turno del usuario</small></div>
+          <div class="sx">arma</div>
+          <div class="sn">contexto<small>historial + findings</small></div>
+          <div class="sx">decide</div>
+          <div class="sn dec">¿decisión?<small>SupervisorDecision</small></div>
+          <div class="sx">delegar · task</div>
+          <div class="sn tool">especialista ReAct<small>corre sus tools</small></div>
+          <div class="sx">hallazgo</div>
+          <div class="sn">findings + trace<small>delegations +1</small></div>
+        </div>
+        <div class="sloop"><b>⟲</b> el hallazgo vuelve a «contexto»: el supervisor decide de nuevo con más evidencia — puede encadenar una tarea dependiente</div>
+        <div class="sbranch"><span class="cond">finish →</span><div class="sn">final_answer<small>síntesis con fuentes</small></div><div class="sx">cierra</div><div class="sn fin">END</div></div>
+        <div class="sbranch"><span class="cond">delegations ≥ 5 →</span><div class="sn">síntesis forzada<small>marca lo no resuelto · no inventa</small></div><div class="sx">cierra</div><div class="sn fin">END</div></div>
+        <div class="sbranch"><span class="cond">falta identificar cliente →</span><div class="sn">pregunta al usuario<small>no delega a ciegas</small></div><div class="sx">cierra</div><div class="sn fin">END</div></div>
+      </div>
+    </div>
+
+    <!-- RIEL RESEARCH -->
+    <div class="srail">
+      <div class="srail-h"><span class="t">Research</span><span><span class="pill hoy">hoy</span></span></div>
+      <div class="srail-b">
+        <div class="flowline">
+          <div class="sn start">task</div>
+          <div class="sx">clasifica</div>
+          <div class="sn">tipo de consulta<small>ticker / tickers / query / since</small></div>
+          <div class="sx">consulta</div>
+          <div class="sn tool">consultar_research<small>3 corpus · filtro source</small></div>
+          <div class="sx">evalúa</div>
+          <div class="sn dec">¿hits?</div>
+          <div class="sx">sí</div>
+          <div class="sn">sintetiza<small>cada número con fuente+fecha</small></div>
+          <div class="sx">entrega</div>
+          <div class="sn fin">responde</div>
+        </div>
+        <div class="sbranch"><span class="cond">cero hits →</span><div class="sn">«sin view vigente»<small>lo declara · no rellena</small></div><div class="sx">entrega</div><div class="sn fin">responde</div></div>
+        <div class="sbranch"><span class="cond">pedido de señal (otro agente) →</span><div class="sn">JSON tipado<small>{ticker, view, recommendation, drivers, fuente, fecha} · sin prosa</small></div></div>
+        <div class="sloop"><b>⟲</b> si la síntesis necesita otro corte (otra fuente, otro rango de fechas) vuelve a la tool — es el loop ReAct interno</div>
+      </div>
+    </div>
+
+    <!-- RIEL COMERCIAL -->
+    <div class="srail">
+      <div class="srail-h"><span class="t">Comercial</span><span><span class="pill hoy">hoy</span> <span class="pill esp">+ tools MCP</span></span></div>
+      <div class="srail-b">
+        <div class="flowline">
+          <div class="sn start">task</div>
+          <div class="sx">chequea</div>
+          <div class="sn dec">¿id_grupo?</div>
+          <div class="sx">no</div>
+          <div class="sn tool">buscar_cliente<small>fuzzy · 5 candidatos</small></div>
+          <div class="sx">resuelve</div>
+          <div class="sn dec">¿ambiguo?</div>
+          <div class="sx">no</div>
+          <div class="sn">ruta<small>lista NBA / briefing / filtros</small></div>
+          <div class="sx">consulta</div>
+          <div class="sn tool">listar / perfil<small>+ saldo y minutas MCP</small></div>
+          <div class="sx">formatea</div>
+          <div class="sn">tabla · USD<small>flag_dormido arriba</small></div>
+          <div class="sx">entrega</div>
+          <div class="sn fin">responde</div>
+        </div>
+        <div class="sbranch"><span class="cond">ambiguo →</span><div class="sn">pregunta cuál es<small>corta el turno · no adivina</small></div></div>
+        <div class="sbranch"><span class="cond">tool → {"error"} →</span><div class="sn">pide confirmación<small>nombre / descripción</small></div></div>
+        <div class="sbranch"><span class="cond">pide view o instrumentos →</span><div class="sn">declara y deriva<small>→ research / portafolio</small></div></div>
+      </div>
+    </div>
+
+    <!-- RIEL PORTAFOLIO -->
+    <div class="srail">
+      <div class="srail-h"><span class="t">Portafolio</span><span><span class="pill hoy">hoy</span> <span class="pill esp">+ gate</span></span></div>
+      <div class="srail-b">
+        <div class="flowline">
+          <div class="sn start">task</div>
+          <div class="sx">identifica</div>
+          <div class="sn tool">buscar_cliente</div>
+          <div class="sx">foto real</div>
+          <div class="sn tool">tenencias_cliente<small>CSV hoy · MCP mañana</small></div>
+          <div class="sx">¿propuesta?</div>
+          <div class="sn tool">recomendar_rotacion<small>titulares, no data dura</small></div>
+          <div class="sx">valida</div>
+          <div class="sn tool">consultar_research<small>cada TNA/TIR/% con fuente</small></div>
+          <div class="sx">chequea</div>
+          <div class="sn dec">¿view vigente?</div>
+          <div class="sx">sí</div>
+          <div class="sn">arma propuesta<small>ROTAR → AGREGAR → MANTENER</small></div>
+          <div class="sx">audita</div>
+          <div class="sn esp">gate de riesgo<small>esperado</small></div>
+          <div class="sx">entrega</div>
+          <div class="sn fin">responde<small>propone · no ejecuta</small></div>
+        </div>
+        <div class="sbranch"><span class="cond">solo pide la foto →</span><div class="sn">tabla<small>instrumento | nominal | familia</small></div><div class="sx">entrega</div><div class="sn fin">responde</div></div>
+        <div class="sbranch"><span class="cond">sin view vigente →</span><div class="sn">recomienda sin el número<small>no lo inventa</small></div></div>
+        <div class="sbranch"><span class="cond">cliente B/C + pesos agresivo →</span><div class="sn">fuera de la primera propuesta<small>regla dura · segunda etapa</small></div></div>
+      </div>
+    </div>
+
+    <!-- RIEL RIESGOS -->
+    <div class="srail">
+      <div class="srail-h"><span class="t">Riesgo — el gate</span><span><span class="pill esp">esperado</span></span></div>
+      <div class="srail-b">
+        <div class="flowline">
+          <div class="sn start">propuesta<small>de portafolio</small></div>
+          <div class="sx">proyecta</div>
+          <div class="sn esp">posición resultante<small>cartera + propuesta</small></div>
+          <div class="sx">corre</div>
+          <div class="sn esp">chequeos<small>concentración · suitability · apalancamiento · límites</small></div>
+          <div class="sx">emite</div>
+          <div class="sn dec">veredicto</div>
+          <div class="sx">pasa</div>
+          <div class="sn fin">sella con motivo<small>→ finish</small></div>
+        </div>
+        <div class="sbranch"><span class="cond">no pasa →</span><div class="sn">motivo → portafolio<small>busca la alternativa · máx. 1 reintento</small></div></div>
+        <div class="sbranch"><span class="cond">pasa con observación →</span><div class="sn">nota visible en la síntesis<small>el comercial la ve</small></div></div>
+        <div class="sloop"><b>×</b> nunca habla con el cliente final · nunca propone instrumentos — audita, no diseña</div>
+      </div>
+    </div>
+    </details>
 
     <div class="note">
-      <span class="lbl">La regla que hereda todo el documento</span>
-      <p><strong>Informar vs. asesorar sigue siendo la línea.</strong> Nada de lo que se arma acá ejecuta una operación ni habla con el cliente final. Los agentes proponen con fuente y fecha; el comercial humano decide. La arquitectura técnica codifica ese principio: el guardrail no es un párrafo del prompt, es un nodo del grafo.</p>
+      <span class="lbl">Dónde vive el estado</span>
+      <p>Hoy, todo el estado del sistema es el <code>SupervisorState</code>: <code>messages</code>, <code>next_agent</code>, <code>task</code>, <code>findings[]</code>, <code>trace[]</code>, <code>delegations</code> — y muere con el proceso. El esperado suma tres campos y una propiedad: el <strong>bloque de memoria</strong> (retrieve), la <strong>propuesta tipada</strong> (para que el gate audite un objeto, no un texto), el <strong>veredicto de riesgo</strong> — y todo checkpointeado por <code>thread_id</code>, para que un <code>interrupt()</code> pueda esperar horas sin perder nada.</p>
     </div>
   </section>
-
-  <!-- 01 LO QUE TENEMOS -->
-  <section class="chapter" id="s1">
-    <div class="ch-head">
-      <div class="ch-marker"><span class="mn">01</span><span class="lbl">Estado actual · scaffold v1</span></div>
-      <h2 class="ch-title">Lo que tenemos: anatomía del <span class="hl">scaffold</span></h2>
-      <p class="ch-lede">Seis capas, de la terminal a OneDrive. Todo lo de este capítulo existe y corre hoy con <code style="font-size:.6em">python chat.py &lt;agente&gt; "pregunta"</code>.</p>
-    </div>
-
-    <div class="stack">
-      <div class="tier">
-        <div class="t-lbl"><span class="lbl">Canal <span class="pill hoy">hoy</span></span></div>
-        <div class="t-items">
-          <div class="cell"><span class="cn">chat.py</span><span class="cs">CLI one-shot o REPL interactivo · historial en memoria de proceso · imprime tool calls y delegaciones</span></div>
-        </div>
-      </div>
-      <div class="flowmark">▼ build_agent("research" | "comercial" | "portafolio" | "supervisor")</div>
-      <div class="tier">
-        <div class="t-lbl"><span class="lbl">Orquestación</span></div>
-        <div class="t-items">
-          <div class="cell x"><span class="cn">supervisor.py</span><span class="cs">StateGraph LangGraph · decide con structured output · máx. 5 delegaciones · acumula findings + trace</span></div>
-          <div class="cell"><span class="cn">agents.py</span><span class="cs">fábrica: create_agent (loop ReAct LangChain 1.x) + ChatAnthropic · claude-opus-4-8 · max_tokens 8000</span></div>
-        </div>
-      </div>
-      <div class="flowmark">▼ cada especialista recibe su system prompt y su set de tools</div>
-      <div class="tier">
-        <div class="t-lbl"><span class="lbl">Especialistas</span></div>
-        <div class="t-items">
-          <div class="cell x"><span class="cn">research</span><span class="cs">1 tool · consultar_research</span></div>
-          <div class="cell x"><span class="cn">comercial</span><span class="cs">3 tools · buscar_cliente, perfil_cliente, listar_clientes</span></div>
-          <div class="cell x"><span class="cn">portafolio</span><span class="cs">4 tools · + tenencias, rotación y research como atajo local*</span></div>
-        </div>
-      </div>
-      <div class="flowmark">▼ tools.py — cada skill envuelta con @tool, wrapper fino sobre CLI</div>
-      <div class="tier">
-        <div class="t-lbl"><span class="lbl">Skills</span></div>
-        <div class="t-items">
-          <div class="cell"><span class="cn">skill_runner.py</span><span class="cs">subprocess por script · stdout JSON · timeout 60 s · UTF-8 forzado · error → {"error": ...}</span></div>
-          <div class="cell"><span class="cn">skills/ ×6</span><span class="cs">buscar-cliente · perfil-cliente · listar-clientes · tenencias-cliente · recomendar-rotacion · consultar-research</span></div>
-        </div>
-      </div>
-      <div class="flowmark">▼ los scripts leen la data EN VIVO — no hay snapshot que actualizar</div>
-      <div class="tier">
-        <div class="t-lbl"><span class="lbl">Datos</span></div>
-        <div class="t-items">
-          <div class="cell"><span class="cn">OneDrive · artefactos</span><span class="cs">clientes_index, nba_ranking, perfiles, sustitutos</span></div>
-          <div class="cell"><span class="cn">OneDrive · Research</span><span class="cs">view_mercado, qa_semanales, consultoras_research (JSON)</span></div>
-          <div class="cell"><span class="cn">OneDrive · Tenencias</span><span class="cs">Carteras_FyoCapital.csv — holdings reales</span></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="prose">
-      <p>* El atajo: portafolio lleva <code>consultar_research</code> propio para validar números con fuente+fecha sin pasar por el supervisor. Es deliberado y transitorio — en el diseño multi-agente pleno esa pregunta la responde el agente research vía orquestación, y el atajo se apaga.</p>
-      <p><strong>El loop ReAct de cada especialista</strong> es el mismo para los tres: el modelo recibe system prompt + conversación, decide si llama una tool o responde; si llama, el resultado JSON vuelve como tool message y el loop repite hasta que el modelo produce la respuesta final. LangChain 1.x lo implementa sobre LangGraph con <code>create_agent</code> — no hay código de loop propio que mantener.</p>
-    </div>
-
-    <div class="grid2">
-      <div class="card"><span class="cnum">Limitación 01</span><h4>La memoria muere con el proceso</h4><p>El REPL acumula historial en una lista de Python. Cerraste la terminal, no pasó nada: no hay checkpointer, no hay <code>thread_id</code>, no hay ayer. El supervisor tampoco persiste sus findings entre corridas.</p></div>
-      <div class="card"><span class="cnum">Limitación 02</span><h4>Guardrails solo en el prompt</h4><p>Las reglas duras («B/C + pesos agresivo no va en primera», «todo número con fuente+fecha») viven en el system prompt. Se cumplen casi siempre — pero nada estructural las garantiza. No hay nodo de riesgo.</p></div>
-      <div class="card"><span class="cnum">Limitación 03</span><h4>Delegación secuencial</h4><p>El supervisor delega de a una tarea por vuelta. Si la pregunta necesita comercial y research a la vez, van en serie aunque sean independientes. Con 5 delegaciones máximo, cada vuelta cuenta.</p></div>
-      <div class="card"><span class="cnum">Limitación 04</span><h4>Observabilidad artesanal</h4><p>El trace se imprime en consola: delegaciones y tool calls. No hay LangSmith, no hay evals, no hay métricas. Comparar contra las otras dos implementaciones (PROBAR.md) es hoy un ejercicio manual.</p></div>
-    </div>
-  </section>
-
-  <!-- 02 ESPECIALISTAS -->
-  <section class="chapter" id="s2">
-    <div class="ch-head">
-      <div class="ch-marker"><span class="mn">02</span><span class="lbl">Los que ya corren</span></div>
-      <h2 class="ch-title">Los tres especialistas, <span class="hl">paso a paso</span></h2>
-      <p class="ch-lede">Para cada uno: qué hace, el flujo interno numerado, y el tablero de encendido — cuándo prende, cuándo no y a quién deriva. El tablero es la parte que más importa: un agente que contesta lo que no le toca contamina a los otros.</p>
-    </div>
-
-    <!-- RESEARCH -->
-    <div class="entity">
-      <div class="entity-head">
-        <span class="lbl">Especialista · el cerebro <span class="pill hoy">hoy</span></span>
-        <h3 class="entity-name">Agente de <span class="hl">Research</span></h3>
-        <p class="entity-purpose">La house view consultable y citable. No conoce clientes ni carteras: es <strong>la fuente contra la que los otros dos verifican</strong>. Su regla existencial: nunca opina por su cuenta — todo sale del corpus, y cero hits se dice explícito («sin view vigente»), no se rellena.</p>
-      </div>
-      <div class="entity-body">
-        <div class="fn"><div class="fi">01</div><div class="ft"><strong>Clasifica la consulta.</strong> <span class="d">Ticker puntual, varios tickers, tema libre o pulso de mercado. Cada forma mapea a un flag distinto de la tool: <code>ticker</code> / <code>tickers</code> / <code>query</code> / <code>since</code>.</span></div></div>
-        <div class="fn"><div class="fi">02</div><div class="ft"><strong>Consulta el corpus.</strong> <span class="d"><code>consultar_research</code> busca sobre los 3 corpus: view_mercado.json (Mesa Capitales), qa_semanales.json (Mesa Granos) y consultoras_research.json (Delphos). Filtra por fuente con <code>source</code> si el usuario nombró una.</span></div></div>
-        <div class="fn"><div class="fi">03</div><div class="ft"><strong>Sintetiza con trazabilidad.</strong> <span class="d">Cada número que cita lleva fuente + fecha: (view FyO 17/07), (Delphos Semanal 17/07). Tickers y views (BUY/HOLD/BULLISH) se citan directo del corpus.</span><span class="sub">Regla dura: nunca cita un número que venga solo de un campo <code>justificacion</code>/<code>detalle</code> — eso es titular, no data.</span></div></div>
-        <div class="fn"><div class="fi">04</div><div class="ft"><strong>Modo señal para briefings.</strong> <span class="d">Cuando otro agente le pide señal para los tickers del mix de un cliente, devuelve SOLO JSON tipado — {ticker, view, recommendation, drivers[], fuente, fecha} — sin prosa. Es el contrato máquina-a-máquina del «research al revés».</span></div></div>
-        <div class="fn"><div class="fi">05</div><div class="ft"><strong>Declara el vacío.</strong> <span class="d">Cero hits en el corpus → «sin view vigente en el corpus para X». La ausencia de view es información: le dice al de Portafolio que recomiende sin el número, no que lo invente.</span></div></div>
-      </div>
-      <div class="onoff">
-        <div class="col on">
-          <h5>Prende cuando</h5>
-          <ul>
-            <li>«¿Qué opina fyo / Delphos de AL30?» <em>→ ticker</em></li>
-            <li>«Pulso de mercado de la semana» <em>→ since + agrupar por categoría</em></li>
-            <li>Validar un TNA/TIR/% antes de que alguien lo cite <em>→ fuente+fecha o nada</em></li>
-            <li>Otro agente necesita la view vigente para un briefing <em>→ modo señal JSON</em></li>
-          </ul>
-        </div>
-        <div class="col off">
-          <h5>No prende — deriva</h5>
-          <ul>
-            <li>Preguntas sobre un cliente o su cartera <em>→ comercial / portafolio</em></li>
-            <li>«¿Qué le recomiendo a X?» <em>→ portafolio</em></li>
-            <li>«¿Qué es una ON?» — educación <em>→ onboarding (esperado)</em></li>
-            <li>Opinar sin corpus — <em>nunca; «sin view vigente» y punto</em></li>
-          </ul>
-        </div>
-      </div>
-      <div class="entity-foot">
-        <span class="tag"><strong>Tools:</strong> consultar_research</span>
-        <span class="tag lnk"><strong>Alimenta a:</strong> comercial · portafolio · (futuro) fyoCapital AI</span>
-        <span class="tag key"><strong>Esperado:</strong> cablear carteras_modelo.json · ingesta continua al grafo con vigencia temporal</span>
-      </div>
-    </div>
-
-    <!-- COMERCIAL -->
-    <div class="entity">
-      <div class="entity-head">
-        <span class="lbl">Especialista · a quién y por qué <span class="pill hoy">hoy</span></span>
-        <h3 class="entity-name">Agente <span class="hl">Comercial</span></h3>
-        <p class="entity-purpose">Que el comercial le dedique tiempo a los clientes correctos: radar defensivo (no perder los que tiene) y radar ofensivo (capturar lo que no captura). <strong>No recomienda instrumentos ni cita views</strong> — cuando el briefing lo pide, lo dice explícito: «eso lo completa Research/Portafolio».</p>
-      </div>
-      <div class="entity-body">
-        <div class="fn"><div class="fi">01</div><div class="ft"><strong>Resuelve la identidad.</strong> <span class="d">Cliente nombrado por texto sin ID → <code>buscar_cliente</code> primero (fuzzy, hasta 5 candidatos). Si hay ambigüedad, pregunta cuál es — no adivina.</span><span class="sub">Es la puerta de entrada de casi todos los flujos: sin <code>id_grupo</code> ninguna otra tool funciona.</span></div></div>
-        <div class="fn"><div class="fi">02</div><div class="ft"><strong>La lista del día.</strong> <span class="d">«¿A quién llamo hoy?» → <code>listar_clientes</code> top NBA → tabla slim: id, cliente, acción sugerida, score, motivo. Filtros combinables: acción (RETENER/CRECER/OPTIMIZAR_YIELD/…), categoría, actividad, arquetipo, dormidos, mínimos de comisión o wallet gap.</span></div></div>
-        <div class="fn"><div class="fi">03</div><div class="ft"><strong>Briefing 360.</strong> <span class="d"><code>perfil_cliente</code> → identidad, mix con pesos, gaps de arquetipo, performance y scores. Destaca <code>accion_sugerida</code> + 2-3 scores relevantes (churn, CLV, wallet gap). Si <code>flag_dormido = true</code>, va ARRIBA de todo.</span></div></div>
-        <div class="fn"><div class="fi">04</div><div class="ft"><strong>Marca sus límites.</strong> <span class="d">Si el briefing necesita view de mercado o recomendación de instrumentos, lo declara y deriva. En el modo supervisor, esa derivación se vuelve delegación real.</span></div></div>
-        <div class="fn"><div class="fi">05</div><div class="ft"><strong>Maneja el error.</strong> <span class="d">Tool devuelve <code>{"error": ...}</code> → pide confirmación del cliente por nombre/descripción en vez de reintentar a ciegas.</span></div></div>
-      </div>
-      <div class="onoff">
-        <div class="col on">
-          <h5>Prende cuando</h5>
-          <ul>
-            <li>«¿A quién llamo hoy?» <em>→ top NBA</em></li>
-            <li>«Briefing / perfil / cómo está X» <em>→ buscar + perfil</em></li>
-            <li>«Top N en riesgo de churn» <em>→ accion=RETENER</em></li>
-            <li>«Clientes dormidos» / «clientes A con comisión &gt; X» <em>→ filtros</em></li>
-            <li>«Mayores oportunidades de wallet» <em>→ accion=CRECER + min_wallet_gap</em></li>
-          </ul>
-        </div>
-        <div class="col off">
-          <h5>No prende — deriva</h5>
-          <ul>
-            <li>«¿Qué le ofrezco / roto / sugiero?» <em>→ portafolio</em></li>
-            <li>«¿Qué tiene hoy en cartera?» <em>→ portafolio (tenencias)</em></li>
-            <li>«¿Qué dice el mercado de…?» <em>→ research</em></li>
-            <li>Inventar un dato de cliente — <em>nunca; todo sale de las tools</em></li>
-          </ul>
-        </div>
-      </div>
-      <div class="entity-foot">
-        <span class="tag"><strong>Tools:</strong> buscar_cliente · perfil_cliente · listar_clientes</span>
-        <span class="tag"><strong>Estilo:</strong> rioplatense · USD con miles · listas como tabla</span>
-        <span class="tag key"><strong>Esperado:</strong> tools MCP (saldo hoy, minutas, comercial asignado, presupuesto) · debrief con guardar_resumen_minutas + interrupt() · radar proactivo por cron · memoria en el grafo</span>
-      </div>
-    </div>
-
-    <!-- PORTAFOLIO -->
-    <div class="entity">
-      <div class="entity-head">
-        <span class="lbl">Especialista · qué hacer <span class="pill hoy">hoy</span></span>
-        <h3 class="entity-name">Agente de <span class="hl">Portafolio</span></h3>
-        <p class="entity-purpose">Que cada portafolio esté bien parado según el cliente y según el mercado. Diagnostica, recomienda con argumento trazable y prioriza. <strong>El argumento sin fuente no sirve</strong> — y propone, nunca ejecuta.</p>
-      </div>
-      <div class="entity-body">
-        <div class="fn"><div class="fi">01</div><div class="ft"><strong>Resuelve la identidad.</strong> <span class="d">Igual que comercial: texto sin ID → <code>buscar_cliente</code> primero.</span></div></div>
-        <div class="fn"><div class="fi">02</div><div class="ft"><strong>La foto real.</strong> <span class="d">«¿Qué tiene hoy X?» → <code>tenencias_cliente</code> desde Carteras_FyoCapital.csv → tabla instrumento | nominal | familia. Holdings de hoy, no mix histórico de comisiones (eso es perfil_cliente).</span></div></div>
-        <div class="fn"><div class="fi">03</div><div class="ft"><strong>La propuesta.</strong> <span class="d">«¿Qué le ofrezco a X?» → <code>tenencias_cliente</code> + <code>recomendar_rotacion</code> → recomendación agrupada por acción: ROTAR primero, después AGREGAR, después MANTENER — cada una con su porqué.</span></div></div>
-        <div class="fn"><div class="fi">04</div><div class="ft"><strong>Valida cada número.</strong> <span class="d">Las <code>justificacion</code> de recomendar_rotacion son titulares, NO data dura. Antes de poner un TNA/TIR/% en la propuesta → <code>consultar_research</code> y cita con fuente+fecha. Sin view vigente → recomienda sin el número.</span><span class="sub">Este paso es el que separa una recomendación auditable de una alucinación bien redactada. Es innegociable.</span></div></div>
-        <div class="fn"><div class="fi">05</div><div class="ft"><strong>Research al revés.</strong> <span class="d">Dado un evento o señal («suba de tasa», «canje de X»), identifica qué clientes tienen los tickers afectados (tenencias) y qué conviene en cada caso. El cerebro detecta el qué; este agente resuelve el a quién.</span></div></div>
-      </div>
-      <div class="onoff">
-        <div class="col on">
-          <h5>Prende cuando</h5>
-          <ul>
-            <li>«¿Qué tiene hoy X en cartera?» <em>→ tenencias</em></li>
-            <li>«¿Qué le ofrezco / roto / sugiero a X?» <em>→ tenencias + rotación</em></li>
-            <li>«¿Qué bonos / ONs / cedears tiene?» <em>→ tenencias filtradas</em></li>
-            <li>«¿A qué clientes les pega este evento?» <em>→ research al revés</em></li>
-          </ul>
-        </div>
-        <div class="col off">
-          <h5>No prende — deriva o frena</h5>
-          <ul>
-            <li>«¿A quién llamo hoy?» <em>→ comercial</em></li>
-            <li>View de mercado sin cliente de por medio <em>→ research</em></li>
-            <li>Cliente B/C + instrumento «perfil pesos agresivo» <em>→ no va en primera; segunda etapa</em></li>
-            <li>Ejecutar una orden — <em>nunca; el humano decide, siempre</em></li>
-          </ul>
-        </div>
-      </div>
-      <div class="entity-foot">
-        <span class="tag"><strong>Tools:</strong> buscar_cliente · tenencias_cliente · recomendar_rotacion · consultar_research*</span>
-        <span class="tag lnk"><strong>Consume de:</strong> research — hoy por atajo, mañana por handoff</span>
-        <span class="tag key"><strong>Esperado:</strong> apagar el atajo* · saldo de hoy y comitentes vía MCP · tenencias por MCP cuando exista la extensión · chequeo previo contra el gate de riesgo</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- 03 SUPERVISOR -->
-  <section class="chapter" id="s3">
-    <div class="ch-head">
-      <div class="ch-marker"><span class="mn">03</span><span class="lbl">Orquestación</span></div>
-      <h2 class="ch-title">El supervisor: el grafo que <span class="hl">orquesta</span></h2>
-      <p class="ch-lede">Un StateGraph explícito de LangGraph. No es un prompt que «coordina»: es un grafo con nodos, aristas condicionales y estado tipado. Acá está el corazón técnico de la implementación — y el lugar donde se enchufan todas las piezas esperadas.</p>
-    </div>
-
-    <div class="codebox"><span class="cb-t">Topología actual del grafo · supervisor.py</span>
-START ──▶ <b>supervisor</b> ──┬──▶ <b>research</b>  ──▶ supervisor  <i>(vuelve con hallazgo)</i><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├──▶ <b>comercial</b> ──▶ supervisor<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├──▶ <b>portafolio</b> ──▶ supervisor<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──▶ finish ──▶ END<br>
-<br>
-<i>estado:</i> messages · next_agent · task · <b>findings[]</b> · <b>trace[]</b> · delegations<br>
-<i>tope:</i> <u>MAX_DELEGACIONES = 5</u> → síntesis forzada con lo que haya, sin inventar
-    </div>
-
-    <div class="entity">
-      <div class="entity-head">
-        <span class="lbl">Orquestador · una decisión por vuelta <span class="pill hoy">hoy</span></span>
-        <h3 class="entity-name">El <span class="hl">turno</span> del supervisor, paso a paso</h3>
-        <p class="entity-purpose">El nodo supervisor decide <strong>un solo próximo paso por vuelta</strong>: delegar o finalizar. La decisión sale como structured output (Pydantic), no como texto libre — el grafo rutea sobre un campo tipado, no sobre una interpretación.</p>
-      </div>
-      <div class="entity-body">
-        <div class="fn"><div class="fi">01</div><div class="ft"><strong>Arma el contexto.</strong> <span class="d">A la conversación del usuario le agrega los hallazgos acumulados: «HALLAZGOS DE ESPECIALISTAS PARA ESTA CONSULTA» con tarea delegada y resultado de cada vuelta anterior. Primera vuelta: «todavía no hay hallazgos».</span></div></div>
-        <div class="fn"><div class="fi">02</div><div class="ft"><strong>Decide con schema.</strong> <span class="d">El modelo responde una <code>SupervisorDecision</code>: <code>next_agent</code> ∈ {research, comercial, portafolio, finish}, <code>task</code> (solo al delegar, autosuficiente y concreta) o <code>final_answer</code> (solo al finalizar).</span><span class="sub">Reglas del prompt: para datos de negocio siempre delega; respeta dependencias (tenencias primero, research de esos tickers después); no repite delegaciones resueltas; si falta identificar un cliente, finaliza con una pregunta clara.</span></div></div>
-        <div class="fn"><div class="fi">03</div><div class="ft"><strong>Ejecuta al especialista.</strong> <span class="d">El nodo del especialista corre su agente ReAct completo con la task como mensaje de usuario. El especialista usa sus tools las veces que necesite y devuelve su respuesta final.</span></div></div>
-        <div class="fn"><div class="fi">04</div><div class="ft"><strong>Acumula y registra.</strong> <span class="d">La respuesta entra a <code>findings</code> (agente, tarea, resultado); cada tool call del especialista entra al <code>trace</code>. El flujo vuelve al supervisor, que ahora decide con más evidencia — y puede encadenar una tarea dependiente.</span></div></div>
-        <div class="fn"><div class="fi">05</div><div class="ft"><strong>Sintetiza o corta.</strong> <span class="d">Con evidencia suficiente → finish: integra hallazgos, conserva fuentes/fechas y distingue qué propone el sistema de qué decide el humano. Si llegó a 5 delegaciones → síntesis forzada: responde con lo disponible, marca lo que quedó sin resolver, no inventa.</span></div></div>
-      </div>
-      <div class="onoff">
-        <div class="col on">
-          <h5>Prende cuando</h5>
-          <ul>
-            <li>La pregunta cruza dominios <em>«qué tiene X y qué dice research de eso»</em></li>
-            <li>Una tarea depende del resultado de otra <em>→ encadena</em></li>
-            <li>Hace falta una respuesta única integrada de varios especialistas</li>
-          </ul>
-        </div>
-        <div class="col off">
-          <h5>No prende — sobra</h5>
-          <ul>
-            <li>Pregunta 100% de un dominio <em>→ el especialista directo es más barato y rápido</em></li>
-            <li>Falta identificar al cliente <em>→ finaliza preguntando, no delega a ciegas</em></li>
-            <li>Ya delegó lo mismo <em>→ no repite; sintetiza</em></li>
-          </ul>
-        </div>
-      </div>
-      <div class="entity-foot">
-        <span class="tag"><strong>Decisión:</strong> structured output Pydantic — ruteo tipado</span>
-        <span class="tag"><strong>Anti-loop:</strong> MAX_DELEGACIONES=5 + síntesis forzada</span>
-        <span class="tag key"><strong>Esperado:</strong> checkpointer · delegación paralela (Send) · interrupt() para confirmación humana · gate de riesgo antes de finish</span>
-      </div>
-    </div>
-
-    <div class="note ok">
-      <span class="lbl">Por qué esta pieza es la que escala</span>
-      <p>Todo lo esperado del documento conceptual tiene un lugar natural en este grafo: el <strong>gate de riesgo</strong> es un nodo entre la propuesta y el finish; la <strong>memoria</strong> es un nodo de retrieve al inicio y un write al final; el <strong>orquestador del briefing a tres manos</strong> es exactamente este supervisor con delegación paralela; el <strong>human-in-the-loop</strong> es <code>interrupt()</code> nativo de LangGraph con checkpointer. No hay que rediseñar: hay que agregar nodos.</p>
-    </div>
-  </section>
-
-  <!-- 04 LOS QUE FALTAN -->
-  <section class="chapter" id="s4">
-    <div class="ch-head">
-      <div class="ch-marker"><span class="mn">04</span><span class="lbl">Definición · esperado</span></div>
-      <h2 class="ch-title">Los que <span class="hl">faltan</span> en el grafo</h2>
-      <p class="ch-lede">Cuatro piezas definidas y aún no implementadas en LangChain. Tres ya existen como subagentes en la implementación Claude Code — portarlas es replicar prompt + tools. La cuarta, el gate de riesgo, es la única que cambia la topología del grafo.</p>
-    </div>
-
-    <!-- RIESGO -->
-    <div class="entity">
-      <div class="entity-head">
-        <span class="lbl">Transversal · nivel exposición de fyo · el control <span class="pill esp">esperado</span></span>
-        <h3 class="entity-name">Agente de <span class="hl">Riesgo</span> — el gate del grafo</h3>
-        <p class="entity-purpose">Los cuatro agentes miran hacia afuera: buscan clientes, detectan señales, proponen operaciones. Ninguno sabe decir que no. Este es el único que mira hacia adentro —a lo que fyo está dispuesto a asumir— y su propósito es que <strong>el «no» llegue antes de la propuesta, no después</strong>. En LangGraph no es un hermano más: es un nodo obligatorio entre la propuesta y la salida — <em>propuesta → riesgo → finish</em>. Estructural, no discursivo.</p>
-      </div>
-      <div class="entity-body">
-        <div class="fn"><div class="fi">01</div><div class="ft"><strong>Posición de riesgo online.</strong> <span class="d">La exposición de fyoCapital consolidada y viva: por cliente, instrumento, contraparte y vencimiento. Es el espejo del MCP de posiciones, pero mirado desde fyo y no desde el cliente. Hoy el armado es manual y la posición integrada no se ve.</span><span class="sub">Es el cimiento: sin esta función las otras cuatro no existen. Y es la que define si esto son tres semanas o tres meses — la respuesta depende de si la posición y el saldo están en sistema o en planilla.</span></div></div>
-        <div class="fn"><div class="fi">02</div><div class="ft"><strong>Chequeo previo — el guardrail.</strong> <span class="d">Antes de que el Comercial o el de Portafolio propongan, consultan: ¿este cliente puede? ¿esta operación entra en su perfil? ¿queda dentro de los límites de fyo? Respuesta binaria, con motivo. No opina: responde.</span><span class="sub">No es un agente conversando con otro. Es un contrato: una pregunta, una respuesta, trazable. En el grafo son las dos caras de la misma función: el nodo gate (automático, antes del finish) y la tool <code>chequear(cliente, operación)</code> → veredicto tipado, consultable por cualquier especialista.</span></div></div>
-        <div class="fn"><div class="fi">03</div><div class="ft"><strong>Simulador.</strong> <span class="d">La misma información con el framing invertido: el comercial pregunta «si hago este negocio, ¿qué pasa con la posición?» y lo ve antes de comprometerse.</span><span class="sub">Es lo que hace que el guardrail se lea como servicio y no como policía. Por eso va como MVP. Técnicamente es gratis: la misma función del gate, expuesta como tool de solo lectura sobre la posición proyectada.</span></div></div>
-        <div class="fn"><div class="fi">04</div><div class="ft"><strong>Centinela de límites y consola de excepciones.</strong> <span class="d">Alerta por exceso, concentración, desvío de plazo u operación fuera de perfil. Y la contracara, que es la que gana al analista: el «sí, pero» trazable, con aprobador y con fecha.</span><span class="sub">Hoy las excepciones existen y no se ven en ningún lado. Hacerlas visibles vale tanto como los bloqueos. En LangGraph la excepción ES un <code>interrupt()</code>: el grafo se pausa, el aprobador aprueba con nombre y fecha, y todo queda persistido en el checkpoint — la consola sale sola del historial de interrupts.</span></div></div>
-        <div class="fn"><div class="fi">05</div><div class="ft"><strong>Post-mortem.</strong> <span class="d">Qué se aprobó, qué se excepcionó y qué salió mal. Sin esto es un semáforo; con esto es lo que recalibra con mora real y alimenta la capa de datos del área de Riesgos.</span><span class="sub">Es el principio «que aprenda», aplicado al riesgo: la mora real entra como reward al loop del cap. 09 (recalibra umbrales) y como aristas al cerebro del cap. 10 (la historia de cada excepción).</span></div></div>
-      </div>
-      <div class="onoff">
-        <div class="col on">
-          <h5>Prende cuando</h5>
-          <ul>
-            <li>Cualquier propuesta de portafolio va a salir <em>→ gate automático</em></li>
-            <li>«Si hago este negocio, ¿qué pasa con la posición?» <em>→ simulador</em></li>
-            <li>«¿Qué tan concentrado está X / el libro?» «¿quién opera apalancado?» <em>→ posición online</em></li>
-            <li>«¿Qué queda expuesto si sube el dólar / la tasa?» <em>→ estrés con drivers de la view</em></li>
-            <li>Un exceso o una operación fuera de perfil <em>→ centinela + excepción con interrupt()</em></li>
-          </ul>
-        </div>
-        <div class="col off">
-          <h5>No prende — frontera dura</h5>
-          <ul>
-            <li>Recomendar instrumentos <em>→ portafolio; este solo audita</em></li>
-            <li>Opinar de mercado <em>→ research; consume política escrita, no house view</em></li>
-            <li>Hablar con el cliente final — <em>nunca, bajo ninguna forma</em></li>
-            <li>Evaluar al comercial — <em>evalúa la exposición, no a la persona</em></li>
-          </ul>
-        </div>
-      </div>
-      <div class="entity-foot">
-        <span class="tag lnk"><strong>Consume:</strong> la política de riesgo escrita — no la house view</span>
-        <span class="tag"><strong>Entrega:</strong> el límite, el motivo y la excepción trazable</span>
-        <span class="tag"><strong>Ya existe como:</strong> subagente riesgos-fyo en Claude Code</span>
-        <span class="tag key"><strong>MVP:</strong> posición online + simulador — primero de los cuatro a portar</span>
-      </div>
-    </div>
-
-    <!-- COMPETENCIA + ONBOARDING compactos -->
-    <div class="grid2">
-      <div class="card">
-        <span class="cnum">Especialista · el vigía <span class="pill esp">esperado</span></span>
-        <h4>Agente de Competencia</h4>
-        <p>Cómo viene fyo en volumen contra los otros ALyCs en cada mercado (BYMA, A3, MAV, MAE), con los rankings públicos de participación. Cosecha informes por web con confirmación antes de guardar; consulta el histórico local con fuente+fecha y marca VENCIDO lo que superó la cadencia. <strong>Prende</strong> ante «¿cómo venimos en BYMA?», «¿qué share tiene X?». <strong>No prende</strong> para nada que toque clientes, carteras o data no pública. En el grafo: especialista aparte con tools propias de harvest+consulta — cuarta fuente del cerebro, mira hacia afuera.</p>
-      </div>
-      <div class="card">
-        <span class="cnum">Especialista · el idóneo teórico <span class="pill esp">esperado</span></span>
-        <h4>Agente de Onboarding</h4>
-        <p>Explica el mercado de capitales completo en lenguaje llano — bonos, ONs, CEDEARs, cauciones, TIR, duration, licitaciones, normativa — con ejemplos ilustrativos y sin recomendar nada. <strong>Prende</strong> ante «¿qué es X?», «explicame Y», material didáctico para el productor agro o el junior. <strong>No prende</strong> para opinar de mercado, mirar clientes ni citar tasas vigentes; ante «¿me conviene?» deriva al asesor. En el grafo: especialista sin tools de datos — solo conocimiento, cero riesgo regulatorio. El más barato de portar.</p>
-      </div>
-      <div class="card">
-        <span class="cnum">Cara al cliente <span class="pill hor">horizonte</span></span>
-        <h4>fyoCapital AI — otro grafo, no otro nodo</h4>
-        <p>La cara al cliente NO entra en este grafo interno: es un <strong>grafo separado</strong> con superficie mínima — MCP de posiciones + research en modo lectura — y sus cuatro modos (informar → avisar → conversar → ejecutar). Compartir el proceso con los agentes internos sería mezclar audiencias con permisos distintos: el aislamiento es de arquitectura, no de prompt. Se para sobre el mismo cerebro de datos, con vista recortada.</p>
-      </div>
-      <div class="card">
-        <span class="cnum">Regla de portado</span>
-        <h4>Orden: riesgo → onboarding → competencia</h4>
-        <p>Riesgo primero porque cambia la topología (el gate tiene que existir antes de que el sistema proponga en serio). Onboarding segundo porque es gratis en riesgo y suma adopción. Competencia tercero porque requiere pipeline de harvest con confirmación humana — más piezas móviles. fyoCapital AI recién con el cerebro maduro y la decisión regulatoria tomada.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- 05 CAPA DE DATOS · MCP FYO DIGITAL -->
-  <section class="chapter" id="s45">
-    <div class="ch-head">
-      <div class="ch-marker"><span class="mn">05</span><span class="lbl">La capa de datos</span></div>
-      <h2 class="ch-title">Del archivo suelto al <span class="hl">MCP</span> de FyO Digital</h2>
-      <p class="ch-lede">Hoy los agentes leen archivos: un CSV de tenencias y JSONs en OneDrive. El MCP de FyO Digital ya existe —34 herramientas sobre el CRM y la operación en vivo— y es el primer paso real del «MCP de posiciones» del documento conceptual: un contrato de datos estable en lugar de archivos que alguien regenera a mano.</p>
-    </div>
-
-    <div class="prose">
-      <p><strong>El problema del archivo suelto no es que sea archivo: es que no es un contrato.</strong> El CSV de tenencias cambia de columnas y nadie avisa; quien ve el archivo ve todo (no hay permisos por usuario); la «foto de hoy» es en realidad la foto de la última regeneración; y el acceso por subprocess suma timeout de 60 segundos y parseo de stdout. El MCP invierte cada uno de esos puntos: <em>herramientas tipadas con schema</em>, autenticación por usuario con permisos del CRM, y el dato del sistema de origen en el momento exacto de la pregunta.</p>
-    </div>
-
-    <div class="entity">
-      <div class="entity-head">
-        <span class="lbl">Contrato de datos · servidor claude.ai › Fyo Digital <span class="pill hoy">existe</span> <span class="pill esp">conexión LangChain esperada</span></span>
-        <h3 class="entity-name">El MCP FyO Digital: qué trae, <span class="hl">hoy</span></h3>
-        <p class="entity-purpose">34 herramientas, <strong>todas de solo lectura excepto una</strong> (<code>guardar_resumen_minutas</code>). Casi todo empieza en <code>buscar_empresas</code>: de ahí salen <code>idEmpresa</code>, CUIT y grupo económico — los identificadores que necesita el resto.</p>
-      </div>
-      <div class="entity-body">
-        <div class="fn"><div class="fi">01</div><div class="ft"><strong>Identidad operativa.</strong> <span class="d"><code>buscar_empresas</code> resuelve la empresa por nombre y devuelve idEmpresa, CUIT, grupo económico y el comercial responsable por línea de servicio — «¿qué comercial lleva a X?» se contesta directo de acá.</span></div></div>
-        <div class="fn"><div class="fi">02</div><div class="ft"><strong>Posición de plata, hoy.</strong> <span class="d"><code>obtener_comitentes_fyocapital</code> (la única que usa CUIT, como entero sin guiones) → <code>obtener_saldo_fyocapital</code>: el saldo del cliente en FyO Capital <em>del día</em>. Dato volátil: se cita siempre con fecha.</span></div></div>
-        <div class="fn"><div class="fi">03</div><div class="ft"><strong>La operación.</strong> <span class="d">Contratos (rango máx. 365 días), órdenes «a precio» / «a fijar», cupos y solicitudes (máx. 90 días), potencialidad por campaña vigente y presupuesto/cumplimiento por grupo económico.</span><span class="sub">Esta es la puerta al mundo Granos e insumos — el dato que el embedded del doc conceptual va a necesitar cuando sea decisión.</span></div></div>
-        <div class="fn"><div class="fi">04</div><div class="ft"><strong>La relación.</strong> <span class="d">Contactos con área y seniority; minutas de reuniones con búsqueda por contenido. Es la data cualitativa que el doc conceptual daba por faltante — y la materia prima del debrief y del cerebro de datos (cap. 10).</span></div></div>
-        <div class="fn"><div class="fi">05</div><div class="ft"><strong>La única escritura.</strong> <span class="d"><code>guardar_resumen_minutas</code>. En LangGraph esa llamada va SIEMPRE detrás de un <code>interrupt()</code>: resumen propuesto → OK del comercial → escritura. El debrief automático, con el humano en el medio por diseño y no por costumbre.</span></div></div>
-      </div>
-      <div class="onoff">
-        <div class="col on">
-          <h5>El MCP prende cuando</h5>
-          <ul>
-            <li>«¿Qué comercial lleva a X?» / contactos <em>→ buscar_empresas · contactos</em></li>
-            <li>«¿Qué saldo tiene X hoy?» <em>→ comitentes + saldo, citado con fecha</em></li>
-            <li>Contratos, órdenes, cupos, potencialidad, presupuesto <em>→ operación en vivo</em></li>
-            <li>«¿Qué se habló con X?» / guardar el resumen <em>→ minutas (escritura con interrupt)</em></li>
-          </ul>
-        </div>
-        <div class="col off">
-          <h5>No prende — sigue en las skills</h5>
-          <ul>
-            <li>Scores NBA, churn, wallet gap, arquetipos <em>→ artefactos analíticos locales</em></li>
-            <li>Tenencias por instrumento <em>→ CSV, hasta que el MCP las exponga</em></li>
-            <li>Research y views <em>→ corpus local (y después, el grafo)</em></li>
-            <li>Escribir sin confirmación humana — <em>nunca</em></li>
-          </ul>
-        </div>
-      </div>
-      <div class="entity-foot">
-        <span class="tag"><strong>34 herramientas</strong> · solo lectura salvo guardar_resumen_minutas</span>
-        <span class="tag lnk"><strong>Integración:</strong> langchain-mcp-adapters — cada herramienta MCP = tool nativa del especialista</span>
-        <span class="tag"><strong>Entornos:</strong> DEV · STG · PROD — mismo grafo, distinta credencial</span>
-      </div>
-    </div>
-
-    <div class="prose">
-      <p><strong>Cómo se enchufa.</strong> En LangChain la integración es directa: <code>langchain-mcp-adapters</code> (<code>MultiServerMCPClient</code>) expone cada herramienta del servidor como tool nativa, con su schema. El loop ReAct de los especialistas <em>no cambia</em> — cambia el origen del dato. El reparto por agente: <strong>comercial</strong> suma identidad operativa, saldo de hoy, minutas, presupuesto y comercial asignado; <strong>portafolio</strong> suma comitentes + saldo (y tenencias cuando lleguen); <strong>riesgo</strong> encuentra acá el cimiento de su posición online; <strong>competencia</strong> no lo toca — solo usa data pública.</p>
-    </div>
-
-    <table class="cmp">
-      <thead><tr>
-        <th style="width:24%">Dato</th>
-        <th class="hoy" style="width:33%">Fuente hoy</th>
-        <th class="esp">Fuente esperada</th>
-      </tr></thead>
-      <tbody>
-        <tr><td class="dim-k">Identidad + scores</td><td>Artefactos OneDrive (clientes_index, nba_ranking) vía skills</td><td>Siguen siendo pipeline analítico propio — se calculan, no se consultan; servidos como artefacto versionado</td></tr>
-        <tr><td class="dim-k">Tenencias por instrumento</td><td>Carteras_FyoCapital.csv</td><td><strong>Extensión del MCP</strong> (el «MCP de posiciones») — el faltante más importante de la capa; ver nota abajo</td></tr>
-        <tr><td class="dim-k">Saldo del cliente (hoy)</td><td>No disponible</td><td>MCP: comitentes + saldo — dato nuevo que el scaffold no tenía</td></tr>
-        <tr><td class="dim-k">Comercial asignado, contactos</td><td>No disponible</td><td>MCP: buscar_empresas · obtener_contactos</td></tr>
-        <tr><td class="dim-k">Contratos, órdenes, cupos, potencialidad, presupuesto</td><td>No disponible</td><td>MCP — la vista Granos/insumos que habilita el cruce de caja ociosa post-cosecha</td></tr>
-        <tr><td class="dim-k">Minutas</td><td>No disponible</td><td>MCP: obtener_minutas (lectura) + guardar_resumen_minutas (escritura con interrupt) → y de ahí, episodios para el cerebro (cap. 10)</td></tr>
-        <tr><td class="dim-k">Research (3 corpus)</td><td>JSON OneDrive vía skill</td><td>Corpus local → ingesta al grafo con vigencia temporal (cap. 10)</td></tr>
-      </tbody>
-    </table>
-
-    <div class="note warn">
-      <span class="lbl">Lo que el MCP todavía no trae — decirlo temprano</span>
-      <p><strong>Las tenencias por instrumento —el dato que motiva esta vuelta— hoy NO están entre las 34 herramientas.</strong> El saldo es plata, no títulos. Reemplazar de verdad el CSV requiere que FyO Digital exponga holdings por comitente e instrumento — la extensión natural del MCP existente, o un «MCP de posiciones» como servidor hermano. Es un pedido de producto a FyO Digital, no un desarrollo de esta carpeta, y conviene gestionarlo ya: es el ítem con más lead time. Mientras tanto, convivencia con regla: <strong>el CSV para títulos, el MCP para plata y operación</strong> — y cada dato citado con su fuente y su fecha, para que la mezcla se lea como trazabilidad y no como inconsistencia.</p>
-    </div>
-
-    <div class="note">
-      <span class="lbl">Gotchas que absorbe la arquitectura, no el prompt</span>
-      <p>El MCP tiene reglas propias: CUIT (entero, sin guiones) solo para comitentes y todo lo demás usa idEmpresa; rangos de fecha con tope (contratos 365 días, cupos 90); <code>tipo_operacion</code> obligatorio en órdenes; productos como <code>"idMateriaPrima_idCategoria"</code>. Esas validaciones van en el <strong>wrapper de la tool</strong> —tipadas, con mensajes de error claros— para que el modelo no queme vueltas del loop descubriéndolas a prueba y error. Regla general del scaffold: lo que se puede validar en código, no se le pide al modelo.</p>
-    </div>
-  </section>
-
-  <!-- 06 GAP -->
-  <section class="chapter" id="s5">
-    <div class="ch-head">
-      <div class="ch-marker"><span class="mn">06</span><span class="lbl">El gap</span></div>
-      <h2 class="ch-title">Tenemos vs. esperamos, <span class="hl">dimensión por dimensión</span></h2>
-      <p class="ch-lede">La distancia entre el scaffold y el sistema no es una reescritura: son diez dimensiones que se cierran de a una, casi todas agregando nodos y config al grafo que ya existe.</p>
-    </div>
-
-    <table class="cmp">
-      <thead><tr>
-        <th style="width:17%">Dimensión</th>
-        <th class="hoy" style="width:38%">Hoy · scaffold v1</th>
-        <th class="esp">Esperado · sistema</th>
-      </tr></thead>
-      <tbody>
-        <tr><td class="dim-k">Especialistas</td><td>3 — research, comercial, portafolio</td><td>6 — + riesgo (gate), competencia, onboarding. fyoCapital AI como grafo aparte.</td></tr>
-        <tr><td class="dim-k">Orquestación</td><td>Secuencial, una delegación por vuelta, tope 5</td><td>Delegaciones independientes en paralelo (<code>Send</code>), handoffs directos entre especialistas donde el patrón lo pide, gate de riesgo antes del finish</td></tr>
-        <tr><td class="dim-k">Memoria conversacional</td><td>Lista en memoria del proceso; muere al cerrar el REPL</td><td>Checkpointer persistente (SQLite → Postgres) con <code>thread_id</code> por comercial: retomar la conversación de ayer es un parámetro, no un feature</td></tr>
-        <tr><td class="dim-k">Memoria de negocio</td><td>No existe — cada corrida arranca de cero</td><td>Knowledge graph temporal (Zep Cloud / Graphiti): views con vigencia, interacciones, propuestas y resultados. El capítulo 10.</td></tr>
-        <tr><td class="dim-k">Guardrails</td><td>Reglas duras en el system prompt</td><td>+ gate de riesgo estructural en el grafo + validadores de salida (todo número lleva fuente+fecha o no sale) + <code>interrupt()</code> para confirmación humana en acciones sensibles</td></tr>
-        <tr><td class="dim-k">Datos</td><td>JSON/CSV en OneDrive vía subprocess (60 s timeout)</td><td>MCP FyO Digital conectado vía <code>langchain-mcp-adapters</code> (34 herramientas ya existentes: saldo hoy, minutas, contratos, presupuesto) + extensión de tenencias por instrumento — el capítulo 05. Los artefactos analíticos siguen como pipeline propio; el research se ingiere al grafo.</td></tr>
-        <tr><td class="dim-k">Evals</td><td>No hay — comparación manual contra PROBAR.md</td><td>Suite de evals replicando PROBAR.md, corrida por CI contra las tres implementaciones; nada se suelta sin pasar el framework — la batería completa, en el capítulo 09</td></tr>
-        <tr><td class="dim-k">Observabilidad</td><td>Prints de trace en consola</td><td>LangSmith: tracing completo, latencia y costo por turno, datasets de regresión sobre los traces reales</td></tr>
-        <tr><td class="dim-k">Runtime y canal</td><td>CLI local (chat.py) en la máquina de un analista</td><td>Runtime propio de LangGraph servido como API y empaquetado en Docker; clientes: fyoDigital, Teams y el propio CLI. Identidad del comercial como parte del estado. Azure AI Foundry queda fuera de la arquitectura.</td></tr>
-        <tr><td class="dim-k">Aprendizaje</td><td>No registra qué se propuso ni qué pasó después</td><td>Cada propuesta emitida y su resultado (hecho / no hecho / resultado) escritos al grafo — el principio «que aprenda» hecho dato</td></tr>
-      </tbody>
-    </table>
-
-    <div class="note warn">
-      <span class="lbl">El orden importa más que la lista</span>
-      <p>Checkpointer y LangSmith van primero <strong>porque son baratos y todo lo demás se apoya en ellos</strong>: sin persistencia no hay <code>interrupt()</code> ni human-in-the-loop; sin tracing no hay evals serios. El MCP va segundo: cambia el origen del dato sin tocar el loop, y el pedido de tenencias a FyO Digital hay que dispararlo temprano por lead time. El gate de riesgo va antes de cualquier canal que multiplique el volumen de propuestas. La memoria de negocio (cap. 10) puede pilotearse en paralelo porque no toca el grafo existente: se enchufa como un nodo más.</p>
-    </div>
-
-    <div class="note">
-      <span class="lbl">Decisión de plataforma · cerrada</span>
-      <p><strong>No se usa Azure AI Foundry.</strong> Los agentes se modelan y orquestan con <strong>LangGraph</strong>; la API, los workers y sus dependencias se construyen como imágenes <strong>Docker</strong>. Para el piloto, Docker Compose levanta el stack completo en una VM interna: agent API, workers, PostgreSQL para checkpoints, Redis para colas/streaming y el acceso al MCP de FyO Digital. La evolución productiva conserva esos mismos contenedores y contratos, sin acoplar el diseño a una plataforma propietaria.</p>
-    </div>
-  </section>
-
-  <!-- 07 TURNO PERFECTO -->
-  <section class="chapter" id="s6">
-    <div class="ch-head">
-      <div class="ch-marker"><span class="mn">07</span><span class="lbl">Diseño objetivo</span></div>
-      <h2 class="ch-title">El turno perfecto: cómo debería correr <span class="hl">end-to-end</span></h2>
-      <p class="ch-lede">La secuencia completa de un turno en el sistema esperado, del mensaje del comercial a la respuesta con memoria. Los pasos 0, 1, 8 y 9 son los nuevos; el 2 al 7 ya existen en forma embrionaria.</p>
-    </div>
-
-    <div class="entity">
-      <div class="entity-head">
-        <span class="lbl">Secuencia objetivo · un turno <span class="pill esp">esperado</span></span>
-        <h3 class="entity-name">«¿Qué le ofrezco a Crosetti?» — <span class="hl">anatomía</span> del turno</h3>
-        <p class="entity-purpose">Cada paso indica qué componente lo resuelve y qué estado toca. La pregunta es real: cruza comercial (quién es), portafolio (qué tiene, qué rotar), research (con qué fuente) y riesgo (si puede).</p>
-      </div>
-      <div class="entity-body">
-        <div class="fn"><div class="fi">00</div><div class="ft"><strong>Entrada con identidad.</strong> <span class="d">El mensaje llega por el canal (API/CLI) con <code>thread_id</code> del comercial. El checkpointer levanta el estado del hilo: si ayer hablaron de Crosetti, el contexto ya lo sabe.</span></div></div>
-        <div class="fn"><div class="fi">01</div><div class="ft"><strong>Nodo memoria — retrieve.</strong> <span class="d">Consulta al cerebro de datos: hechos vigentes sobre el cliente mencionado (últimas interacciones, propuestas anteriores y su resultado, preferencias declaradas) → bloque de contexto compacto que se inyecta al supervisor.</span><span class="sub">La memoria no reemplaza a las skills: la data dura (tenencias, scores) sigue viniendo en vivo. El grafo aporta lo que las skills no tienen — historia y vigencia.</span></div></div>
-        <div class="fn"><div class="fi">02</div><div class="ft"><strong>Supervisor decide.</strong> <span class="d">Con conversación + memoria + hallazgos, structured output: delegar o finalizar. Detecta que necesita identidad → tenencias → view → propuesta.</span></div></div>
-        <div class="fn"><div class="fi">03</div><div class="ft"><strong>Delegación — paralela si es independiente.</strong> <span class="d">Identidad y pulso de mercado no dependen entre sí → <code>Send</code> a comercial y research a la vez. Tenencias → rotación sí es cadena → en serie.</span></div></div>
-        <div class="fn"><div class="fi">04</div><div class="ft"><strong>Especialistas ejecutan.</strong> <span class="d">Cada ReAct corre sus tools según el reparto del capítulo 05: skills locales para scores y research, MCP FyO Digital para saldo de hoy, minutas y comercial asignado (tenencias por instrumento aún del CSV, hasta la extensión). Portafolio arma la propuesta y valida números contra research — el atajo local ya apagado: la view llega por handoff con fuente+fecha.</span></div></div>
-        <div class="fn"><div class="fi">05</div><div class="ft"><strong>Gate de riesgo.</strong> <span class="d">La propuesta pasa por el nodo riesgo ANTES de sintetizarse: suitability contra arquetipo, concentración resultante, apalancamiento. No pasa → vuelve a portafolio con el motivo; portafolio propone la alternativa que sí entra. Máximo un ciclo de reintento.</span></div></div>
-        <div class="fn"><div class="fi">06</div><div class="ft"><strong>Confirmación humana donde toca.</strong> <span class="d">Si la acción es sensible (mensaje listo para mandar, excepción de límite), <code>interrupt()</code>: el grafo se pausa con estado persistido y espera el OK del comercial. Gracias al checkpointer, puede esperar horas.</span></div></div>
-        <div class="fn"><div class="fi">07</div><div class="ft"><strong>Síntesis.</strong> <span class="d">Respuesta única: qué tiene, qué se propone y por qué, cada número con fuente+fecha, el veredicto de riesgo visible, y qué decide el humano claramente separado de qué sugiere el sistema.</span></div></div>
-        <div class="fn"><div class="fi">08</div><div class="ft"><strong>Persistencia.</strong> <span class="d">Checkpoint del hilo actualizado + el turno completo escrito al cerebro como episodio: se dijo esto, se propuso aquello, riesgo observó tal cosa.</span></div></div>
-        <div class="fn"><div class="fi">09</div><div class="ft"><strong>Aprendizaje.</strong> <span class="d">Cuando el comercial marca el resultado (llamó / no llamó, aceptó / rechazó), ese hecho entra al grafo como relación con fecha. En seis meses, «qué propuestas funcionan con este perfil» es una consulta, no una intuición.</span></div></div>
-      </div>
-      <div class="entity-foot">
-        <span class="tag key"><strong>Nuevos:</strong> pasos 00-01 (memoria) · 05 (gate) · 06 (interrupt) · 08-09 (persistencia y aprendizaje)</span>
-        <span class="tag"><strong>Ya embrionarios:</strong> 02-04 y 07 — el supervisor actual</span>
-      </div>
-    </div>

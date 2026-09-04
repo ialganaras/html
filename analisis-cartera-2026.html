@@ -48,6 +48,7 @@
   @media (max-width:760px){ .sheet{ padding:0 20px; } }
 
   /* ── Title block (cabecera tipo carátula de plano) ─────── */
+  .titleblock-wrap{ position:relative; }
   .titleblock{ display:flex; align-items:stretch; justify-content:space-between; flex-wrap:wrap;
     border-bottom:1px solid var(--ink); font-family:var(--mono); font-size:11px; letter-spacing:.06em;
     text-transform:uppercase; }
@@ -61,11 +62,17 @@
   .titleblock .tb-type{ color:#fff; background:var(--accent); padding:4px 9px; font-weight:600; letter-spacing:.06em; }
   .titleblock .tb-r{ color:var(--muted); display:flex; align-items:center; padding:16px 0 16px 22px;
     border-left:1px solid var(--rule); white-space:nowrap; }
+  /* En mobile: una sola línea que se puede scrollear horizontalmente, con degradé
+     a la derecha como indicador de que hay más contenido. Sin CSS mask (poca
+     compatibilidad): el degradé es un fondo lineal común sobre un div fijo. */
   @media (max-width:640px){
-    .titleblock{ flex-direction:column; align-items:flex-start; }
-    .titleblock .tb-l{ padding-bottom:10px; }
-    .titleblock .tb-field{ padding:2px 16px; }
-    .titleblock .tb-r{ padding:10px 0 16px; border-left:none; border-top:1px solid var(--rule); width:100%; }
+    .titleblock-wrap::after{ content:''; position:absolute; top:0; bottom:0; right:0; width:28px;
+      background:linear-gradient(to right, transparent, var(--paper)); pointer-events:none; }
+    .titleblock{ flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch;
+      scrollbar-width:none; -ms-overflow-style:none; }
+    .titleblock::-webkit-scrollbar{ display:none; }
+    .titleblock .tb-l{ flex-wrap:nowrap; flex:none; }
+    .titleblock .tb-r{ flex:none; }
   }
 
   /* ── Cover (portada) ─────────────────────────── */
@@ -246,10 +253,10 @@
 
 <div class="doc"><div class="sheet">
 
-  <div class="titleblock">
-    <div class="tb-l"><span class="sq"></span><span class="tb-field"><span class="tb-k">Para.</span><span class="tb-v">Iñaki</span></span><span class="tb-field"><span class="tb-k">Doc.</span><span class="tb-v">Análisis de cartera 2022–2026 v1</span></span><span class="tb-field"><span class="tb-type">Análisis</span></span></div>
+  <div class="titleblock-wrap"><div class="titleblock">
+    <div class="tb-l"><span class="sq"></span><span class="tb-field"><span class="tb-k">Para.</span><span class="tb-v">Iñaki</span></span><span class="tb-field"><span class="tb-k">Doc.</span><span class="tb-v">INA-CART1</span></span><span class="tb-field"><span class="tb-type">Análisis</span></span></div>
     <div class="tb-r">inaki@alganaras.com.ar</div>
-  </div>
+  </div></div>
 
   <header class="cover">
     <div class="ref"><span>Cartera personal</span><span>Informe de resultado</span></div>

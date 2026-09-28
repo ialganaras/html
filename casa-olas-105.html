@@ -12,13 +12,10 @@ body{ background:var(--paper); color:var(--ink); font-family:var(--sans); font-s
 .doc{ max-width:1120px; margin:0 auto; padding:0 0 130px; }
 .sheet{ background:var(--paper); padding:0 52px; position:relative; }
 @media (max-width:760px){ .sheet{ padding:0 20px; } }
-.titleblock{ display:grid; grid-template-columns:1fr auto; align-items:stretch; border-bottom:1px solid var(--ink); }
-.titleblock .tb-l{ padding:16px 0; font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-2); display:flex; align-items:center; }
-.titleblock .tb-l .who{ display:flex; align-items:center; }
-.titleblock .tb-l .sq{ width:8px; height:8px; background:var(--accent); margin-right:12px; flex-shrink:0; }
-.titleblock .tb-r{ font-family:var(--mono); font-size:11px; letter-spacing:.06em; color:var(--muted); text-transform:uppercase; display:flex; align-items:center; padding:16px 0 16px 22px; border-left:1px solid var(--rule); }
+.titleblock{ display:flex; justify-content:flex-end; border-bottom:1px solid var(--ink); }
+.titleblock .tb-r{ font-family:var(--mono); font-size:11px; letter-spacing:.06em; color:var(--muted); text-transform:uppercase; padding:16px 0; }
 .titleblock .tb-r b{ color:var(--accent-deep); font-weight:600; }
-@media (max-width:760px){ .titleblock{ grid-template-columns:1fr; } .titleblock .tb-l{ padding:15px 0 12px; letter-spacing:.06em; line-height:1.5; } .titleblock .tb-r{ padding:11px 0 14px; border-left:none; border-top:1px solid var(--rule); font-size:10.5px; } }
+@media (max-width:760px){ .titleblock{ justify-content:flex-start; } .titleblock .tb-r{ padding:13px 0; font-size:10.5px; } }
 .cover{ padding:70px 0 0; }
 .cover .ref{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin-bottom:30px; display:flex; gap:18px; flex-wrap:wrap; row-gap:9px; }
 .cover .ref span{ position:relative; padding-left:16px; margin-right:4px; }
@@ -42,6 +39,7 @@ h1.title .hl{ color:var(--accent); }
 .toc a{ color:var(--ink); text-decoration:none; font-family:var(--disp); font-weight:500; font-size:19px; letter-spacing:-.01em; }
 .toc li:hover a{ color:var(--accent); }
 .toc .ar{ font-family:var(--mono); color:var(--faint); font-size:12px; }
+@media (max-width:680px){ .toc li{ grid-template-columns:40px 1fr auto; gap:10px; } .toc a{ font-size:17px; } }
 .chapter{ margin-top:96px; scroll-margin-top:24px; }
 .ch-head{ border-bottom:1px solid var(--ink); padding-bottom:26px; }
 .ch-marker{ display:flex; align-items:center; gap:14px; margin-bottom:20px; }
@@ -83,7 +81,7 @@ h2.ch-title{ font-family:var(--disp); font-weight:600; font-size:clamp(28px,4.2v
 .dt td{ padding:14px 20px; vertical-align:top; }
 .dt td.k{ width:220px; font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper-2); border-right:1px solid var(--rule); }
 .dt td.v{ font-size:15.5px; color:var(--ink-2); }
-.dt td.v a{ color:var(--accent); text-decoration:none; }
+.dt td.v a{ color:var(--accent); text-decoration:none; word-break:break-word; }
 @media (max-width:680px){ .dt td.k{ width:auto; display:block; border-right:none; } .dt td.v{ display:block; padding-top:0; } }
 .fig{ margin:36px 0; border:1px solid var(--rule-2); background:var(--card); padding:16px; }
 .fig img{ display:block; width:100%; height:auto; min-height:40px; background:var(--paper-2); }
@@ -95,7 +93,7 @@ h2.ch-title{ font-family:var(--disp); font-weight:600; font-size:clamp(28px,4.2v
 .body > p{ margin:0 0 18px; }
 .body strong{ color:var(--ink); font-weight:600; }
 .body em{ font-style:italic; }
-.body a{ color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accent-line); }
+.body a{ color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accent-line); word-break:break-word; }
 .body a:hover{ border-bottom-color:var(--accent); }
 .body ul{ list-style:none; padding:0; margin:0 0 22px; }
 .body ul li{ position:relative; padding:12px 0 12px 22px; border-bottom:1px solid var(--rule); }
@@ -117,7 +115,7 @@ table.pt tr.zone td{ background:var(--accent-soft); font-family:var(--mono); fon
 </style></head><body>
 <div class="doc"><div class="sheet">
 <header>
-<div class="titleblock"><div class="tb-l"><span class="who"><span class="sq"></span>Familia Algañaras · Vicenzotti</span></div><div class="tb-r">BRIEF · REV. <b>v6.0</b> · SEPTIEMBRE 2026</div></div>
+<div class="titleblock"><div class="tb-r">BRIEF · REV. <b>v6.1</b> · SEPTIEMBRE 2026</div></div>
 <div class="cover">
 <div class="ref"><span>Lote 105 · Manzana M4</span><span>Olas Chapadmalal</span></div>
 <h1 class="title">Casa <span class="hl">Olas 105</span>.</h1>
@@ -159,7 +157,7 @@ table.pt tr.zone td{ background:var(--accent-soft); font-family:var(--mono); fon
 <tr><td class="k">Presupuesto de obra</td><td class="v" data-editable>A definir</td></tr>
 <tr><td class="k">Superficie objetivo</td><td class="v" data-editable>A definir (~322 m² cubiertos)</td></tr>
 <tr><td class="k">Plazo contractual</td><td class="v" data-editable>Acta de Tenencia: 1 de octubre de 2026. Inicio de obra: antes del 1 de abril de 2027 (6 meses). Finalización: antes del 1 de abril de 2028 (18 meses)</td></tr>
-<tr><td class="k">Penalidad del barrio</td><td class="v" data-editable>U$S 33.000 por incumplimiento de plazos</td></tr>
+<tr><td class="k">Penalidad del barrio</td><td class="v" data-editable>U$S 33.000 por incumplimiento de plazos de construcción</td></tr>
 </tbody></table>
 </div></section>
 
@@ -323,7 +321,7 @@ table.pt tr.zone td{ background:var(--accent-soft); font-family:var(--mono); fon
 </div></section>
 </main>
 
-<footer class="colophon"><span>Iña Algañaras · Sole Vicenzotti · Comitentes</span><span>Versión 6.0 · Septiembre 2026</span></footer>
+<footer class="colophon"><span>Iña Algañaras · Sole Vicenzotti · Comitentes</span><span>Versión 6.1 · Septiembre 2026</span></footer>
 </div></div>
 <script>
 /* Las 4 figuras se cargan desde brief_casa_olas_105_v5.html (mismo repo), que tiene las imágenes embebidas. */

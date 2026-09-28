@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casa Olas 105 · Brief arquitectónico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{ --paper:#f3f2ee; --paper-2:#eceae4; --card:#ffffff; --ink:#111110; --ink-2:#2c2b27; --muted:#56544f; --faint:#78756f; --rule:#d6d4ce; --rule-2:#cbc8c0; --accent:#e22b16; --accent-soft:#e22b160e; --accent-line:#e22b1642; --accent-deep:#c0220f; --disp:'Space Grotesk', system-ui, sans-serif; --sans:'IBM Plex Sans', system-ui, sans-serif; --mono:'IBM Plex Mono', monospace; }
+*{ box-sizing:border-box; } html,body{ margin:0; padding:0; }
+body{ background:var(--paper); color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased; }
+::selection{ background:var(--accent); color:#fff; }
+.lbl{ font-family:var(--mono); font-size:11px; font-weight:500; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+.doc{ max-width:1120px; margin:0 auto; padding:0 0 130px; }
+.sheet{ background:var(--paper); padding:0 52px; position:relative; }
+@media (max-width:760px){ .sheet{ padding:0 20px; } }
+.titleblock{ display:grid; grid-template-columns:1fr auto; align-items:stretch; border-bottom:1px solid var(--ink); }
+.titleblock .tb-l{ padding:16px 0; font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-2); display:flex; align-items:center; }
+.titleblock .tb-l .who{ display:flex; align-items:center; }
+.titleblock .tb-l .sq{ width:8px; height:8px; background:var(--accent); margin-right:12px; flex-shrink:0; }
+.titleblock .tb-r{ font-family:var(--mono); font-size:11px; letter-spacing:.06em; color:var(--muted); text-transform:uppercase; display:flex; align-items:center; padding:16px 0 16px 22px; border-left:1px solid var(--rule); }
+.titleblock .tb-r b{ color:var(--accent-deep); font-weight:600; }
+@media (max-width:760px){ .titleblock{ grid-template-columns:1fr; } .titleblock .tb-l{ padding:15px 0 12px; letter-spacing:.06em; line-height:1.5; } .titleblock .tb-r{ padding:11px 0 14px; border-left:none; border-top:1px solid var(--rule); font-size:10.5px; } }
+.cover{ padding:70px 0 0; }
+.cover .ref{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin-bottom:30px; display:flex; gap:18px; flex-wrap:wrap; row-gap:9px; }
+.cover .ref span{ position:relative; padding-left:16px; margin-right:4px; }
+.cover .ref span::before{ content:''; position:absolute; left:0; top:50%; width:8px; height:8px; border:1px solid var(--accent); transform:translateY(-50%); }
+@media (max-width:760px){ .cover{ padding:44px 0 0; } .cover .ref{ font-size:10px; letter-spacing:.1em; gap:14px; margin-bottom:24px; } }
+h1.title{ font-family:var(--disp); font-weight:600; font-size:clamp(40px,6.4vw,82px); line-height:1.0; letter-spacing:-.03em; margin:0; max-width:15ch; color:var(--ink); }
+h1.title .hl{ color:var(--accent); }
+.lede{ font-size:clamp(17px,1.8vw,21px); line-height:1.55; color:var(--ink-2); max-width:62ch; margin:30px 0 0; }
+.specsheet{ margin-top:48px; border:1px solid var(--rule-2); background:var(--card); display:grid; grid-template-columns:repeat(3,1fr); }
+@media (max-width:680px){ .specsheet{ grid-template-columns:1fr; } }
+.specsheet .sc{ padding:18px 20px; border-right:1px solid var(--rule); }
+.specsheet .sc:last-child{ border-right:none; }
+.specsheet .sc .k{ display:block; margin-bottom:8px; }
+.specsheet .sc .v{ font-family:var(--disp); font-weight:500; font-size:16px; color:var(--ink); line-height:1.35; }
+.contents{ margin:72px 0 0; border-top:1px solid var(--ink); padding-top:26px; }
+.contents .ct{ color:var(--accent); margin-bottom:18px; }
+.toc{ list-style:none; margin:0; padding:0; }
+.toc li{ display:grid; grid-template-columns:70px 1fr auto; align-items:center; gap:18px; padding:15px 0; border-bottom:1px solid var(--rule); }
+.toc .n{ font-family:var(--mono); font-size:12px; color:var(--accent); }
+.toc a{ color:var(--ink); text-decoration:none; font-family:var(--disp); font-weight:500; font-size:19px; letter-spacing:-.01em; }
+.toc li:hover a{ color:var(--accent); }
+.toc .ar{ font-family:var(--mono); color:var(--faint); font-size:12px; }
+.chapter{ margin-top:96px; scroll-margin-top:24px; }
+.ch-head{ border-bottom:1px solid var(--ink); padding-bottom:26px; }
+.ch-marker{ display:flex; align-items:center; gap:14px; margin-bottom:20px; }
+.ch-marker .mn{ font-family:var(--mono); font-size:12px; color:#fff; background:var(--accent); padding:4px 9px; font-weight:600; letter-spacing:.06em; }
+h2.ch-title{ font-family:var(--disp); font-weight:600; font-size:clamp(28px,4.2vw,52px); line-height:1.02; letter-spacing:-.03em; margin:0; max-width:18ch; }
+.note{ margin:32px 0; border:1px solid var(--rule-2); border-left:3px solid var(--accent); background:var(--card); padding:22px 26px; max-width:78ch; position:relative; }
+.note .lbl{ color:var(--accent); display:block; margin-bottom:11px; }
+.note p{ margin:0 0 10px; font-size:15.5px; line-height:1.58; color:var(--ink-2); }
+.note p:last-child{ margin-bottom:0; }
+.note strong{ color:var(--ink); font-weight:600; }
+.note em{ font-style:normal; color:var(--accent); font-weight:500; }
+.note.warn{ border-left-color:var(--accent-deep); border-left-width:4px; }
+.tag{ font-family:var(--mono); font-size:11px; color:var(--ink-2); padding:7px 12px; border:1px solid var(--rule-2); background:var(--card); }
+.tag strong{ color:var(--ink); font-weight:600; }
+.tag.key{ border-color:var(--accent-line); color:var(--accent); background:var(--accent-soft); }
+.tag.key strong{ color:var(--accent-deep); }
+.tag.lnk{ border-color:var(--accent); color:var(--accent); }
+.tag.lnk strong{ color:var(--accent-deep); }
+.statement{ margin:40px 0; padding:56px 44px; border:1px solid var(--ink); background:var(--card); position:relative; }
+.statement::before{ content:''; position:absolute; top:0; left:0; width:6px; height:100%; background:var(--accent); }
+.statement .lbl{ color:var(--accent); margin-bottom:22px; display:block; }
+.statement p{ font-family:var(--disp); font-weight:500; font-size:clamp(24px,3.4vw,42px); line-height:1.18; letter-spacing:-.025em; margin:0; max-width:22ch; color:var(--ink); }
+.statement .hl{ color:var(--accent); }
+.colophon{ margin-top:50px; padding-top:18px; border-top:1px solid var(--ink); display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:.05em; text-transform:uppercase; }
+.dt{ width:100%; border-collapse:collapse; margin:32px 0; background:var(--card); border:1px solid var(--rule-2); }
+.dt tr{ border-bottom:1px solid var(--rule); }
+.dt tr:last-child{ border-bottom:none; }
+.dt td{ padding:14px 20px; vertical-align:top; }
+.dt td.k{ width:220px; font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper-2); border-right:1px solid var(--rule); }
+.dt td.v{ font-size:15.5px; color:var(--ink-2); }
+.dt td.v a{ color:var(--accent); text-decoration:none; }
+@media (max-width:680px){ .dt td.k{ width:auto; display:block; border-right:none; } .dt td.v{ display:block; padding-top:0; } }
+.fig{ margin:36px 0; border:1px solid var(--rule-2); background:var(--card); padding:16px; }
+.fig img{ display:block; width:100%; height:auto; min-height:40px; background:var(--paper-2); }
+.fig .cap{ font-family:var(--mono); font-size:11px; letter-spacing:.05em; color:var(--muted); margin-top:12px; padding-top:10px; border-top:1px solid var(--rule); text-transform:uppercase; }
+.sub-h{ font-family:var(--disp); font-weight:600; font-size:26px; letter-spacing:-.015em; color:var(--ink); margin:56px 0 4px; padding-top:24px; border-top:1px solid var(--rule); }
+.sub-h .n{ font-family:var(--mono); font-size:14px; color:var(--accent); margin-right:14px; letter-spacing:.04em; font-weight:500; }
+.body{ margin-top:30px; }
+.body > p, .body > ul, .body > ol{ max-width:70ch; font-size:16.5px; line-height:1.62; color:var(--ink-2); }
+.body > p{ margin:0 0 18px; }
+.body strong{ color:var(--ink); font-weight:600; }
+.body em{ font-style:italic; }
+.body a{ color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accent-line); }
+.body a:hover{ border-bottom-color:var(--accent); }
+.body ul{ list-style:none; padding:0; margin:0 0 22px; }
+.body ul li{ position:relative; padding:12px 0 12px 22px; border-bottom:1px solid var(--rule); }
+.body ul li:last-child{ border-bottom:none; }
+.body ul li::before{ content:''; position:absolute; left:0; top:21px; width:7px; height:7px; background:var(--accent); }
+.body ol{ list-style:none; padding:0; margin:0 0 22px; counter-reset:n; }
+.body ol[start]{ counter-reset:n calc(var(--start) - 1); }
+.body ol li{ counter-increment:n; position:relative; padding:14px 0 14px 44px; border-bottom:1px solid var(--rule); }
+.body ol li::before{ content:counter(n,decimal-leading-zero); position:absolute; left:0; top:17px; font-family:var(--mono); font-size:12px; color:var(--accent); }
+.body ol li:last-child{ border-bottom:none; }
+table.pt{ width:100%; border-collapse:collapse; margin:26px 0 12px; background:var(--card); border:1px solid var(--ink); font-size:15px; }
+table.pt th{ font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); text-align:left; padding:14px 18px; border-bottom:1px solid var(--ink); font-weight:500; background:var(--paper-2); }
+table.pt td{ padding:14px 18px; border-bottom:1px solid var(--rule); vertical-align:top; color:var(--ink-2); line-height:1.5; }
+table.pt td:first-child{ font-family:var(--disp); font-weight:600; color:var(--ink); width:28%; }
+table.pt td:last-child, table.pt th:last-child{ text-align:right; font-family:var(--mono); font-size:12.5px; color:var(--accent); white-space:nowrap; }
+table.pt tr.zone td{ background:var(--accent-soft); font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--accent-deep); font-weight:600; border-top:1px solid var(--accent-line); padding:11px 18px; text-align:left; }
+@media (max-width:680px){ table.pt, table.pt tbody, table.pt tr, table.pt td{ display:block; width:auto !important; } table.pt thead{ display:none; } table.pt td{ border-bottom:none; padding:6px 16px; text-align:left !important; } table.pt tr{ border-bottom:1px solid var(--rule); padding:8px 0; } table.pt tr.zone{ padding:0; } }
+.total{ display:flex; flex-wrap:wrap; gap:9px; margin:0 0 10px; }
+</style></head><body>
+<div class="doc"><div class="sheet">
+<header>
+<div class="titleblock"><div class="tb-l"><span class="who"><span class="sq"></span>Familia Algañaras · Vicenzotti</span></div><div class="tb-r">BRIEF · REV. <b>v6.0</b> · SEPTIEMBRE 2026</div></div>
+<div class="cover">
+<div class="ref"><span>Lote 105 · Manzana M4</span><span>Olas Chapadmalal</span></div>
+<h1 class="title">Casa <span class="hl">Olas 105</span>.</h1>
+<p class="lede">La casa de residencia permanente que Iña, Sole, Roma e Iker queremos construir en Olas Chapadmalal (Lote 105) — documento de partida para la conversación con el estudio.</p>
+<div class="specsheet">
+<div class="sc"><span class="lbl k">Lote</span><span class="v">1.542,71 m²<br>55,10 × 28,05 m</span></div>
+<div class="sc"><span class="lbl k">Casa</span><span class="v">~322 m² cubiertos<br>máx. 400 m²</span></div>
+<div class="sc"><span class="lbl k">Plazo</span><span class="v">Tenencia 01/10/2026<br>Fin de obra 01/04/2028</span></div>
+</div></div>
+</header>
+<main>
+<div class="note" style="margin-top:52px; max-width:none;"><span class="lbl">Nota para el estudio</span>
+<p>Este documento reúne lo que sabemos de nosotros, del lote y de cómo queremos vivir. Es el punto de partida de una conversación, <strong>no un pliego cerrado</strong>.</p>
+<p>Las superficies, medidas, cantidades y soluciones que aparecen en las páginas siguientes son <em>meramente orientativas</em>: describen necesidades y no imponen respuestas. El profesional tiene total libertad para proponer lo que considere mejor — distribuciones distintas, superficies diferentes, soluciones que no imaginamos.</p>
+<p>Lo que más valoramos de una propuesta es que <strong>capture el espíritu de la casa</strong> y lo traduzca mejor de lo que nosotros supimos escribirlo.</p>
+<p style="margin-top:16px; font-family:var(--disp); font-size:17px; color:var(--ink); font-style:italic;">— Iña y Sole</p></div>
+
+<nav class="contents"><div class="lbl ct">Índice del documento</div><ol class="toc">
+<li><span class="n">01</span><a href="#s1">Datos del proyecto</a><span class="ar">[↓]</span></li>
+<li><span class="n">02</span><a href="#s2">Entorno y barrio</a><span class="ar">[↓]</span></li>
+<li><span class="n">03</span><a href="#s3">Espíritu y filosofía</a><span class="ar">[↓]</span></li>
+<li><span class="n">04</span><a href="#s4">Programa de necesidades</a><span class="ar">[↓]</span></li>
+<li><span class="n">05</span><a href="#s5">Disparadores</a><span class="ar">[↓]</span></li>
+<li><span class="n">06</span><a href="#s6">Requerimientos técnicos</a><span class="ar">[↓]</span></li>
+<li><span class="n">07</span><a href="#s7">Referencias visuales y conceptuales</a><span class="ar">[↓]</span></li>
+<li><span class="n">08</span><a href="#s8">Información a relevar antes del anteproyecto</a><span class="ar">[↓]</span></li>
+<li><span class="n">09</span><a href="#s9">Condición contractual crítica</a><span class="ar">[↓]</span></li>
+</ol></nav>
+
+<section class="chapter" id="s1"><div class="ch-head"><div class="ch-marker"><span class="mn">01</span></div><h2 class="ch-title">Datos del proyecto</h2></div><div class="body">
+<table class="dt"><tbody>
+<tr><td class="k">Comitentes</td><td class="v" data-editable>Iñaki Algañaras y Soledad Vicenzotti</td></tr>
+<tr><td class="k">Usuarios permanentes</td><td class="v" data-editable>Iña, Sole, Roma (9) e Iker (7)</td></tr>
+<tr><td class="k">Contacto</td><td class="v"><a href="mailto:inaki@alganaras.com.ar">inaki@alganaras.com.ar</a> · <a href="mailto:solevicen@gmail.com">solevicen@gmail.com</a></td></tr>
+<tr><td class="k">Ubicación</td><td class="v" data-editable>Lote 105 · Manzana M4 · Olas Chapadmalal, Chapadmalal, Mar del Plata</td></tr>
+<tr><td class="k">Superficie del lote</td><td class="v" data-editable>1.542,71 m² · 55,10 m de profundidad × 28,05 m de frente</td></tr>
+<tr><td class="k">Orientación del lote</td><td class="v" data-editable>Frente a calle interna. Fondo hacia arroyo (sin edificación enfrente en Etapas 1 y 2; Etapa 3 separada por arroyo + ~40 m)</td></tr>
+<tr><td class="k">Tipo de uso</td><td class="v" data-editable>Residencia permanente familiar. En temporadas de ausencia: alquiler de la casa completa</td></tr>
+<tr><td class="k">Presupuesto de obra</td><td class="v" data-editable>A definir</td></tr>
+<tr><td class="k">Superficie objetivo</td><td class="v" data-editable>A definir (~322 m² cubiertos)</td></tr>
+<tr><td class="k">Plazo contractual</td><td class="v" data-editable>Acta de Tenencia: 1 de octubre de 2026. Inicio de obra: antes del 1 de abril de 2027 (6 meses). Finalización: antes del 1 de abril de 2028 (18 meses)</td></tr>
+<tr><td class="k">Penalidad del barrio</td><td class="v" data-editable>U$S 33.000 por incumplimiento de plazos</td></tr>
+</tbody></table>
+</div></section>
+
+<section class="chapter" id="s2"><div class="ch-head"><div class="ch-marker"><span class="mn">02</span></div><h2 class="ch-title">Entorno y barrio</h2></div><div class="body">
+<p>Olas Chapadmalal es un barrio con una identidad muy definida — comunidad oceánica, bajo impacto, integración al paisaje — y esa identidad es directamente relevante para el diseño de la casa. Su fundador es Fernando Aguerre, creador de la marca Reef Surfwear y referente del surf olímpico mundial. Las tierras pertenecieron a la familia Bemberg y el bosque fue plantado en 1948. Web oficial: <a target="_blank" rel="noopener" href="https://olas-chapadmalal.com.ar/">olas-chapadmalal.com.ar</a>.</p>
+<h3 class="sub-h"><span class="n">2.1</span> El barrio</h3>
+<table class="dt"><tbody>
+<tr><td class="k">Distancia al mar</td><td class="v" data-editable>150 metros. Acceso por bio-senderos peatonales del barrio</td></tr>
+<tr><td class="k">Entorno inmediato</td><td class="v" data-editable>Bosque nativo de más de 75 años (plantado en 1948, 10.000 árboles). Mar y campos de la zona de Chapadmalal</td></tr>
+<tr><td class="k">Densidad</td><td class="v" data-editable>Máximo 7 viviendas/ha. La mitad que otros barrios de la zona</td></tr>
+<tr><td class="k">Vientos predominantes</td><td class="v" data-editable>Del SW. Verificar incidencia exacta en lote 105 antes del anteproyecto</td></tr>
+<tr><td class="k">Servicios en el lote</td><td class="v" data-editable>Gas natural · Electricidad trifásica subterránea · Agua potable propia · Cloacas · Fibra óptica monomodo</td></tr>
+<tr><td class="k">Club House</td><td class="v" data-editable>Yoga, gym, tenis, paddle, fútbol 5 · Bar/restaurant · Quinchos · Vestuarios</td></tr>
+<tr><td class="k">Áreas comunes</td><td class="v" data-editable>Laguna + arroyo · Huerta orgánica comunitaria · Bio-senderos forestados</td></tr>
+<tr><td class="k">Iluminación del barrio</td><td class="v" data-editable>Política de cielos oscuros. Preserva observación nocturna del cielo</td></tr>
+</tbody></table>
+<figure class="fig"><img data-img="Masterplan de Olas Chapadmalal" alt="Masterplan de Olas Chapadmalal"><figcaption class="cap">Fig. 01 · Masterplan de Olas Chapadmalal — el lote 105 está en el sector interior oeste, próximo a la laguna. El fondo del lote da al arroyo.</figcaption></figure>
+<h3 class="sub-h"><span class="n">2.2</span> El lote 105 en particular</h3>
+<ul>
+<li><strong>Posición del lote.</strong> Interior del barrio, próximo a la laguna. Menor tráfico, mayor tranquilidad, privacidad estructural.</li>
+<li><strong>El fondo da al arroyo.</strong> La vista más valiosa del lote. Sin edificación enfrente en Etapas 1 y 2. La Etapa 3 estará separada por el arroyo y aproximadamente 40 metros adicionales — buffer natural permanente.</li>
+<li><strong>Proporción 55 m × 28 m.</strong> Lote largo y relativamente angosto. La casa se organiza en profundidad: fachada austera al frente, apertura total hacia el arroyo en el fondo.</li>
+<li><strong>Árboles existentes.</strong> El bosque del barrio incluye ejemplares dentro del lote. Son irremplazables — el diseño se adapta a los árboles, no al revés. Relevamiento obligatorio antes del anteproyecto.</li>
+</ul>
+<figure class="fig"><img data-img="Plano del lote 105" alt="Plano del lote 105"><figcaption class="cap">Fig. 02 · Plano del lote 105 — 1.542,71 m² · 55,10 × 28,05 m</figcaption></figure>
+<figure class="fig"><img data-img="Vista satelital del sector" alt="Vista satelital del sector"><figcaption class="cap">Fig. 03 · Vista satelital del sector — el lote 105 con el arroyo y la franja verde al fondo</figcaption></figure>
+</div></section>
+
+<section class="chapter" id="s3"><div class="ch-head"><div class="ch-marker"><span class="mn">03</span></div><h2 class="ch-title">Espíritu y filosofía</h2></div><div class="body">
+<p>Si hay algo que la propuesta debería capturar y traducir, es esto.</p>
+<div class="statement"><span class="lbl">La casa, en una frase</span><p>Casa para habitar y sentir desde adentro, no para mirar <span class="hl">desde afuera</span>.</p></div>
+<p>La casa debe sentirse como una casa de bosque, mar y campos de la zona — no como un country. Simple, cálida, acogedora, funcional. Materiales honestos, integrados al paisaje existente. El entorno de referencia es Chapadmalal: los acantilados, el bosque añoso, el mar, los campos.</p>
+<p>La casa debe verse como un volumen sólido y con carácter desde afuera, sin golpes de efecto, y sentirse cálida y acogedora por dentro. Materialidad que dialogue con el paisaje: hormigón pigmentado en los tonos de los acantilados de Chapadmalal, maderas naturales, vidrio. Curvas usadas con criterio, no como gesto. La referencia más clara de espíritu y materialidad es la <em>Casa Tilo</em>.</p>
+<p><strong>La madera como protagonista.</strong> El papá de Iña era carpintero, y la madera tiene para nosotros un valor que va más allá de lo estético. Queremos que aporte la calidez y el tacto en toda la casa: en lo que se toca todos los días — puertas, marcos, mesadas, pasamanos, muebles empotrados — y no solo como revestimiento. Madera noble, bien trabajada, que se note hecha con oficio.</p>
+<p>Cada decisión de diseño responde a cómo se vive la casa por dentro.</p>
+<ol>
+<li><strong>Privacidad desde el exterior.</strong> La casa es invisible o hermética desde la calle y los lotes vecinos. Un observador desde afuera no puede anticipar lo que hay adentro. La apertura se reserva para el interior del lote y el fondo hacia el arroyo.</li>
+<li><strong>Vida familiar de cuatro, hoy y dentro de 10 años.</strong> La casa está pensada para el día a día actual — desayunar juntos, cocina como lugar de encuentro — y para la realidad de dentro de 10 años, cuando Roma e Iker sean adolescentes y luego jóvenes adultos que vengan de visita. Los dormitorios deben admitir el cambio de uso. Los baños deben sostener picos de uso simultáneo de cuatro adultos.</li>
+<li><strong>Recibir bien.</strong> Capacidad para recibir amigos y familia con comodidad. Mesa para 8–10 personas, barra generosa, galería que extiende el espacio social hacia afuera. Que lleguen y se quieran quedar.</li>
+<li><strong>Diseñada para invierno y viento.</strong> El clima de Chapadmalal es de uso todo el año. La casa tiene que ser acogedora en días fríos y ventosos: el fuego, el patio protegido y los materiales cálidos son tan importantes como la pileta y el deck.</li>
+<li><strong>Casa saludable, seca, sin humedad.</strong> En clima costero atlántico la humedad es el enemigo principal. La casa debe estar diseñada desde su concepción para que no haya condensación, ni manchas, ni olor a humedad — nunca. Esto no es un detalle constructivo posterior: es un principio de diseño.</li>
+<li><strong>El fuego.</strong> Salamandras y chimeneas son parte de la identidad de la casa. El fuego aparece en múltiples espacios; no es un accesorio.</li>
+<li><strong>Dentro y fuera integrados.</strong> La casa conecta el interior con el exterior de forma fluida. El ventanal que se abre, la galería que es continuación del living, el jardín que empieza desde la casa.</li>
+<li><strong>Alquiler de la casa completa.</strong> Cuando la familia no está, la casa se alquila íntegramente como unidad. Esto requiere espacios de guardado bajo llave para los objetos personales, y un nivel de terminaciones que justifique un alquiler premium en la zona.</li>
+<li><strong>Pensada para envejecer bien.</strong> Materiales y soluciones técnicas que mantengan su carácter con el paso del tiempo, sin verse datados a los cinco años. La casa tiene que poder ser de la familia por décadas.</li>
+</ol>
+<p>Espacio abierto: si el estudio identifica un principio rector adicional que crea que debemos considerar, es bienvenido.</p>
+</div></section>
+
+<section class="chapter" id="s4"><div class="ch-head"><div class="ch-marker"><span class="mn">04</span></div><h2 class="ch-title">Programa de necesidades</h2></div><div class="body">
+<p>Superficie total estimada: ~322 m² cubiertos. Todas las superficies y requerimientos son orientativos — describen cómo imaginamos usar cada espacio, no cómo debe resolverse.</p>
+<table class="pt">
+<thead><tr><th>Ambiente</th><th>Requerimientos</th><th>Sup.</th></tr></thead>
+<tbody>
+<tr class="zone"><td colspan="3">Zona social — orientada al fondo y al arroyo</td></tr>
+<tr><td data-editable>Living · comedor · cocina integrados</td><td data-editable>Gran espacio abierto orientado al arroyo. Ventanal de piso a techo tipo Olsen. Barra/isla como protagonista: 4–6 personas acompañando a quien cocina. Mesa para 8–10 personas (recibir). Salamandra de doble cara living/comedor</td><td data-editable>~80 m²</td></tr>
+<tr><td data-editable>Galería cubierta</td><td data-editable>Extensión continua del living hacia el jardín. Es también el quincho y la parrilla. Con salamandra o brasero. Usable en días de viento</td><td data-editable>~40 m²</td></tr>
+<tr><td data-editable>Patio protegido del viento</td><td data-editable>Espacio exterior usable todo el año, opuesto al viento SW. Semi-cubierto según reglamento de superficies cubiertas</td><td data-editable>~20 m²</td></tr>
+<tr class="zone"><td colspan="3">Zona íntima</td></tr>
+<tr><td data-editable>Suite principal</td><td data-editable>Baño en suite muy privado. Bachas individuales. Vestidor. Hogar o salamandra</td><td data-editable>~35 m²</td></tr>
+<tr><td data-editable>Habitación Iker</td><td data-editable>Escritorio incorporado. Diseñada para admitir uso adolescente y adulto joven en el tiempo</td><td data-editable>~18 m²</td></tr>
+<tr><td data-editable>Habitación Roma</td><td data-editable>Escritorio incorporado. Diseñada para admitir uso adolescente y adulto joven en el tiempo. Bow window con asiento empotrado</td><td data-editable>~18 m²</td></tr>
+<tr><td data-editable>Baño compartido (Iker y Roma)</td><td data-editable>Amplio, con espacio para dos. Pensado para picos de uso simultáneo de cuatro adultos a futuro</td><td data-editable>~8 m²</td></tr>
+<tr><td data-editable>Sala de TV / playroom</td><td data-editable>Separada del living, para que la tele no esté ahí. Aislación acústica para no interferir con el resto de la casa. Uso de Iker y Roma hoy; espacio de estar informal a futuro</td><td data-editable>~15 m²</td></tr>
+<tr class="zone"><td colspan="3">Estudio y huéspedes</td></tr>
+<tr><td data-editable>Home office + cuarto de huéspedes</td><td data-editable>Doble función: trabajo aislado acústicamente y habitación independiente para amigos o familia. SIN cocina. Con baño propio. Entrada independiente</td><td data-editable>~28 m²</td></tr>
+<tr class="zone"><td colspan="3">Cochera y llegada de la playa</td></tr>
+<tr><td data-editable>Cochera con techo y taller integrado</td><td data-editable>No requiere garaje cerrado: alcanza con un techo para 2 autos. Losa de hormigón, trifásica, sector de taller delimitado</td><td data-editable>~30 m²</td></tr>
+<tr><td data-editable>Zona de llegada de la playa</td><td data-editable>Transición para arena, trajes mojados, tablas y toallas antes de entrar. Resolución a criterio del arquitecto. Ventilación adecuada</td><td data-editable>~12 m²</td></tr>
+<tr class="zone"><td colspan="3">Servicios</td></tr>
+<tr><td data-editable>Lavadero + guardado de temporada</td><td data-editable>Separado de la cocina. Sector bajo llave para objetos personales al salir a alquilar</td><td data-editable>~14 m²</td></tr>
+<tr class="zone"><td colspan="3">Exterior — no computa como superficie cubierta</td></tr>
+<tr><td data-editable>Pileta</td><td data-editable>Tamaño mediano. Integrada al jardín y galería. Sistema automatizado</td><td>exterior</td></tr>
+<tr><td data-editable>Jardín</td><td data-editable>Especies nativas de bajo mantenimiento. Integración con el bosque del barrio</td><td>exterior</td></tr>
+</tbody></table>
+<div class="total"><span class="tag key"><strong>Total cubierto estimado:</strong> ~322 m²</span><span class="tag"><strong>Máximo objetivo:</strong> 400 m²</span><span class="tag lnk"><strong>Ajustable:</strong> según FOT/FOS y criterio del estudio</span></div>
+</div></section>
+
+<section class="chapter" id="s5"><div class="ch-head"><div class="ch-marker"><span class="mn">05</span></div><h2 class="ch-title">Disparadores</h2></div><div class="body">
+<h3 class="sub-h"><span class="n">5.1</span> Estrategia general del lote</h3>
+<p>La geometría del lote (55 m de profundidad × 28 m de frente) define una estrategia clara: la casa se organiza en profundidad. La fachada pública es completamente cerrada al frente; el observador desde la calle no anticipa nada. La apertura progresiva culmina en el fondo, hacia el arroyo.</p>
+<ul>
+<li><strong>Frente (calle).</strong> Cerrado, privado, austero. Cochera, acceso peatonal discreto. Sin ventanas grandes hacia la calle.</li>
+<li><strong>Zona media.</strong> Llegada de la playa, circulaciones, servicios, cochera con taller. Transición.</li>
+<li><strong>Fondo (arroyo).</strong> Máxima apertura. Living con ventanal Olsen, galería, pileta, jardín. La vista más valiosa orientada hacia acá.</li>
+</ul>
+<h3 class="sub-h"><span class="n">5.2</span> La galería como corazón del espacio exterior</h3>
+<p>La galería cubierta no es un apéndice — es la extensión natural del living hacia el exterior, y al mismo tiempo el quincho, la parrilla y el espacio de estar protegido del viento. Un solo gesto que lo hace todo: continuidad visual y física con el living interior, parrilla integrada con mesada de trabajo, salamandra o brasero, privacidad lateral respecto a lotes vecinos, y diseñada para ser usable en invierno.</p>
+<h3 class="sub-h"><span class="n">5.3</span> El fuego como sistema</h3>
+<p>El fuego es parte de la identidad de la casa, no un accesorio. Debe aparecer en: <strong>salamandra de doble cara living/comedor</strong> — elemento estructural del espacio social —, <strong>hogar o salamandra en suite principal</strong>, y <strong>brasero o salamandra en galería exterior</strong>. El arquitecto debe ubicar estos elementos desde el anteproyecto: las chimeneas y conducciones se coordinan con la estructura desde el inicio.</p>
+<h3 class="sub-h"><span class="n">5.4</span> El patio protegido del viento</h3>
+<p>El viento del SW en Chapadmalal inutiliza los espacios exteriores convencionales muchos días al año. Un patio bien orientado multiplica los días de uso real. Requerimientos: orientación opuesta al SW (verificar en lote con visita en día de viento típico), semi-cubierto o con cerramiento vidriado retráctil, y espacio para mesa, plantas, y estar confortablemente en días de entre-tiempo.</p>
+<h3 class="sub-h"><span class="n">5.5</span> La barra y la cocina social</h3>
+<p>La cocina es un espacio de actuación y convivencia. La isla o barra es el corazón del espacio social: altura de bar para estar de pie o sentado acompañando a quien cocina, capacidad para 4–6 personas sentadas mirando hacia quien cocina, buena iluminación sobre mesada y barra, visible desde el ventanal y la galería.</p>
+<h3 class="sub-h"><span class="n">5.6</span> El home office</h3>
+<p>Doble función: espacio de trabajo propio, aislado e independiente; y habitación confortable para amigos o familia. El diseño debe resolver ambas funciones sin que una compita con la otra. Aislación acústica respecto al resto de la casa. Entrada independiente. Baño propio. Sin cocina. Espacio de trabajo con buena luz natural y escritorio amplio. Como habitación de huéspedes: cama cómoda, espacio para guardar ropa, privacidad total.</p>
+<h3 class="sub-h"><span class="n">5.7</span> La llegada de la playa</h3>
+<p>A 150 metros del mar, la vuelta de la playa es un momento cotidiano de la casa: arena, trajes mojados, toallas, tablas. Vale la pena que la casa lo tenga resuelto con naturalidad — que la arena y lo mojado tengan su lugar antes de entrar, sin cruzar las zonas secas. Cómo se resuelve (ducha exterior, cuarto húmedo, sector de la cochera) queda a criterio del arquitecto. Lo que importa es que el flujo exista y que el guardado de equipamiento esté ventilado.</p>
+</div></section>
+
+<section class="chapter" id="s6"><div class="ch-head"><div class="ch-marker"><span class="mn">06</span></div><h2 class="ch-title">Requerimientos técnicos</h2></div><div class="body">
+<h3 class="sub-h"><span class="n">6.1</span> Materialidad y resistencia costera</h3>
+<p>Doble o triple aislación para humedad y salitre — clima agresivo costero atlántico. Carpinterías de alta performance con rotura de puente térmico. Sin acero inoxidable expuesto al exterior. Hormigón formulado para ambiente marino (relación agua/cemento controlada, aditivos). Maderas según función y exposición. Revoques y pinturas específicas para ambientes costeros con alta salinidad.</p>
+<h3 class="sub-h"><span class="n">6.2</span> Control de humedad y condensación</h3>
+<p>Hoy vivimos en una casa alquilada nueva y aun así la ropa sale húmeda de los placares, las toallas no se secan en el baño y las alacenas tienen olor a humedad. No queremos eso para esta casa. En Chapadmalal la humedad ambiente y el salto térmico entre día y noche generan condensación si el diseño no la anticipa, así que la envolvente tiene que pensarse como un sistema: aislación continua sin puentes térmicos, barrera de vapor, carpinterías con rotura de puente térmico, ventilación (natural y mecánica) y extracción real en cocina y baños. Los recursos concretos los decide el arquitecto, pero es algo que nos importa pensar desde el principio del proyecto, no como un arreglo posterior.</p>
+<h3 class="sub-h"><span class="n">6.3</span> Eficiencia energética</h3>
+<p>Paneles solares dimensionados para consumo total del hogar. Aislación térmica reforzada en muros, techo y carpinterías (ver también 6.2). Gas natural disponible en el lote — prever para calefacción, cocina y agua caliente central. Losa radiante como opción de calefacción complementaria.</p>
+<h3 class="sub-h"><span class="n">6.4</span> Domótica e infraestructura tecnológica</h3>
+<p>Infraestructura completa desde obra — cañeros, tableros, puntos de red. Sin retrofitting posterior. Control centralizado de iluminación, climatización y seguridad. Fibra óptica monomodo disponible en el lote. Sistema de monitoreo remoto para gestionar el alquiler a distancia.</p>
+<h3 class="sub-h"><span class="n">6.5</span> Bajo mantenimiento</h3>
+<p>Jardín con especies nativas de bajo riego — integrado al bosque del barrio. Pileta con sistema automatizado de tratamiento y limpieza. Materiales de fachada que no requieran pintura periódica.</p>
+<h3 class="sub-h"><span class="n">6.6</span> Iluminación exterior</h3>
+<p>El barrio tiene política de cielos oscuros. La iluminación exterior debe ser rasante, baja, direccional e indirecta. Sin focos hacia arriba. Suma al espíritu de la casa y al potencial de alquiler.</p>
+</div></section>
+
+<section class="chapter" id="s7"><div class="ch-head"><div class="ch-marker"><span class="mn">07</span></div><h2 class="ch-title">Referencias visuales y conceptuales</h2></div><div class="body">
+<h3 class="sub-h"><span class="n">7.1</span> Referencia principal — espíritu y materialidad</h3>
+<p>Volumetría clara, materiales integrados al entorno, uso medido de curvas, calidez interior. Es la referencia más precisa del carácter que buscamos.</p>
+<ul>
+<li><strong>Casa Tilo.</strong> <a target="_blank" rel="noopener" href="https://gonzalobardach.com/proyectos/tilo/">gonzalobardach.com/proyectos/tilo</a></li>
+<li><strong>Casa Olivos Golf</strong> — obra afín en la misma línea. <a target="_blank" rel="noopener" href="https://gonzalobardach.com/proyectos/olivos-golf/">gonzalobardach.com/proyectos/olivos-golf</a></li>
+<li><strong>Casa Rivera.</strong> <a target="_blank" rel="noopener" href="https://atelierm.ar/es/projects/rivera">atelierm.ar/es/projects/rivera</a></li>
+</ul>
+<h3 class="sub-h"><span class="n">7.2</span> Hormigón pigmentado color acantilado</h3>
+<p>Estudiar hormigón pigmentado en los tonos de los acantilados de Chapadmalal como materialidad principal de fachada. Dialoga con el paisaje geológico del lugar y envejece mejor que revoques pintados en clima costero.</p>
+<figure class="fig"><img data-img="Referencia de hormigón pigmentado color acantilado" alt="Referencia de hormigón pigmentado color acantilado"><figcaption class="cap">Fig. 04 · Referencia de hormigón pigmentado — tonos ocres y tierras del acantilado</figcaption></figure>
+<h3 class="sub-h"><span class="n">7.3</span> Otras referencias</h3>
+<ul>
+<li><strong>Ventanal Olsen.</strong> Restaurante Olsen, Palermo (Buenos Aires). Gran paño de madera y vidrio que se pliega completamente. Referencia de sistema constructivo y escala.</li>
+<li><strong>Bow window con asiento.</strong> Ventanas con asiento empotrado, estilo nórdico / inglés rural. Búsqueda: <em>window seat Nordic house</em>.</li>
+<li><strong>Salamandra doble cara.</strong> Estufas de doble cara entre living y comedor en espacio abierto.</li>
+<li><strong>Patio interior protegido.</strong> Búsqueda: <em>wind-protected courtyard house coastal</em>.</li>
+</ul>
+<p>Referencias adicionales que el estudio quiera aportar para calibrar la conversación son bienvenidas.</p>
+</div></section>
+
+<section class="chapter" id="s8"><div class="ch-head"><div class="ch-marker"><span class="mn">08</span></div><h2 class="ch-title">Información a relevar antes del anteproyecto</h2></div><div class="body">
+<p>Estos datos condicionan cualquier propuesta — sin ellos, un anteproyecto puede quedar invalidado. Proponemos relevarlos juntos como primer paso del trabajo.</p>
+<h3 class="sub-h">Lote y reglamento del barrio</h3>
+<ol>
+<li><strong>FOT y FOS.</strong> Superficie máxima edificable y ocupación de planta. Solicitar a Olas Chapadmalal.</li>
+<li><strong>Altura máxima.</strong> ¿Una o dos plantas? ¿Restricción de cota de cumbrera?</li>
+<li><strong>Retiros de frente, fondo y laterales.</strong> Define el perímetro real construible dentro del lote.</li>
+<li><strong>Reglamento de materiales y fachadas.</strong> ¿Restricciones de materiales, colores, estilos o cercos?</li>
+</ol>
+<h3 class="sub-h">Sitio — características físicas</h3>
+<ol start="5" style="--start:5">
+<li><strong>Vientos predominantes en lote 105.</strong> Dirección y fuerza estacional. Visitar el lote en día de viento típico.</li>
+<li><strong>Orientación del atardecer.</strong> Verificar ángulo solar oeste/noroeste y obstrucciones de árboles. Medir sombras.</li>
+<li><strong>Relevamiento de árboles en el lote.</strong> Especies, tamaños, estado. El diseño se adapta a los árboles existentes.</li>
+<li><strong>Condición del arroyo en el fondo.</strong> Distancia exacta, cota de inundación, retiro obligatorio, nivel freático.</li>
+<li><strong>Estudio de suelos y nivel freático.</strong> Fundamental para definir estrategia de impermeabilización de bases y controlar humedad ascendente.</li>
+</ol>
+</div></section>
+
+<section class="chapter" id="s9"><div class="ch-head"><div class="ch-marker"><span class="mn">09</span></div><h2 class="ch-title">Condición contractual crítica</h2></div><div class="body">
+<div class="note warn" style="max-width:none; margin-top:32px;"><span class="lbl">Plazo no negociable</span>
+<p>El contrato de reserva del lote establece que la construcción debe iniciarse dentro de los 6 meses desde el Acta de Tenencia, y finalizarse dentro de los 18 meses desde esa misma fecha.</p>
+<p>La tenencia es a partir del <strong>1 de octubre de 2026</strong>, por lo que la obra debe <strong>empezar antes del 1 de abril de 2027</strong> y <strong>terminar antes del 1 de abril de 2028</strong>. El incumplimiento implica una penalidad de <em>U$S 33.000</em>.</p>
+<p>Es la única condición cerrada de este brief: el cronograma de proyecto y obra debe garantizar el cumplimiento de ambos plazos con margen de seguridad.</p></div>
+</div></section>
+</main>
+
+<footer class="colophon"><span>Iña Algañaras · Sole Vicenzotti · Comitentes</span><span>Versión 6.0 · Septiembre 2026</span></footer>
+</div></div>
+<script>
+/* Las 4 figuras se cargan desde brief_casa_olas_105_v5.html (mismo repo), que tiene las imágenes embebidas. */
+(function(){var imgs=document.querySelectorAll('img[data-img]:not([src])');if(!imgs.length)return;
+fetch('brief_casa_olas_105_v5.html').then(function(r){return r.text()}).then(function(t){
+var d=new DOMParser().parseFromString(t,'text/html');
+imgs.forEach(function(el){var s=d.querySelector('img[alt="'+el.getAttribute('data-img')+'"]');if(s)el.src=s.getAttribute('src');});
+}).catch(function(){});})();
+</script>
+<script src="https://docs.alganaras.com.ar/_editor.js"></script>
+</body></html>

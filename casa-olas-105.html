@@ -31,6 +31,7 @@ h1.title .hl{ color:var(--accent); }
 @media (max-width:680px){ .specsheet{ grid-template-columns:1fr; } }
 .specsheet .sc{ padding:18px 20px; border-right:1px solid var(--rule); }
 .specsheet .sc:last-child{ border-right:none; }
+@media (max-width:680px){ .specsheet .sc{ border-right:none; border-bottom:1px solid var(--rule); } .specsheet .sc:last-child{ border-bottom:none; } }
 .specsheet .sc .k{ display:block; margin-bottom:8px; }
 .specsheet .sc .v{ font-family:var(--disp); font-weight:500; font-size:16px; color:var(--ink); line-height:1.35; }
 .contents{ margin:72px 0 0; border-top:1px solid var(--ink); padding-top:26px; }
@@ -64,6 +65,17 @@ h2.ch-title{ font-family:var(--disp); font-weight:600; font-size:clamp(28px,4.2v
 .statement .lbl{ color:var(--accent); margin-bottom:22px; display:block; }
 .statement p{ font-family:var(--disp); font-weight:500; font-size:clamp(24px,3.4vw,42px); line-height:1.18; letter-spacing:-.025em; margin:0; max-width:22ch; color:var(--ink); }
 .statement .hl{ color:var(--accent); }
+@media (max-width:680px){ .statement{ padding:36px 26px; } }
+.principles{ display:grid; grid-template-columns:1fr 1fr; margin:36px 0 10px; border:1px solid var(--ink); background:var(--card); }
+.principles .card{ padding:26px 28px 28px; border-bottom:1px solid var(--rule); border-right:1px solid var(--rule); min-width:0; }
+.principles .card:nth-child(2n){ border-right:none; }
+.principles .card:nth-last-child(-n+2){ border-bottom:none; }
+.principles .cnum{ font-family:var(--mono); font-size:11px; letter-spacing:.08em; color:var(--accent); display:block; margin-bottom:12px; }
+.principles h4{ font-family:var(--disp); font-weight:600; font-size:20px; line-height:1.2; letter-spacing:-.015em; margin:0 0 9px; color:var(--ink); }
+.principles p{ font-size:15px; line-height:1.55; color:var(--ink-2); margin:0; }
+.principles .card.open h4, .principles .card.open p{ color:var(--muted); }
+.principles .card.open p{ font-style:italic; }
+@media (max-width:680px){ .principles{ grid-template-columns:1fr; } .principles .card{ border-right:none; } .principles .card:nth-last-child(-n+2){ border-bottom:1px solid var(--rule); } .principles .card:last-child{ border-bottom:none; } }
 .colophon{ margin-top:50px; padding-top:18px; border-top:1px solid var(--ink); display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:.05em; text-transform:uppercase; }
 .dt{ width:100%; border-collapse:collapse; margin:32px 0; background:var(--card); border:1px solid var(--rule-2); }
 .dt tr{ border-bottom:1px solid var(--rule); }
@@ -183,18 +195,18 @@ table.pt tr.zone td{ background:var(--accent-soft); font-family:var(--mono); fon
 <p>La casa debe verse como un volumen sólido y con carácter desde afuera, sin golpes de efecto, y sentirse cálida y acogedora por dentro. Materialidad que dialogue con el paisaje: hormigón pigmentado en los tonos de los acantilados de Chapadmalal, maderas naturales, vidrio. Curvas usadas con criterio, no como gesto. La referencia más clara de espíritu y materialidad es la <em>Casa Tilo</em>.</p>
 <p><strong>La madera como protagonista.</strong> El papá de Iña era carpintero, y la madera tiene para nosotros un valor que va más allá de lo estético. Queremos que aporte la calidez y el tacto en toda la casa: en lo que se toca todos los días — puertas, marcos, mesadas, pasamanos, muebles empotrados — y no solo como revestimiento. Madera noble, bien trabajada, que se note hecha con oficio.</p>
 <p>Cada decisión de diseño responde a cómo se vive la casa por dentro.</p>
-<ol>
-<li><strong>Privacidad desde el exterior.</strong> La casa es invisible o hermética desde la calle y los lotes vecinos. Un observador desde afuera no puede anticipar lo que hay adentro. La apertura se reserva para el interior del lote y el fondo hacia el arroyo.</li>
-<li><strong>Vida familiar de cuatro, hoy y dentro de 10 años.</strong> La casa está pensada para el día a día actual — desayunar juntos, cocina como lugar de encuentro — y para la realidad de dentro de 10 años, cuando Roma e Iker sean adolescentes y luego jóvenes adultos que vengan de visita. Los dormitorios deben admitir el cambio de uso. Los baños deben sostener picos de uso simultáneo de cuatro adultos.</li>
-<li><strong>Recibir bien.</strong> Capacidad para recibir amigos y familia con comodidad. Mesa para 8–10 personas, barra generosa, galería que extiende el espacio social hacia afuera. Que lleguen y se quieran quedar.</li>
-<li><strong>Diseñada para invierno y viento.</strong> El clima de Chapadmalal es de uso todo el año. La casa tiene que ser acogedora en días fríos y ventosos: el fuego, el patio protegido y los materiales cálidos son tan importantes como la pileta y el deck.</li>
-<li><strong>Casa saludable, seca, sin humedad.</strong> En clima costero atlántico la humedad es el enemigo principal. La casa debe estar diseñada desde su concepción para que no haya condensación, ni manchas, ni olor a humedad — nunca. Esto no es un detalle constructivo posterior: es un principio de diseño.</li>
-<li><strong>El fuego.</strong> Salamandras y chimeneas son parte de la identidad de la casa. El fuego aparece en múltiples espacios; no es un accesorio.</li>
-<li><strong>Dentro y fuera integrados.</strong> La casa conecta el interior con el exterior de forma fluida. El ventanal que se abre, la galería que es continuación del living, el jardín que empieza desde la casa.</li>
-<li><strong>Alquiler de la casa completa.</strong> Cuando la familia no está, la casa se alquila íntegramente como unidad. Esto requiere espacios de guardado bajo llave para los objetos personales, y un nivel de terminaciones que justifique un alquiler premium en la zona.</li>
-<li><strong>Pensada para envejecer bien.</strong> Materiales y soluciones técnicas que mantengan su carácter con el paso del tiempo, sin verse datados a los cinco años. La casa tiene que poder ser de la familia por décadas.</li>
-</ol>
-<p>Espacio abierto: si el estudio identifica un principio rector adicional que crea que debemos considerar, es bienvenido.</p>
+<div class="principles">
+<div class="card"><span class="cnum">Principio 01</span><h4>Privacidad desde el exterior</h4><p>La casa es invisible o hermética desde la calle y los lotes vecinos. Un observador desde afuera no puede anticipar lo que hay adentro. La apertura se reserva para el interior del lote y el fondo hacia el arroyo.</p></div>
+<div class="card"><span class="cnum">Principio 02</span><h4>Vida familiar de cuatro, hoy y dentro de 10 años</h4><p>La casa está pensada para el día a día actual — desayunar juntos, cocina como lugar de encuentro — y para la realidad de dentro de 10 años, cuando Roma e Iker sean adolescentes y luego jóvenes adultos que vengan de visita. Los dormitorios deben admitir el cambio de uso. Los baños deben sostener picos de uso simultáneo de cuatro adultos.</p></div>
+<div class="card"><span class="cnum">Principio 03</span><h4>Recibir bien</h4><p>Capacidad para recibir amigos y familia con comodidad. Mesa para 8–10 personas, barra generosa, galería que extiende el espacio social hacia afuera. Que lleguen y se quieran quedar.</p></div>
+<div class="card"><span class="cnum">Principio 04</span><h4>Diseñada para invierno y viento</h4><p>El clima de Chapadmalal es de uso todo el año. La casa tiene que ser acogedora en días fríos y ventosos: el fuego, el patio protegido y los materiales cálidos son tan importantes como la pileta y el deck.</p></div>
+<div class="card"><span class="cnum">Principio 05</span><h4>Casa saludable, seca, sin humedad</h4><p>En clima costero atlántico la humedad es el enemigo principal. La casa debe estar diseñada desde su concepción para que no haya condensación, ni manchas, ni olor a humedad — nunca. Esto no es un detalle constructivo posterior: es un principio de diseño.</p></div>
+<div class="card"><span class="cnum">Principio 06</span><h4>El fuego</h4><p>Salamandras y chimeneas son parte de la identidad de la casa. El fuego aparece en múltiples espacios; no es un accesorio.</p></div>
+<div class="card"><span class="cnum">Principio 07</span><h4>Dentro y fuera integrados</h4><p>La casa conecta el interior con el exterior de forma fluida. El ventanal que se abre, la galería que es continuación del living, el jardín que empieza desde la casa.</p></div>
+<div class="card"><span class="cnum">Principio 08</span><h4>Alquiler de la casa completa</h4><p>Cuando la familia no está, la casa se alquila íntegramente como unidad. Esto requiere espacios de guardado bajo llave para los objetos personales, y un nivel de terminaciones que justifique un alquiler premium en la zona.</p></div>
+<div class="card"><span class="cnum">Principio 09</span><h4>Pensada para envejecer bien</h4><p>Materiales y soluciones técnicas que mantengan su carácter con el paso del tiempo, sin verse datados a los cinco años. La casa tiene que poder ser de la familia por décadas.</p></div>
+<div class="card open"><span class="cnum">Espacio abierto</span><h4>¿Falta alguno?</h4><p>Si el estudio identifica un principio rector adicional que crea que debemos considerar, es bienvenido.</p></div>
+</div>
 </div></section>
 
 <section class="chapter" id="s4"><div class="ch-head"><div class="ch-marker"><span class="mn">04</span></div><h2 class="ch-title">Programa de necesidades</h2></div><div class="body">

@@ -67,13 +67,13 @@ h2.ch-title{ font-family:var(--disp); font-weight:600; font-size:clamp(28px,4.2v
 .principles{ display:grid; grid-template-columns:1fr 1fr; margin:36px 0 10px; border:1px solid var(--ink); background:var(--card); }
 .principles .card{ padding:26px 28px 28px; border-bottom:1px solid var(--rule); border-right:1px solid var(--rule); min-width:0; }
 .principles .card:nth-child(2n){ border-right:none; }
-.principles .card:nth-last-child(-n+2){ border-bottom:none; }
+.principles .card.open{ grid-column:1 / -1; border-right:none; border-bottom:none; }
 .principles .cnum{ font-family:var(--mono); font-size:11px; letter-spacing:.08em; color:var(--accent); display:block; margin-bottom:12px; }
 .principles h4{ font-family:var(--disp); font-weight:600; font-size:20px; line-height:1.2; letter-spacing:-.015em; margin:0 0 9px; color:var(--ink); }
 .principles p{ font-size:15px; line-height:1.55; color:var(--ink-2); margin:0; }
 .principles .card.open h4, .principles .card.open p{ color:var(--muted); }
 .principles .card.open p{ font-style:italic; }
-@media (max-width:680px){ .principles{ grid-template-columns:1fr; } .principles .card{ border-right:none; } .principles .card:nth-last-child(-n+2){ border-bottom:1px solid var(--rule); } .principles .card:last-child{ border-bottom:none; } }
+@media (max-width:680px){ .principles{ grid-template-columns:1fr; } .principles .card{ border-right:none; } }
 .colophon{ margin-top:50px; padding-top:18px; border-top:1px solid var(--ink); display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:.05em; text-transform:uppercase; }
 .dt{ width:100%; border-collapse:collapse; margin:32px 0; background:var(--card); border:1px solid var(--rule-2); }
 .dt tr{ border-bottom:1px solid var(--rule); }
@@ -115,7 +115,7 @@ table.pt tr.zone td{ background:var(--accent-soft); font-family:var(--mono); fon
 </style></head><body>
 <div class="doc"><div class="sheet">
 <header>
-<div class="titleblock"><div class="tb-r">BRIEF · REV. <b>v6.1</b> · SEPTIEMBRE 2026</div></div>
+<div class="titleblock"><div class="tb-r">BRIEF · REV. <b>v6.2</b> · SEPTIEMBRE 2026</div></div>
 <div class="cover">
 <div class="ref"><span>Lote 105 · Manzana M4</span><span>Olas Chapadmalal</span></div>
 <h1 class="title">Casa <span class="hl">Olas 105</span>.</h1>
@@ -142,7 +142,7 @@ table.pt tr.zone td{ background:var(--accent-soft); font-family:var(--mono); fon
 <li><span class="n">06</span><a href="#s6">Requerimientos técnicos</a><span class="ar">[↓]</span></li>
 <li><span class="n">07</span><a href="#s7">Referencias visuales y conceptuales</a><span class="ar">[↓]</span></li>
 <li><span class="n">08</span><a href="#s8">Información a relevar antes del anteproyecto</a><span class="ar">[↓]</span></li>
-<li><span class="n">09</span><a href="#s9">Condición contractual crítica</a><span class="ar">[↓]</span></li>
+<li><span class="n">09</span><a href="#s9">Condición contractual con el barrio</a><span class="ar">[↓]</span></li>
 </ol></nav>
 
 <section class="chapter" id="s1"><div class="ch-head"><div class="ch-marker"><span class="mn">01</span></div><h2 class="ch-title">Datos del proyecto</h2></div><div class="body">
@@ -196,13 +196,14 @@ table.pt tr.zone td{ background:var(--accent-soft); font-family:var(--mono); fon
 <div class="principles">
 <div class="card"><span class="cnum">Principio 01</span><h4>Privacidad desde el exterior</h4><p>La casa es invisible o hermética desde la calle y los lotes vecinos. Un observador desde afuera no puede anticipar lo que hay adentro. La apertura se reserva para el interior del lote y el fondo hacia el arroyo.</p></div>
 <div class="card"><span class="cnum">Principio 02</span><h4>Vida familiar de cuatro, hoy y dentro de 10 años</h4><p>La casa está pensada para el día a día actual — desayunar juntos, cocina como lugar de encuentro — y para la realidad de dentro de 10 años, cuando Roma e Iker sean adolescentes y luego jóvenes adultos que vengan de visita. Los dormitorios deben admitir el cambio de uso. Los baños deben sostener picos de uso simultáneo de cuatro adultos.</p></div>
-<div class="card"><span class="cnum">Principio 03</span><h4>Recibir bien</h4><p>Capacidad para recibir amigos y familia con comodidad. Mesa para 8–10 personas, barra generosa, galería que extiende el espacio social hacia afuera. Que lleguen y se quieran quedar.</p></div>
-<div class="card"><span class="cnum">Principio 04</span><h4>Diseñada para invierno y viento</h4><p>El clima de Chapadmalal es de uso todo el año. La casa tiene que ser acogedora en días fríos y ventosos: el fuego, el patio protegido y los materiales cálidos son tan importantes como la pileta y el deck.</p></div>
-<div class="card"><span class="cnum">Principio 05</span><h4>Casa saludable, seca, sin humedad</h4><p>En clima costero atlántico la humedad es el enemigo principal. La casa debe estar diseñada desde su concepción para que no haya condensación, ni manchas, ni olor a humedad — nunca. Esto no es un detalle constructivo posterior: es un principio de diseño.</p></div>
-<div class="card"><span class="cnum">Principio 06</span><h4>El fuego</h4><p>Salamandras y chimeneas son parte de la identidad de la casa. El fuego aparece en múltiples espacios; no es un accesorio.</p></div>
-<div class="card"><span class="cnum">Principio 07</span><h4>Dentro y fuera integrados</h4><p>La casa conecta el interior con el exterior de forma fluida. El ventanal que se abre, la galería que es continuación del living, el jardín que empieza desde la casa.</p></div>
-<div class="card"><span class="cnum">Principio 08</span><h4>Alquiler de la casa completa</h4><p>Cuando la familia no está, la casa se alquila íntegramente como unidad. Esto requiere espacios de guardado bajo llave para los objetos personales, y un nivel de terminaciones que justifique un alquiler premium en la zona.</p></div>
-<div class="card"><span class="cnum">Principio 09</span><h4>Pensada para envejecer bien</h4><p>Materiales y soluciones técnicas que mantengan su carácter con el paso del tiempo, sin verse datados a los cinco años. La casa tiene que poder ser de la familia por décadas.</p></div>
+<div class="card"><span class="cnum">Principio 03</span><h4>Juntos, pero también cada uno en lo suyo</h4><p>Además de los lugares de encuentro, queremos que la casa se pueda disfrutar de forma individual, con independencia de ruido y de uso. Iña y Sole trabajamos de forma remota desde casa y necesitamos hacerlo sin interrumpirnos. Si los chicos juegan, miran tele o invitan amigos, que los grandes podamos estar tranquilos en otra parte; si Sole recibe amigas a cenar, que el resto pueda seguir con su rutina. No sabemos cómo se logra — zonificación, circulaciones, aislación acústica — y lo dejamos a criterio del estudio, pero nos importa tanto como los espacios compartidos.</p></div>
+<div class="card"><span class="cnum">Principio 04</span><h4>Recibir bien</h4><p>Capacidad para recibir amigos y familia con comodidad. Mesa para 8–10 personas, barra generosa, galería que extiende el espacio social hacia afuera. Que lleguen y se quieran quedar.</p></div>
+<div class="card"><span class="cnum">Principio 05</span><h4>Diseñada para invierno y viento</h4><p>El clima de Chapadmalal es de uso todo el año. La casa tiene que ser acogedora en días fríos y ventosos: el fuego, el patio protegido y los materiales cálidos son tan importantes como la pileta y el deck.</p></div>
+<div class="card"><span class="cnum">Principio 06</span><h4>Casa saludable, seca, sin humedad</h4><p>En clima costero atlántico la humedad es el enemigo principal. La casa debe estar diseñada desde su concepción para que no haya condensación, ni manchas, ni olor a humedad — nunca. Esto no es un detalle constructivo posterior: es un principio de diseño.</p></div>
+<div class="card"><span class="cnum">Principio 07</span><h4>El fuego</h4><p>Salamandras y chimeneas son parte de la identidad de la casa. El fuego aparece en múltiples espacios; no es un accesorio.</p></div>
+<div class="card"><span class="cnum">Principio 08</span><h4>Dentro y fuera integrados</h4><p>La casa conecta el interior con el exterior de forma fluida. El ventanal que se abre, la galería que es continuación del living, el jardín que empieza desde la casa.</p></div>
+<div class="card"><span class="cnum">Principio 09</span><h4>Alquiler de la casa completa</h4><p>Cuando la familia no está, la casa se alquila íntegramente como unidad. Esto requiere espacios de guardado bajo llave para los objetos personales, y un nivel de terminaciones que justifique un alquiler premium en la zona.</p></div>
+<div class="card"><span class="cnum">Principio 10</span><h4>Pensada para envejecer bien</h4><p>Materiales y soluciones técnicas que mantengan su carácter con el paso del tiempo, sin verse datados a los cinco años. La casa tiene que poder ser de la familia por décadas.</p></div>
 <div class="card open"><span class="cnum">Espacio abierto</span><h4>¿Falta alguno?</h4><p>Si el estudio identifica un principio rector adicional que crea que debemos considerar, es bienvenido.</p></div>
 </div>
 </div></section>
@@ -264,7 +265,7 @@ table.pt tr.zone td{ background:var(--accent-soft); font-family:var(--mono); fon
 <h3 class="sub-h"><span class="n">6.2</span> Control de humedad y condensación</h3>
 <p>Hoy vivimos en una casa alquilada nueva y aun así la ropa sale húmeda de los placares, las toallas no se secan en el baño y las alacenas tienen olor a humedad. No queremos eso para esta casa. En Chapadmalal la humedad ambiente y el salto térmico entre día y noche generan condensación si el diseño no la anticipa, así que la envolvente tiene que pensarse como un sistema: aislación continua sin puentes térmicos, barrera de vapor, carpinterías con rotura de puente térmico, ventilación (natural y mecánica) y extracción real en cocina y baños. Los recursos concretos los decide el arquitecto, pero es algo que nos importa pensar desde el principio del proyecto, no como un arreglo posterior.</p>
 <h3 class="sub-h"><span class="n">6.3</span> Eficiencia energética</h3>
-<p>Paneles solares dimensionados para consumo total del hogar. Aislación térmica reforzada en muros, techo y carpinterías (ver también 6.2). Gas natural disponible en el lote — prever para calefacción, cocina y agua caliente central. Losa radiante como opción de calefacción complementaria.</p>
+<p>Aislación térmica reforzada en muros, techo y carpinterías (ver también 6.2). Gas natural disponible en el lote — prever para calefacción, cocina y agua caliente central. Losa radiante como opción de calefacción complementaria.</p>
 <h3 class="sub-h"><span class="n">6.4</span> Domótica e infraestructura tecnológica</h3>
 <p>Infraestructura completa desde obra — cañeros, tableros, puntos de red. Sin retrofitting posterior. Control centralizado de iluminación, climatización y seguridad. Fibra óptica monomodo disponible en el lote. Sistema de monitoreo remoto para gestionar el alquiler a distancia.</p>
 <h3 class="sub-h"><span class="n">6.5</span> Bajo mantenimiento</h3>
@@ -313,15 +314,15 @@ table.pt tr.zone td{ background:var(--accent-soft); font-family:var(--mono); fon
 </ol>
 </div></section>
 
-<section class="chapter" id="s9"><div class="ch-head"><div class="ch-marker"><span class="mn">09</span></div><h2 class="ch-title">Condición contractual crítica</h2></div><div class="body">
-<div class="note warn" style="max-width:none; margin-top:32px;"><span class="lbl">Plazo no negociable</span>
+<section class="chapter" id="s9"><div class="ch-head"><div class="ch-marker"><span class="mn">09</span></div><h2 class="ch-title">Condición contractual con el barrio</h2></div><div class="body">
+<div class="note warn" style="max-width:none; margin-top:32px;"><span class="lbl">Plazo de construcción</span>
 <p>El contrato de reserva del lote establece que la construcción debe iniciarse dentro de los 6 meses desde el Acta de Tenencia, y finalizarse dentro de los 18 meses desde esa misma fecha.</p>
 <p>La tenencia es a partir del <strong>1 de octubre de 2026</strong>, por lo que la obra debe <strong>empezar antes del 1 de abril de 2027</strong> y <strong>terminar antes del 1 de abril de 2028</strong>. El incumplimiento implica una penalidad de <em>U$S 33.000</em>.</p>
 <p>Es la única condición cerrada de este brief: el cronograma de proyecto y obra debe garantizar el cumplimiento de ambos plazos con margen de seguridad.</p></div>
 </div></section>
 </main>
 
-<footer class="colophon"><span>Iña Algañaras · Sole Vicenzotti · Comitentes</span><span>Versión 6.1 · Septiembre 2026</span></footer>
+<footer class="colophon"><span>Iña Algañaras · Sole Vicenzotti · Comitentes</span><span>Versión 6.2 · Septiembre 2026</span></footer>
 </div></div>
 <script>
 /* Las 4 figuras se cargan desde brief_casa_olas_105_v5.html (mismo repo), que tiene las imágenes embebidas. */

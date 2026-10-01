@@ -2,7 +2,7 @@
 <html lang="es"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Árbol de valor · fyoCapital · visual</title>
+<title>Árbol de valor y agentes · fyoCapital · visual</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -206,23 +206,29 @@
     color:var(--muted); letter-spacing:.05em; text-transform:uppercase; }
 </style>
 <style>
-  /* ── Visual de proyección 16:9 (capa sobre el sistema Plano) ── */
-  html,body{ height:100%; overflow:hidden; }
+  /* ── Visual de proyección 16:9, varias láminas (capa sobre el sistema Plano) ── */
+  html{ height:100%; overflow-y:auto; overflow-x:hidden; scroll-snap-type:y mandatory; }
+  body{ min-height:100%; }
+  .slide{ position:relative; height:100vh; overflow:hidden; scroll-snap-align:start; }
+  .slide + .slide{ border-top:1px solid var(--rule); }
   .stage{ position:absolute; left:50%; top:50%; width:1600px; height:900px; transform:translate(-50%,-50%);
     transform-origin:center; background:var(--paper); padding:22px 56px 16px; display:flex; flex-direction:column; }
   .vhead{ margin-top:16px; }
-  .vhead .ref{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); }
+  .vhead .ref{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin:0; }
   .vhead h1{ font-family:var(--disp); font-weight:600; font-size:34px; line-height:1.05; letter-spacing:-.025em; margin:6px 0 0; }
   .vhead h1 .hl{ color:var(--accent); }
-  .vbody{ flex:1; display:grid; grid-template-columns:1fr 360px; gap:44px; margin-top:16px; min-height:0; }
+  .vhead .sub{ font-size:18px; line-height:1.4; color:var(--ink-2); margin:6px 0 0; }
+  .vfoot{ margin-top:16px; padding-top:10px; border-top:1px solid var(--ink); display:flex; justify-content:space-between;
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
 
+  /* Lámina · árbol de valor */
+  .vbody{ flex:1; display:grid; grid-template-columns:1fr 360px; gap:44px; margin-top:16px; min-height:0; }
   .tree{ display:flex; flex-direction:column; justify-content:center; }
   .trow{ display:grid; grid-template-columns:100px 1fr; column-gap:18px; }
   .trow + .trow{ margin-top:32px; }
   .rlab{ display:flex; flex-direction:column; justify-content:center; border-right:1px solid var(--rule); padding-right:12px; }
   .rlab .lbl{ color:var(--ink); font-weight:600; }
   .rlab .rs{ font-family:var(--mono); font-size:10.5px; color:var(--faint); line-height:1.35; margin:4px 0 0; }
-
   .nodes{ --g:12px; position:relative; display:flex; gap:var(--g); }
   .nodes.c{ justify-content:center; }
   .nodes.up::before, .nodes.dn::after{ content:''; position:absolute; height:1px; background:var(--faint);
@@ -245,11 +251,12 @@
   .node.root .nm{ font-size:21px; }
   .node.piv{ border:1px solid var(--ink); border-left:6px solid var(--accent); text-align:center; }
   .node.piv .nm{ font-size:21px; color:var(--accent); }
-  .ag .node .nm{ font-size:16px; }
-  .ag .node .sb{ font-size:11.5px; }
+  .ag{ --g:10px; }
+  .ag .node{ padding:9px 10px 10px; }
+  .ag .node .nm{ font-size:15.5px; }
+  .ag .node .sb{ font-size:11px; }
   .node.gap{ border:1px dashed var(--accent); background:var(--accent-soft); }
   .node.gap .nm{ color:var(--accent); }
-
   .side{ border-left:1px solid var(--ink); padding-left:30px; display:flex; flex-direction:column; justify-content:center; gap:26px; }
   .side .lbl{ display:block; margin-bottom:10px; }
   .idea .lbl{ color:var(--accent); }
@@ -264,15 +271,41 @@
     font-family:var(--disp); font-weight:500; font-size:19px; letter-spacing:-.01em; color:var(--ink); }
   .filtro li .n{ font-family:var(--mono); font-size:11px; color:var(--accent); }
 
-  .vfoot{ margin-top:16px; padding-top:10px; border-top:1px solid var(--ink); display:flex; justify-content:space-between;
-    font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+  /* Lámina · arquitectura de agentes */
+  .dia{ position:relative; flex:1; margin-top:18px; min-height:0; }
+  .wires{ position:absolute; left:0; top:0; overflow:visible; pointer-events:none; }
+  .wires .w{ fill:none; stroke:var(--ink); stroke-width:1.2; }
+  .wires .w.d{ stroke:var(--faint); stroke-dasharray:4 4; }
+  .sec{ position:absolute; margin:0; font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--ink); }
+  .elab{ position:absolute; margin:0; font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; color:var(--muted); line-height:1.3; }
+  .bx{ position:absolute; background:var(--card); border:1px solid var(--rule-2); padding:11px 14px 12px; }
+  .bx > *{ margin:0; }
+  .bx .nm{ font-family:var(--disp); font-weight:600; font-size:17px; line-height:1.15; letter-spacing:-.01em; color:var(--ink); }
+  .bx .ow{ font-family:var(--mono); font-size:10px; letter-spacing:.06em; color:var(--muted); margin-top:4px; }
+  .bx .ow.r{ color:var(--accent); }
+  .bx .ds{ font-size:13px; line-height:1.4; color:var(--ink-2); margin-top:8px; }
+  .bx .mh{ font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-top:9px; }
+  .bx ul{ list-style:none; padding:0; margin:6px 0 0; display:grid; column-gap:8px; row-gap:1px;
+    font-family:var(--mono); font-size:11.5px; line-height:1.45; color:var(--ink-2); }
+  .bx ul.c2{ grid-template-columns:auto 1fr; }
+  .bx li::before{ content:'· '; color:var(--faint); }
+  .bx.key{ border:1px solid var(--ink); border-top:3px solid var(--accent); }
+  .bx.ink{ border-color:var(--ink); }
+  .pill{ position:absolute; background:var(--card); border:1px solid var(--ink); padding:9px 18px; margin:0;
+    font-family:var(--disp); font-weight:500; font-size:17px; letter-spacing:-.01em; color:var(--ink); text-align:center; }
+  .band{ display:grid; grid-template-columns:repeat(4,1fr); border:1px solid var(--ink); background:var(--card); margin-top:14px; }
+  .band .bc{ padding:10px 16px 11px; border-left:1px solid var(--rule); }
+  .band .bc:first-child{ border-left:none; }
+  .band .bc h4{ font-family:var(--disp); font-weight:600; font-size:15px; letter-spacing:-.01em; margin:0; color:var(--ink); }
+  .band .bc p{ font-size:13px; line-height:1.4; color:var(--muted); margin:3px 0 0; }
+  .band .bc.r h4{ color:var(--accent); }
 </style>
 </head>
 <body>
-<div class="stage" id="stage">
-
+<section class="slide" id="arbol"><div class="stage">
   <div class="titleblock-wrap"><div class="titleblock">
-    <div class="tb-l"><span class="sq"></span><span class="tb-field"><span class="tb-k">Para.</span><span class="tb-v">FyO</span></span><span class="tb-field"><span class="tb-k">Doc.</span><span class="tb-v">FYO-ARBOL2</span></span><span class="tb-field"><span class="tb-type">Visual</span></span></div>
+    <div class="tb-l"><span class="sq"></span><span class="tb-field"><span class="tb-k">Para.</span><span class="tb-v">FyO</span></span><span class="tb-field"><span class="tb-k">Doc.</span><span class="tb-v">FYO-ARBOL3</span></span><span class="tb-field"><span class="tb-k">Lámina.</span><span class="tb-v">Árbol de valor</span></span><span class="tb-field"><span class="tb-type">Visual</span></span></div>
     <div class="tb-r">inaki@alganaras.com.ar</div>
   </div></div>
 
@@ -320,11 +353,12 @@
 
       <div class="trow">
         <div class="rlab"><span class="lbl">Agentes</span><p class="rs">quién lo escala</p></div>
-        <div class="nodes up ag" style="--n:6">
-          <div class="node"><p class="k">Research</p><h3 class="nm">fyoCortex</h3><p class="sb">→ gana más</p></div>
-          <div class="node"><p class="k">Interno</p><h3 class="nm">Portafolio</h3><p class="sb">→ gana más · plata · profundidad</p></div>
-          <div class="node"><p class="k">Interno</p><h3 class="nm">Comercial</h3><p class="sb">→ relación · retener · capacidad</p></div>
-          <div class="node"><p class="k">Cara al cliente</p><h3 class="nm">fyoCapital AI</h3><p class="sb">→ entiende · operación visible</p></div>
+        <div class="nodes up ag" style="--n:7">
+          <div class="node"><p class="k">Contexto</p><h3 class="nm">fyoCortex · Research</h3><p class="sb">→ gana más</p></div>
+          <div class="node"><p class="k">Cuentas</p><h3 class="nm">Comercial</h3><p class="sb">→ relación · retener · capacidad</p></div>
+          <div class="node"><p class="k">Cuenta</p><h3 class="nm">Carteras</h3><p class="sb">→ gana más · plata · profundidad</p></div>
+          <div class="node"><p class="k">Venta</p><h3 class="nm">Funnel</h3><p class="sb">→ relación · más cierres</p></div>
+          <div class="node"><p class="k">Cliente</p><h3 class="nm">Agente de Cliente</h3><p class="sb">→ entiende · operación visible</p></div>
           <div class="node"><p class="k">Transversal</p><h3 class="nm">Riesgo</h3><p class="sb">cuida que la confianza no se gaste</p></div>
           <div class="node gap"><p class="k r">Hueco</p><h3 class="nm">Originación Granos</h3><p class="sb">→ captar · sin agente hoy</p></div>
         </div>
@@ -352,21 +386,176 @@
     </aside>
   </div>
 
-  <div class="vfoot"><span>Iñaki · Consultoría</span><span>Tecla F: pantalla completa · inaki@alganaras.com.ar</span></div>
-</div>
+  <div class="vfoot"><span>Iñaki · Consultoría</span><span>Tecla F: pantalla completa · flechas: cambiar lámina · inaki@alganaras.com.ar</span></div>
+</div></section>
+
+<section class="slide" id="agentes"><div class="stage">
+  <div class="titleblock-wrap"><div class="titleblock">
+    <div class="tb-l"><span class="sq"></span><span class="tb-field"><span class="tb-k">Para.</span><span class="tb-v">FyO</span></span><span class="tb-field"><span class="tb-k">Doc.</span><span class="tb-v">FYO-ARBOL3</span></span><span class="tb-field"><span class="tb-k">Lámina.</span><span class="tb-v">Agentes</span></span><span class="tb-field"><span class="tb-type">Visual</span></span></div>
+    <div class="tb-r">inaki@alganaras.com.ar</div>
+  </div></div>
+
+  <header class="vhead">
+    <p class="ref">fyoCapital Financiero · Arquitectura de agentes</p>
+    <h1>Escalar contexto, personalización, relevancia y la <span class="hl">operación</span></h1>
+    <p class="sub">para que los comerciales puedan desarrollar relaciones de valor y se cierren más transacciones</p>
+  </header>
+
+  <div class="dia" id="dia">
+    <svg class="wires" id="wires" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#111110"/></marker>
+        <marker id="ahf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#78756f"/></marker>
+      </defs>
+    </svg>
+
+    <p class="sec" style="left:254px;top:12px">Intranet</p>
+    <p class="sec" style="left:512px;top:0">Cuentas</p>
+    <p class="sec" style="left:0;top:196px">Mercado</p>
+    <p class="sec" style="left:254px;top:196px">Contexto</p>
+    <p class="sec" style="left:512px;top:196px">Research</p>
+    <p class="sec" style="left:836px;top:100px">Cuenta</p>
+    <p class="sec" style="left:1005px;top:100px">Venta</p>
+    <p class="sec" style="left:1174px;top:100px">Operación</p>
+    <p class="sec" style="left:1343px;top:100px">Cliente</p>
+
+    <div class="bx" id="onb" style="left:0;top:20px;width:190px;height:112px">
+      <h3 class="nm">Onboarding</h3>
+      <ul><li>Interno</li><li>Cliente avanzado</li><li>Cliente sencillo</li></ul>
+    </div>
+    <div class="bx" id="fdig" style="left:254px;top:34px;width:190px;height:84px">
+      <h3 class="nm">fyoDigital</h3>
+      <p class="ds">Plataforma de trabajo comercial</p>
+    </div>
+    <div class="bx" id="com" style="left:512px;top:20px;width:236px;height:150px">
+      <h3 class="nm">Agente Comercial</h3>
+      <p class="ow">Owner: Juanma</p>
+      <p class="mh">Prioriza según potencial</p>
+      <ul class="c2"><li>Tamaño</li><li>Actividad</li><li>Rentabilidad</li><li>Crecimiento</li></ul>
+    </div>
+
+    <div class="bx" id="term" style="left:0;top:216px;width:190px;height:168px">
+      <h3 class="nm">Terminal Trading Desk</h3>
+      <p class="ow">Owner: Ale</p>
+      <p class="ds">Datos online: precios, informes y más</p>
+      <p class="ow" style="margin-top:8px">Interno · Avanzado · Básico</p>
+    </div>
+    <div class="bx" id="ctx" style="left:254px;top:216px;width:190px;height:128px">
+      <h3 class="nm">fyoCortex</h3>
+      <p class="ow">Owner: Ceci</p>
+      <p class="ds">Memoria y grafo de entidades y relaciones en el tiempo</p>
+    </div>
+    <div class="bx" id="res" style="left:512px;top:216px;width:236px;height:200px">
+      <h3 class="nm">Agente de Research</h3>
+      <p class="ow">Owner: Ceci</p>
+      <p class="ds">Nuestra visión agregada y procesada del mercado</p>
+      <ul class="c2"><li>Informes</li><li>Oportunidades</li><li>Insights</li><li>Riesgos</li><li>Escenarios</li><li>Noticias</li></ul>
+    </div>
+    <div class="bx" id="gra" style="left:0;top:412px;width:190px;height:140px">
+      <h3 class="nm">Granos</h3>
+      <ul><li>Precios</li><li>Disponibilidad</li><li>Logística</li><li>Condiciones</li><li>Objetivos</li></ul>
+    </div>
+
+    <div class="bx key" id="car" style="left:836px;top:120px;width:143px;height:186px">
+      <h3 class="nm">Agente de Carteras</h3>
+      <p class="ow r">Owner: a definir</p>
+      <p class="ds">Recomendaciones relevantes basadas en cliente y contexto</p>
+    </div>
+    <div class="bx" id="fun" style="left:1005px;top:120px;width:143px;height:100px">
+      <h3 class="nm">Agente de Funnel</h3>
+      <p class="ds">Un CRM de propuestas</p>
+    </div>
+    <div class="bx ink" id="ope" style="left:1174px;top:120px;width:143px;height:64px">
+      <h3 class="nm">Operación</h3>
+    </div>
+    <div class="bx" id="rie" style="left:1174px;top:214px;width:143px;height:52px">
+      <h3 class="nm">Riesgo</h3>
+    </div>
+    <div class="bx" id="cli" style="left:1343px;top:120px;width:143px;height:166px">
+      <h3 class="nm">Agente de Cliente</h3>
+      <p class="ds">Recomendaciones relevantes basadas en cliente y contexto</p>
+    </div>
+
+    <p class="pill" id="fb" style="left:560px;top:490px;width:210px">Feedback continuo</p>
+
+    <p class="elab" style="left:198px;top:258px">ingesta</p>
+    <p class="elab" style="left:452px;top:258px">procesa</p>
+    <p class="elab" style="left:0;top:390px;width:186px;text-align:right">flujos / objetivos</p>
+  </div>
+
+  <div class="band">
+    <div class="bc"><h4>Datos del mercado y granos</h4><p>Información actualizada, flujos y objetivos</p></div>
+    <div class="bc"><h4>Insights y contexto</h4><p>Entidades, relaciones e inteligencia de mercado</p></div>
+    <div class="bc"><h4>Estrategia comercial</h4><p>Recomendaciones y propuestas relevantes</p></div>
+    <div class="bc r"><h4>Resultados y aprendizaje</h4><p>Más transacciones y mejores relaciones</p></div>
+  </div>
+
+  <div class="vfoot"><span>Iñaki · Consultoría</span><span>Tecla F: pantalla completa · flechas: cambiar lámina · inaki@alganaras.com.ar</span></div>
+</div></section>
 
 <script>
   (function(){
-    var st=document.getElementById('stage');
-    function fit(){ var s=Math.min(window.innerWidth/1600, window.innerHeight/900);
-      st.style.transform='translate(-50%,-50%) scale('+s+')'; }
-    window.addEventListener('resize',fit); fit();
-    document.addEventListener('keydown',function(e){
+    var stages=[].slice.call(document.querySelectorAll('.stage'));
+    var slides=[].slice.call(document.querySelectorAll('.slide'));
+    function fit(){
+      var w=document.documentElement.clientWidth, h=window.innerHeight;
+      var s=Math.min(w/1600, h/900);
+      stages.forEach(function(st){ st.style.transform='translate(-50%,-50%) scale('+s+')'; });
+    }
+    function box(id){ var e=document.getElementById(id);
+      return {l:e.offsetLeft, t:e.offsetTop, w:e.offsetWidth, h:e.offsetHeight}; }
+    function anc(id, side, f){ var b=box(id); f=(f==null)?0.5:f;
+      if(side==='l') return {x:b.l, y:b.t+b.h*f, nx:-1, ny:0};
+      if(side==='r') return {x:b.l+b.w, y:b.t+b.h*f, nx:1, ny:0};
+      if(side==='t') return {x:b.l+b.w*f, y:b.t, nx:0, ny:-1};
+      return {x:b.l+b.w*f, y:b.t+b.h, nx:0, ny:1}; }
+    var NS='http://www.w3.org/2000/svg';
+    function path(svg, d, dashed, both){
+      var p=document.createElementNS(NS,'path'); p.setAttribute('d',d);
+      p.setAttribute('class', dashed?'w d':'w');
+      var m=dashed?'url(#ahf)':'url(#ah)';
+      p.setAttribute('marker-end', m); if(both) p.setAttribute('marker-start', m);
+      svg.appendChild(p); }
+    function curve(a,b,k){ k=k||60;
+      return 'M'+a.x+','+a.y+' C'+(a.x+a.nx*k)+','+(a.y+a.ny*k)+' '+(b.x+b.nx*k)+','+(b.y+b.ny*k)+' '+b.x+','+b.y; }
+    function hline(a,b,y){ var A=box(a), B=box(b); return 'M'+(A.l+A.w)+','+y+' L'+B.l+','+y; }
+    function draw(){
+      var dia=document.getElementById('dia'), svg=document.getElementById('wires'); if(!dia) return;
+      svg.setAttribute('width', dia.clientWidth); svg.setAttribute('height', dia.clientHeight);
+      [].slice.call(svg.querySelectorAll('path.w')).forEach(function(p){ p.remove(); });
+      var on=box('onb'), cx=box('ctx'), car=box('car');
+      var y1=on.t+on.h/2, y2=cx.t+cx.h/2, yc=box('ope').t+box('ope').h/2;
+      path(svg, hline('onb','fdig',y1));
+      path(svg, hline('fdig','com',y1));
+      path(svg, hline('term','ctx',y2));
+      path(svg, hline('ctx','res',y2));
+      path(svg, curve(anc('com','r',0.5), anc('car','l',0.3), 70));
+      path(svg, curve(anc('res','r',0.45), anc('car','l',0.6), 70));
+      path(svg, curve(anc('gra','r',0.25), anc('ctx','l',0.82), 30), false, true);
+      path(svg, hline('car','fun',yc));
+      path(svg, hline('fun','ope',yc));
+      path(svg, hline('ope','cli',yc));
+      var o=box('ope'), r=box('rie'), xm=o.l+o.w/2;
+      path(svg, 'M'+xm+','+(o.t+o.h)+' L'+xm+','+r.t);
+      // feedback continuo
+      path(svg, curve(anc('gra','r',0.6), anc('fb','l',0.5), 90), true, true);
+      path(svg, curve(anc('fb','t',0.18), anc('ctx','b',0.5), 60), true);
+      path(svg, curve(anc('car','b',0.5), anc('fb','r',0.35), 60), true);
+      path(svg, curve(anc('cli','b',0.5), anc('fb','r',0.7), 120), true, true);
+    }
+    function all(){ fit(); draw(); }
+    window.addEventListener('resize', all); all();
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
+    window.addEventListener('load', draw);
+    function cur(){ var y=document.documentElement.scrollTop, h=window.innerHeight; return Math.round(y/h); }
+    function go(i){ i=Math.max(0, Math.min(slides.length-1, i)); slides[i].scrollIntoView({behavior:'smooth'}); }
+    document.addEventListener('keydown', function(e){
       var t=e.target; if(t && (t.isContentEditable || /INPUT|TEXTAREA/.test(t.tagName))) return;
       if(e.key==='f'||e.key==='F'){
         if(!document.fullscreenElement){ document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); }
         else { document.exitFullscreen && document.exitFullscreen(); }
-      }
+      } else if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key==='PageDown'){ e.preventDefault(); go(cur()+1); }
+      else if(e.key==='ArrowLeft'||e.key==='ArrowUp'||e.key==='PageUp'){ e.preventDefault(); go(cur()-1); }
     });
   })();
 </script>

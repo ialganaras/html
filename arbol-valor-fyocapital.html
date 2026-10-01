@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Árbol de valor · fyoCapital · visual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!--
+  ░░ PLANTILLA "ESTILO-PLANO" ░░ Sistema de documentos de Iñaki / alganaras.com.ar
+  Cómo usarla: copiá este archivo entero y reemplazá SOLO el contenido del <body>.
+  No toques el <style>: es el sistema. Lista de componentes al final del <body>.
+-->
+<style>
+  :root{
+    /* ── PALETA (no inventar colores nuevos: usar SOLO estos tokens) ── */
+    --paper:#f3f2ee;     /* fondo de la hoja (papel cálido)          */
+    --paper-2:#eceae4;   /* fondo de filas/etiquetas internas        */
+    --card:#ffffff;      /* fondo de tarjetas, tablas, callouts       */
+    --ink:#111110;       /* texto principal y bordes fuertes          */
+    --ink-2:#2c2b27;     /* texto de cuerpo / párrafos                */
+    --muted:#56544f;     /* etiquetas, subtítulos, texto secundario   */
+    --faint:#78756f;     /* texto terciario, flechas                  */
+    --rule:#d6d4ce;      /* líneas finas internas                     */
+    --rule-2:#cbc8c0;    /* bordes suaves de tarjetas                 */
+    /* Acento — rojo. Es el ÚNICO color vivo del sistema; usar con moderación */
+    --accent:#e22b16; --accent-soft:#e22b160e; --accent-line:#e22b1642; --accent-deep:#c0220f;
+    /* ── TIPOGRAFÍA ── display=titulares · sans=cuerpo · mono=etiquetas/datos ── */
+    --disp:'Space Grotesk', system-ui, sans-serif;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--paper);
+    color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--accent); color:#fff; }
+  /* etiqueta monoespaciada en mayúsculas: el sello del sistema */
+  .lbl{ font-family:var(--mono); font-size:11px; font-weight:500; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--muted); }
+
+  .doc{ max-width:1120px; margin:0 auto; padding:0 0 130px; }
+  .sheet{ background:var(--paper); padding:0 52px; position:relative; }
+  @media (max-width:760px){ .sheet{ padding:0 20px; } }
+
+  /* ── Title block (cabecera tipo carátula de plano) ─────── */
+  .titleblock-wrap{ position:relative; }
+  .titleblock{ display:flex; align-items:stretch; justify-content:space-between; flex-wrap:wrap;
+    border-bottom:1px solid var(--ink); font-family:var(--mono); font-size:11px; letter-spacing:.06em;
+    text-transform:uppercase; }
+  .titleblock .tb-l{ padding:16px 0; color:var(--muted); display:flex; align-items:center; flex-wrap:wrap; }
+  .titleblock .tb-l .sq{ width:8px; height:8px; background:var(--accent); margin-right:16px; flex:none; }
+  .titleblock .tb-field{ display:flex; align-items:baseline; gap:6px; padding:0 16px;
+    border-left:1px solid var(--rule); white-space:nowrap; }
+  .titleblock .tb-field:first-of-type{ border-left:none; padding-left:0; }
+  .titleblock .tb-k{ color:var(--muted); }
+  .titleblock .tb-v{ color:var(--ink); font-weight:600; }
+  .titleblock .tb-type{ color:#fff; background:var(--accent); padding:4px 9px; font-weight:600; letter-spacing:.06em; }
+  .titleblock .tb-r{ color:var(--muted); display:flex; align-items:center; padding:16px 0 16px 22px;
+    border-left:1px solid var(--rule); white-space:nowrap; }
+  @media (max-width:640px){
+    .titleblock-wrap::after{ content:''; position:absolute; top:0; bottom:0; right:0; width:28px;
+      background:linear-gradient(to right, transparent, var(--paper)); pointer-events:none; }
+    .titleblock{ flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch;
+      scrollbar-width:none; -ms-overflow-style:none; }
+    .titleblock::-webkit-scrollbar{ display:none; }
+    .titleblock .tb-l{ flex-wrap:nowrap; flex:none; }
+    .titleblock .tb-r{ flex:none; }
+  }
+
+  /* ── Cover (portada) ─────────────────────────── */
+  .cover{ padding:70px 0 0; }
+  .cover .ref{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); margin-bottom:30px; display:flex; gap:18px; }
+  .cover .ref span{ position:relative; padding-left:16px; }
+  .cover .ref span::before{ content:''; position:absolute; left:0; top:50%; width:8px; height:8px;
+    border:1px solid var(--accent); transform:translateY(-50%); }
+  h1.title{ font-family:var(--disp); font-weight:600; font-size:clamp(40px,6.4vw,82px);
+    line-height:1.0; letter-spacing:-.03em; margin:0; max-width:15ch; color:var(--ink); }
+  h1.title .hl{ color:var(--accent); }
+  .lede{ font-size:clamp(17px,1.8vw,21px); line-height:1.55; color:var(--ink-2); max-width:62ch;
+    margin:30px 0 0; }
+  .specsheet{ margin-top:48px; border:1px solid var(--rule-2); background:var(--card);
+    display:grid; grid-template-columns:repeat(3,1fr); }
+  @media (max-width:680px){ .specsheet{ grid-template-columns:1fr; } }
+  .specsheet .sc{ padding:18px 20px; border-right:1px solid var(--rule); }
+  .specsheet .sc:last-child{ border-right:none; }
+  .specsheet .sc .k{ display:block; margin-bottom:8px; }
+  .specsheet .sc .v{ font-family:var(--disp); font-weight:500; font-size:16px; color:var(--ink);
+    line-height:1.35; }
+
+  /* ── Index (índice) ──────────────────────────── */
+  .contents{ margin:72px 0 0; border-top:1px solid var(--ink); padding-top:26px; }
+  .contents .ct{ color:var(--accent); margin-bottom:18px; }
+  .toc{ list-style:none; margin:0; padding:0; }
+  .toc li{ display:grid; grid-template-columns:70px 1fr auto; align-items:center; gap:18px;
+    padding:15px 0; border-bottom:1px solid var(--rule); }
+  .toc .n{ font-family:var(--mono); font-size:12px; color:var(--accent); }
+  .toc a{ color:var(--ink); text-decoration:none; font-family:var(--disp); font-weight:500;
+    font-size:19px; letter-spacing:-.01em; }
+  .toc li:hover a{ color:var(--accent); }
+  .toc .ar{ font-family:var(--mono); color:var(--faint); font-size:12px; }
+
+  /* ── Chapter (capítulo / sección) ────────────── */
+  .chapter{ margin-top:96px; scroll-margin-top:24px; }
+  .ch-head{ border-bottom:1px solid var(--ink); padding-bottom:26px; }
+  .ch-marker{ display:flex; align-items:center; gap:14px; margin-bottom:20px; }
+  .ch-marker .mn{ font-family:var(--mono); font-size:12px; color:#fff; background:var(--accent);
+    padding:4px 9px; font-weight:600; letter-spacing:.06em; }
+  h2.ch-title{ font-family:var(--disp); font-weight:600; font-size:clamp(28px,4.2vw,52px);
+    line-height:1.02; letter-spacing:-.03em; margin:0; max-width:18ch; }
+  h2.ch-title .hl{ color:var(--accent); }
+  .ch-lede{ font-size:19px; line-height:1.5; color:var(--ink-2); margin:20px 0 0; max-width:64ch; }
+
+  /* ── Prose (cuerpo de texto) ─────────────────── */
+  .prose{ max-width:70ch; margin-top:32px; font-size:16.5px; line-height:1.62; color:var(--ink-2); }
+  .prose p{ margin:0 0 18px; }
+  .prose strong{ color:var(--ink); font-weight:600; }
+  .prose em{ font-style:normal; color:var(--accent); font-weight:500; }   /* resalta una idea en rojo */
+
+  /* ── Note (callout / nota al margen) ─────────── */
+  .note{ margin:32px 0; border:1px solid var(--rule-2); border-left:3px solid var(--accent);
+    background:var(--card); padding:22px 26px; max-width:78ch; position:relative; }
+  .note .lbl{ color:var(--accent); display:block; margin-bottom:11px; }
+  .note p{ margin:0; font-size:15.5px; line-height:1.58; color:var(--ink-2); }
+  .note strong{ color:var(--ink); font-weight:600; }
+  .note.warn{ border-left-color:var(--accent-deep); }   /* variante de advertencia */
+
+  /* ── Stack (diagrama por niveles / jerarquía) ── */
+  .stack{ margin:36px 0 8px; border:1px solid var(--ink); background:var(--card); }
+  .tier{ display:grid; grid-template-columns:158px 1fr; border-bottom:1px solid var(--rule); }
+  .tier:last-child{ border-bottom:none; }
+  @media (max-width:680px){ .tier{ grid-template-columns:1fr; } }
+  .tier .t-lbl{ padding:18px 20px; border-right:1px solid var(--rule); display:flex; align-items:center;
+    background:var(--paper-2); }
+  .tier .t-items{ display:flex; }
+  @media (max-width:560px){ .tier .t-items{ flex-direction:column; } }
+  .cell{ flex:1; padding:18px 20px; border-left:1px solid var(--rule); }
+  .cell:first-child{ border-left:none; }
+  .cell .cn{ font-family:var(--disp); font-weight:600; font-size:18px; color:var(--ink); display:block;
+    letter-spacing:-.01em; }
+  .cell .cs{ font-family:var(--mono); font-size:11px; color:var(--muted); display:block; margin-top:7px;
+    line-height:1.45; }
+  .cell.x .cn{ color:var(--accent); }   /* destaca una celda */
+  .flowmark{ font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; color:var(--faint);
+    text-transform:uppercase; padding:7px 20px; text-align:center; border-bottom:1px solid var(--rule);
+    background:var(--paper-2); }
+
+  /* ── Entity (ficha de un elemento: persona, módulo, fase…) ── */
+  .entity{ margin:38px 0; border:1px solid var(--ink); background:var(--card); }
+  .entity-head{ padding:26px 30px 22px; border-bottom:1px solid var(--rule); border-top:3px solid var(--accent); }
+  .entity-head .lbl{ color:var(--accent); display:block; margin-bottom:12px; }
+  .entity-name{ font-family:var(--disp); font-weight:600; font-size:28px; line-height:1.05;
+    letter-spacing:-.02em; margin:0 0 11px; }
+  .entity-name .hl{ color:var(--accent); }
+  .entity-purpose{ font-size:16px; line-height:1.55; color:var(--ink-2); margin:0; max-width:72ch; }
+  .entity-purpose strong{ color:var(--ink); font-weight:600; }
+  .entity-body{ padding:4px 30px; }
+  .fn{ display:grid; grid-template-columns:36px 1fr; gap:18px; padding:16px 0; border-bottom:1px solid var(--rule); }
+  .fn:last-child{ border-bottom:none; }
+  .fn .fi{ font-family:var(--mono); font-size:12px; color:var(--accent); border:1px solid var(--accent-line);
+    width:30px; height:30px; display:flex; align-items:center; justify-content:center; }
+  .fn .ft strong{ color:var(--ink); font-weight:600; }
+  .fn .ft .d{ color:var(--ink-2); }
+  .fn .ft .sub{ display:block; margin-top:6px; font-size:14px; color:var(--muted); line-height:1.5;
+    padding-left:12px; border-left:2px solid var(--rule-2); }
+  .entity-foot{ display:flex; flex-wrap:wrap; gap:9px; padding:18px 30px 22px; border-top:1px solid var(--rule);
+    background:var(--paper-2); }
+  .tag{ font-family:var(--mono); font-size:11px; color:var(--ink-2); padding:7px 12px; border:1px solid var(--rule-2);
+    background:var(--card); }
+  .tag strong{ color:var(--ink); font-weight:600; }
+  .tag.key{ border-color:var(--accent-line); color:var(--accent); background:var(--accent-soft); }
+  .tag.key strong{ color:var(--accent-deep); }
+  .tag.lnk{ border-color:var(--accent); color:var(--accent); }
+  .tag.lnk strong{ color:var(--accent-deep); }
+
+  /* ── Grid2 (grilla de tarjetas, p. ej. principios) ── */
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; margin-top:36px; border:1px solid var(--ink);
+    background:var(--card); }
+  @media (max-width:680px){ .grid2{ grid-template-columns:1fr; } }
+  .card{ padding:26px 28px 28px; border-bottom:1px solid var(--rule); }
+  .card:nth-child(odd){ border-right:1px solid var(--rule); }
+  @media (max-width:680px){ .card:nth-child(odd){ border-right:none; } }
+  .card:nth-last-child(-n+2){ border-bottom:none; }
+  @media (max-width:680px){ .card:nth-last-child(-n+2){ border-bottom:1px solid var(--rule); } .card:last-child{ border-bottom:none; } }
+  .card .cnum{ font-family:var(--mono); font-size:11px; color:var(--accent); display:block; margin-bottom:14px; }
+  .card h4{ font-family:var(--disp); font-weight:600; font-size:21px; letter-spacing:-.015em; margin:0 0 9px; color:var(--ink); }
+  .card p{ font-size:15px; line-height:1.55; color:var(--ink-2); margin:0; }
+
+  /* ── Statement (frase de cierre / pull-quote) ── */
+  .statement{ margin:88px 0 0; padding:56px 44px; border:1px solid var(--ink); background:var(--card);
+    position:relative; }
+  .statement::before{ content:''; position:absolute; top:0; left:0; width:6px; height:100%; background:var(--accent); }
+  .statement .lbl{ color:var(--accent); margin-bottom:22px; display:block; }
+  .statement p{ font-family:var(--disp); font-weight:500; font-size:clamp(24px,3.4vw,42px); line-height:1.18;
+    letter-spacing:-.025em; margin:0; max-width:22ch; color:var(--ink); }
+  .statement .hl{ color:var(--accent); }
+
+  /* ── Footer (colofón) ────────────────────────── */
+  .colophon{ margin-top:50px; padding-top:18px; border-top:1px solid var(--ink); display:flex;
+    justify-content:space-between; flex-wrap:wrap; gap:12px; font-family:var(--mono); font-size:11px;
+    color:var(--muted); letter-spacing:.05em; text-transform:uppercase; }
+</style>
+<style>
+  /* ── Visual de proyección 16:9 (capa sobre el sistema Plano) ── */
+  html,body{ height:100%; overflow:hidden; }
+  .stage{ position:absolute; left:50%; top:50%; width:1600px; height:900px; transform:translate(-50%,-50%);
+    transform-origin:center; background:var(--paper); padding:22px 56px 16px; display:flex; flex-direction:column; }
+  .vhead{ margin-top:16px; }
+  .vhead .ref{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); }
+  .vhead h1{ font-family:var(--disp); font-weight:600; font-size:34px; line-height:1.05; letter-spacing:-.025em; margin:6px 0 0; }
+  .vhead h1 .hl{ color:var(--accent); }
+  .vbody{ flex:1; display:grid; grid-template-columns:1fr 360px; gap:44px; margin-top:16px; min-height:0; }
+
+  .tree{ display:flex; flex-direction:column; justify-content:center; }
+  .trow{ display:grid; grid-template-columns:100px 1fr; column-gap:18px; }
+  .trow + .trow{ margin-top:32px; }
+  .rlab{ display:flex; flex-direction:column; justify-content:center; border-right:1px solid var(--rule); padding-right:12px; }
+  .rlab .lbl{ color:var(--ink); font-weight:600; }
+  .rlab .rs{ font-family:var(--mono); font-size:10.5px; color:var(--faint); line-height:1.35; margin:4px 0 0; }
+
+  .nodes{ --g:12px; position:relative; display:flex; gap:var(--g); }
+  .nodes.c{ justify-content:center; }
+  .nodes.up::before, .nodes.dn::after{ content:''; position:absolute; height:1px; background:var(--faint);
+    left:calc((100% - (var(--n) - 1) * var(--g)) / var(--n) / 2);
+    right:calc((100% - (var(--n) - 1) * var(--g)) / var(--n) / 2); }
+  .nodes.up::before{ top:-16px; }
+  .nodes.dn::after{ bottom:-16px; }
+  .node{ position:relative; flex:1 1 0; min-width:0; background:var(--card); border:1px solid var(--rule-2);
+    padding:10px 13px 11px; display:flex; flex-direction:column; justify-content:center; }
+  .nodes.c .node{ flex:0 0 66%; }
+  .up .node::before, .dn .node::after{ content:''; position:absolute; left:50%; width:1px; height:16px; background:var(--faint); }
+  .up .node::before{ top:-17px; }
+  .dn .node::after{ bottom:-17px; }
+  .node > *{ margin:0; }
+  .node .k{ font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:5px; }
+  .node .k.r{ color:var(--accent); }
+  .node .nm{ font-family:var(--disp); font-weight:600; font-size:19px; line-height:1.15; letter-spacing:-.01em; color:var(--ink); }
+  .node .sb{ font-family:var(--mono); font-size:12px; line-height:1.4; color:var(--muted); margin-top:6px; }
+  .node.root{ border:1px solid var(--ink); border-top:3px solid var(--accent); text-align:center; }
+  .node.root .nm{ font-size:21px; }
+  .node.piv{ border:1px solid var(--ink); border-left:6px solid var(--accent); text-align:center; }
+  .node.piv .nm{ font-size:21px; color:var(--accent); }
+  .ag .node .nm{ font-size:16px; }
+  .ag .node .sb{ font-size:11.5px; }
+  .node.gap{ border:1px dashed var(--accent); background:var(--accent-soft); }
+  .node.gap .nm{ color:var(--accent); }
+
+  .side{ border-left:1px solid var(--ink); padding-left:30px; display:flex; flex-direction:column; justify-content:center; gap:26px; }
+  .side .lbl{ display:block; margin-bottom:10px; }
+  .idea .lbl{ color:var(--accent); }
+  .idea p{ font-family:var(--disp); font-weight:500; font-size:29px; line-height:1.16; letter-spacing:-.02em; margin:0; color:var(--ink); }
+  .idea .hl{ color:var(--accent); }
+  .nego{ border:1px solid var(--rule-2); border-left:3px solid var(--accent-deep); background:var(--card); padding:15px 18px; }
+  .nego .lbl{ color:var(--accent-deep); }
+  .nego p{ margin:0; font-size:15px; line-height:1.5; color:var(--ink-2); }
+  .nego strong{ color:var(--ink); font-weight:600; }
+  .filtro ol{ list-style:none; margin:0; padding:0; border-top:1px solid var(--ink); }
+  .filtro li{ display:grid; grid-template-columns:34px 1fr; align-items:baseline; padding:11px 0; border-bottom:1px solid var(--rule);
+    font-family:var(--disp); font-weight:500; font-size:19px; letter-spacing:-.01em; color:var(--ink); }
+  .filtro li .n{ font-family:var(--mono); font-size:11px; color:var(--accent); }
+
+  .vfoot{ margin-top:16px; padding-top:10px; border-top:1px solid var(--ink); display:flex; justify-content:space-between;
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+
+  <div class="titleblock-wrap"><div class="titleblock">
+    <div class="tb-l"><span class="sq"></span><span class="tb-field"><span class="tb-k">Para.</span><span class="tb-v">FyO</span></span><span class="tb-field"><span class="tb-k">Doc.</span><span class="tb-v">FYO-ARBOL2</span></span><span class="tb-field"><span class="tb-type">Visual</span></span></div>
+    <div class="tb-r">inaki@alganaras.com.ar</div>
+  </div></div>
+
+  <header class="vhead">
+    <p class="ref">fyoCapital Financiero · Árbol de valor</p>
+    <h1>Lo que tiene que pasar para que fyoCapital <span class="hl">crezca</span></h1>
+  </header>
+
+  <div class="vbody">
+    <div class="tree">
+
+      <div class="trow">
+        <div class="rlab"><span class="lbl">Raíz</span><p class="rs">lo que buscamos</p></div>
+        <div class="nodes c dn" style="--n:1">
+          <div class="node root"><h3 class="nm">Comisiones que crecen más rápido que la nómina</h3><p class="sb">más negocio por cliente · más clientes por comercial</p></div>
+        </div>
+      </div>
+
+      <div class="trow">
+        <div class="rlab"><span class="lbl">Drivers</span><p class="rs">la aritmética</p></div>
+        <div class="nodes up dn" style="--n:4">
+          <div class="node"><p class="k">Condicionada · decisión de grupo</p><h3 class="nm">Captar</h3><p class="sb">clientes de Granos que empiezan a operar Capital</p></div>
+          <div class="node"><p class="k r">Foco</p><h3 class="nm">Retener</h3><p class="sb">que sigan operando y se queden más tiempo</p></div>
+          <div class="node"><p class="k r">Foco · la aguja grande</p><h3 class="nm">Más plata confiada</h3><p class="sb">qué parte de su plata pone en fyo</p></div>
+          <div class="node"><p class="k r">Foco</p><h3 class="nm">Más profundidad</h3><p class="sb">más productos y compuestos, solo si le conviene</p></div>
+        </div>
+      </div>
+
+      <div class="trow">
+        <div class="rlab"><span class="lbl">Pivote</span><p class="rs">el porqué del cliente</p></div>
+        <div class="nodes c up dn" style="--n:1">
+          <div class="node piv"><h3 class="nm">Confianza: con fyo me va mejor</h3><p class="sb">se transfiere desde Granos · se gana con resultados · se pierde con un error</p></div>
+        </div>
+      </div>
+
+      <div class="trow">
+        <div class="rlab"><span class="lbl">Motores</span><p class="rs">de dónde nace</p></div>
+        <div class="nodes up dn" style="--n:4">
+          <div class="node"><h3 class="nm">Gana más plata</h3><p class="sb">le rinde lo que sobra, le cuesta menos lo que falta, cubre el precio</p></div>
+          <div class="node"><h3 class="nm">Relación personal</h3><p class="sb">comercial con tiempo y con la información para sentarse</p></div>
+          <div class="node"><h3 class="nm">Operación impecable</h3><p class="sb">sin errores y visible en todo momento</p></div>
+          <div class="node"><h3 class="nm">Entiende lo que tiene</h3><p class="sb">información a la medida de cada perfil, del sofisticado al que aprende</p></div>
+        </div>
+      </div>
+
+      <div class="trow">
+        <div class="rlab"><span class="lbl">Agentes</span><p class="rs">quién lo escala</p></div>
+        <div class="nodes up ag" style="--n:6">
+          <div class="node"><p class="k">Research</p><h3 class="nm">fyoCortex</h3><p class="sb">→ gana más</p></div>
+          <div class="node"><p class="k">Interno</p><h3 class="nm">Portafolio</h3><p class="sb">→ gana más · plata · profundidad</p></div>
+          <div class="node"><p class="k">Interno</p><h3 class="nm">Comercial</h3><p class="sb">→ relación · retener · capacidad</p></div>
+          <div class="node"><p class="k">Cara al cliente</p><h3 class="nm">fyoCapital AI</h3><p class="sb">→ entiende · operación visible</p></div>
+          <div class="node"><p class="k">Transversal</p><h3 class="nm">Riesgo</h3><p class="sb">cuida que la confianza no se gaste</p></div>
+          <div class="node gap"><p class="k r">Hueco</p><h3 class="nm">Originación Granos</h3><p class="sb">→ captar · sin agente hoy</p></div>
+        </div>
+      </div>
+
+    </div>
+
+    <aside class="side">
+      <div class="idea">
+        <span class="lbl">Idea rectora</span>
+        <p>Crecer porque el cliente <span class="hl">gana más</span> con fyo, y escalarlo con agentes, no con nómina.</p>
+      </div>
+      <div class="nego">
+        <span class="lbl">No se negocia</span>
+        <p><strong>El resultado del cliente.</strong> Operar más solo si le conviene. Si la comisión sube y su resultado no, es rotar cartera.</p>
+      </div>
+      <div class="filtro">
+        <span class="lbl">El filtro para cualquier iniciativa</span>
+        <ol>
+          <li><span class="n">01</span><span data-editable>¿Qué aguja mueve?</span></li>
+          <li><span class="n">02</span><span data-editable>¿Le conviene al cliente?</span></li>
+          <li><span class="n">03</span><span data-editable>¿Escala sin sumar nómina?</span></li>
+        </ol>
+      </div>
+    </aside>
+  </div>
+
+  <div class="vfoot"><span>Iñaki · Consultoría</span><span>Tecla F: pantalla completa · inaki@alganaras.com.ar</span></div>
+</div>
+
+<script>
+  (function(){
+    var st=document.getElementById('stage');
+    function fit(){ var s=Math.min(window.innerWidth/1600, window.innerHeight/900);
+      st.style.transform='translate(-50%,-50%) scale('+s+')'; }
+    window.addEventListener('resize',fit); fit();
+    document.addEventListener('keydown',function(e){
+      var t=e.target; if(t && (t.isContentEditable || /INPUT|TEXTAREA/.test(t.tagName))) return;
+      if(e.key==='f'||e.key==='F'){
+        if(!document.fullscreenElement){ document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); }
+        else { document.exitFullscreen && document.exitFullscreen(); }
+      }
+    });
+  })();
+</script>
+<script src="https://docs.alganaras.com.ar/_editor.js"></script>
+</body></html>

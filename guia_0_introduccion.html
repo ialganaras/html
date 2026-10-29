@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Guía 0 · Introducción · Agentes de IA en fyoCapital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a1424;
+    --bg-2:#0e1c33;
+    --panel:#132543;
+    --panel-2:#172d51;
+    --panel-3:#1c365f;
+    --line:#1f3358;
+    --line-2:#2a4475;
+    --line-3:#3a5a95;
+
+    --text:#e8eef9;
+    --text-2:#c6d2e6;
+    --muted:#8aa0c2;
+    --dim:#6b81a3;
+    --faint:#4a6088;
+
+    --mint:#5eead4;
+    --mint-soft:rgba(94,234,212,.14);
+    --mint-strong:rgba(94,234,212,.35);
+    --blue:#7dd3fc;
+    --blue-soft:rgba(125,211,252,.14);
+    --violet:#c4b5fd;
+    --violet-soft:rgba(196,181,253,.14);
+    --gold:#fcd34d;
+    --gold-soft:rgba(252,211,77,.18);
+    --amber:#fdba74;
+    --amber-soft:rgba(253,186,116,.16);
+    --rose:#fda4af;
+    --rose-soft:rgba(253,164,175,.14);
+    --green:#86efac;
+    --green-soft:rgba(134,239,172,.14);
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:
+      radial-gradient(1200px 800px at 8% -5%, rgba(94,234,212,.06), transparent 60%),
+      radial-gradient(1000px 600px at 110% 10%, rgba(125,211,252,.05), transparent 60%),
+      radial-gradient(900px 700px at 50% 110%, rgba(196,181,253,.04), transparent 60%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    font-weight:400;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  ::selection{ background:var(--mint-strong); color:#0a1424; }
+
+  /* LAYOUT */
+  .doc{
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 56px 48px 96px;
+    position:relative;
+  }
+  @media (max-width: 720px){
+    .doc{ padding: 24px 20px 60px; }
+  }
+
+  /* META BAR */
+  .meta-bar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color: var(--dim);
+    padding-bottom:14px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom:42px;
+  }
+  .meta-bar .left{ display:flex; align-items:center; gap:14px; }
+  .meta-bar .dot{ width:7px; height:7px; border-radius:50%; background:var(--mint); box-shadow:0 0 14px var(--mint); }
+  .meta-bar .right{ color: var(--faint); }
+  .meta-bar .right b{ color:var(--text-2); font-weight:500; }
+
+  /* COVER */
+  .cover{ margin-bottom: 80px; }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:10px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color: var(--mint);
+    padding: 6px 12px;
+    border:1px solid var(--mint-strong);
+    border-radius:999px;
+    background: var(--mint-soft);
+    margin-bottom: 30px;
+  }
+  .eyebrow::before{ content:''; width:6px; height:6px; background:var(--mint); border-radius:50%; }
+
+  h1.cover-title{
+    font-family:'Fraunces', serif;
+    font-weight:300;
+    font-size: clamp(40px, 6vw, 76px);
+    line-height: 1.02;
+    letter-spacing:-0.02em;
+    margin: 0 0 24px;
+    color: var(--text);
+  }
+  h1.cover-title em{
+    font-style: italic;
+    font-weight:400;
+    color: var(--mint);
+  }
+  h1.cover-title .punct{ color: var(--amber); font-style: italic; }
+
+  .cover-deck{
+    font-family:'Fraunces', serif;
+    font-weight:300;
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.55;
+    color: var(--text-2);
+    max-width: 780px;
+    margin: 0 0 32px;
+  }
+  .cover-byline{
+    display:flex;
+    flex-wrap:wrap;
+    gap: 28px 56px;
+    padding: 22px 0 0;
+    border-top: 1px solid var(--line);
+    margin-top:34px;
+  }
+  .byline-item .lbl{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    color: var(--dim);
+    display:block;
+    margin-bottom: 6px;
+  }
+  .byline-item .val{
+    font-family:'Inter', sans-serif;
+    font-weight:500;
+    color: var(--text);
+    font-size: 14px;
+  }
+
+  /* TOC */
+  .toc{
+    margin-bottom: 80px;
+    padding: 28px 32px;
+    border: 1px solid var(--line-2);
+    border-radius: 4px;
+    background: linear-gradient(180deg, var(--panel) 0%, transparent 100%);
+  }
+  .toc-title{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color: var(--mint);
+    margin-bottom:18px;
+  }
+  .toc-list{
+    list-style:none;
+    padding:0; margin:0;
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px 32px;
+  }
+  @media (max-width: 720px){ .toc-list{ grid-template-columns: 1fr; } }
+  .toc-list li{
+    display:flex;
+    align-items:baseline;
+    gap: 14px;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .toc-list li:hover{ border-color: var(--mint-strong); }
+  .toc-list a{
+    color: var(--text-2);
+    text-decoration: none;
+    font-size: 14.5px;
+    flex:1;
+    transition: color .15s ease;
+  }
+  .toc-list a:hover{ color: var(--mint); }
+  .toc-list .num{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--dim);
+    min-width: 28px;
+  }
+
+  /* SECTION */
+  section.chapter{
+    margin: 0 0 96px;
+    scroll-margin-top: 30px;
+  }
+  .ch-head{
+    margin-bottom: 38px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--line);
+  }
+  .ch-num{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing:.25em;
+    text-transform:uppercase;
+    color: var(--mint);
+    display:block;
+    margin-bottom:14px;
+  }
+  h2.ch-title{
+    font-family:'Fraunces', serif;
+    font-weight:300;
+    font-size: clamp(30px, 3.6vw, 46px);
+    line-height: 1.1;
+    letter-spacing:-0.015em;
+    margin: 0;
+    color: var(--text);
+  }
+  h2.ch-title em{
+    font-style: italic;
+    color: var(--amber);
+    font-weight:400;
+  }
+  .ch-lede{
+    font-family:'Fraunces', serif;
+    font-size: 19px;
+    font-weight:300;
+    line-height: 1.55;
+    color: var(--text-2);
+    margin: 22px 0 0;
+    max-width: 820px;
+  }
+
+  /* PROSE */
+  .prose{
+    font-size: 15.5px;
+    color: var(--text-2);
+    max-width: 820px;
+  }
+  .prose p{ margin: 0 0 18px; }
+  .prose strong{ color: var(--text); font-weight:600; }
+  .prose em{ color: var(--mint); font-style: normal; }
+  .prose h3{
+    font-family:'Fraunces', serif;
+    font-weight: 400;
+    font-size: 26px;
+    color: var(--text);
+    margin: 40px 0 16px;
+    letter-spacing: -.01em;
+  }
+  .prose h4{
+    font-family:'Fraunces', serif;
+    font-weight: 400;
+    font-size: 20px;
+    color: var(--text);
+    margin: 28px 0 12px;
+    letter-spacing: -.005em;
+  }
+  .prose .pull{
+    font-family:'Fraunces', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--gold);
+    line-height: 1.45;
+    padding: 8px 0 8px 22px;
+    border-left: 2px solid var(--gold);
+    margin: 28px 0;
+    max-width: 760px;
+  }
+
+  /* CALLOUTS */
+  .callout{
+    margin: 32px 0;
+    padding: 22px 26px;
+    border-left: 3px solid var(--violet);
+    background: var(--violet-soft);
+    border-radius: 0 4px 4px 0;
+  }
+  .callout-lbl{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color: var(--violet);
+    margin-bottom: 10px;
+    display:block;
+  }
+  .callout p{
+    margin:0;
+    font-size: 15px;
+    color: var(--text-2);
+    line-height: 1.6;
+  }
+  .callout.amber{ border-left-color: var(--amber); background: var(--amber-soft); }
+  .callout.amber .callout-lbl{ color: var(--amber); }
+  .callout.mint{ border-left-color: var(--mint); background: var(--mint-soft); }
+  .callout.mint .callout-lbl{ color: var(--mint); }
+  .callout.gold{ border-left-color: var(--gold); background: var(--gold-soft); }
+  .callout.gold .callout-lbl{ color: var(--gold); }
+  .callout.rose{ border-left-color: var(--rose); background: var(--rose-soft); }
+  .callout.rose .callout-lbl{ color: var(--rose); }
+
+  /* CAPABILITIES GRID */
+  .caps-grid{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin: 28px 0;
+  }
+  @media (max-width: 900px){ .caps-grid{ grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px){ .caps-grid{ grid-template-columns: 1fr; } }
+  .cap-cell{
+    padding: 18px 18px 20px;
+    border: 1px solid var(--line-2);
+    border-radius: 4px;
+    background: var(--panel);
+    transition: border-color .2s ease, transform .2s ease;
+  }
+  .cap-cell:hover{ border-color: var(--mint-strong); transform: translateY(-2px); }
+  .cap-cell .cn{
+    font-family:'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 32px;
+    color: var(--mint);
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+  .cap-cell h5{
+    font-family:'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text);
+    margin: 0 0 6px;
+  }
+  .cap-cell p{
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* TABLES */
+  .tbl-wrap{ overflow-x: auto; margin: 24px 0; }
+  table.tbl{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    color: var(--text-2);
+  }
+  table.tbl th, table.tbl td{
+    text-align: left;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  table.tbl thead th{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--mint);
+    border-bottom: 1px solid var(--line-2);
+    font-weight: 500;
+  }
+  table.tbl tbody tr:hover{ background: rgba(255,255,255,0.02); }
+  table.tbl td strong{ color: var(--text); }
+  table.tbl td.green-cell{ color: var(--green); }
+  table.tbl td.rose-cell{ color: var(--rose); }
+
+  /* LENSES */
+  .lenses{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 14px;
+  }
+  @media (max-width: 820px){ .lenses{ grid-template-columns: 1fr; } }
+  .lens{
+    padding: 26px 26px 28px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, var(--panel-2) 0%, var(--panel) 100%);
+    border: 1px solid var(--line-2);
+    transition: transform .25s ease, border-color .25s ease;
+  }
+  .lens:hover{ transform: translateY(-3px); border-color: var(--mint-strong); }
+  .lens .ln-num{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--mint);
+    margin-bottom: 10px;
+  }
+  .lens h4{
+    font-family:'Fraunces', serif;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1.2;
+    color: var(--text);
+    margin: 0 0 14px;
+    letter-spacing: -.01em;
+  }
+  .lens .lens-q{
+    font-family:'Fraunces', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--gold);
+    margin: 0 0 14px;
+    line-height: 1.5;
+  }
+  .lens ul{
+    list-style: none;
+    padding: 0; margin: 0;
+    border-top: 1px dashed var(--line-2);
+    padding-top: 12px;
+  }
+  .lens ul li{
+    font-size: 13.5px;
+    color: var(--text-2);
+    padding: 4px 0;
+    padding-left: 18px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .lens ul li::before{
+    content:'→';
+    position: absolute;
+    left: 0;
+    color: var(--mint);
+    font-family:'JetBrains Mono', monospace;
+    font-size: 12px;
+  }
+
+  /* QUESTION BLOCK */
+  .qblock{
+    margin: 24px 0;
+    border: 1px solid var(--line-2);
+    border-radius: 6px;
+    background: var(--panel);
+    overflow: hidden;
+  }
+  .qblock-head{
+    padding: 18px 24px;
+    background: linear-gradient(135deg, var(--panel-3) 0%, var(--panel-2) 100%);
+    border-bottom: 1px solid var(--line-2);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .qblock-head .qb-tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--mint);
+    padding: 4px 10px;
+    background: var(--mint-soft);
+    border-radius: 999px;
+  }
+  .qblock-head h4{
+    font-family:'Fraunces', serif;
+    font-weight: 400;
+    font-size: 20px;
+    color: var(--text);
+    margin: 0;
+    letter-spacing: -.01em;
+  }
+  .qblock-body{ padding: 22px 26px 24px; }
+  .qblock-body ol{
+    margin: 0;
+    padding-left: 22px;
+    color: var(--text-2);
+  }
+  .qblock-body ol li{
+    padding: 7px 0;
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+  .qblock-body ol li::marker{ color: var(--mint); font-weight: 600; }
+
+  /* GREEN/RED FLAGS */
+  .flag-split{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+    margin: 28px 0;
+  }
+  @media (max-width: 720px){ .flag-split{ grid-template-columns: 1fr; } }
+  .flag-col{
+    padding: 24px 24px 26px;
+    border-radius: 4px;
+    border: 1px solid var(--line-2);
+    background: var(--panel);
+  }
+  .flag-col.green{ border-color: rgba(134,239,172,.3); background: var(--green-soft); }
+  .flag-col.red{ border-color: rgba(253,164,175,.3); background: var(--rose-soft); }
+  .flag-col .fl-tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .flag-col.green .fl-tag{ color: var(--green); }
+  .flag-col.red .fl-tag{ color: var(--rose); }
+  .flag-col h4{
+    font-family:'Fraunces', serif;
+    font-weight: 400;
+    font-size: 19px;
+    color: var(--text);
+    margin: 0 0 16px;
+  }
+  .flag-col ul{ list-style: none; padding: 0; margin: 0; }
+  .flag-col ul li{
+    font-size: 14px;
+    color: var(--text-2);
+    padding: 6px 0 6px 22px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .flag-col.green ul li::before{
+    content:'✓';
+    position: absolute;
+    left: 0;
+    color: var(--green);
+    font-weight: 600;
+  }
+  .flag-col.red ul li::before{
+    content:'×';
+    position: absolute;
+    left: 0;
+    color: var(--rose);
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  /* MATRIX */
+  .matrix-wrap{
+    margin: 28px 0;
+    padding: 32px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, var(--panel-3) 0%, var(--panel) 100%);
+    border: 1px solid var(--line-2);
+  }
+  .matrix-2x2{
+    display: grid;
+    grid-template-columns: 60px 1fr 1fr;
+    grid-template-rows: 60px 1fr 1fr;
+    gap: 8px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  @media (max-width: 720px){ .matrix-2x2{ max-width: 100%; } }
+  .mx-empty{}
+  .mx-xlabel, .mx-ylabel{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  .mx-ylabel{
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+  }
+  .mx-cell{
+    padding: 20px;
+    border-radius: 4px;
+    background: var(--panel);
+    border: 1px solid var(--line-2);
+    min-height: 130px;
+  }
+  .mx-cell.q1{ background: var(--mint-soft); border-color: var(--mint-strong); }
+  .mx-cell.q2{ background: var(--gold-soft); border-color: rgba(252,211,77,.3); }
+  .mx-cell.q3{ background: var(--violet-soft); border-color: rgba(196,181,253,.3); }
+  .mx-cell.q4{ background: var(--rose-soft); border-color: rgba(253,164,175,.25); }
+  .mx-cell .mx-n{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .2em;
+    color: var(--dim);
+    margin-bottom: 8px;
+  }
+  .mx-cell h5{
+    font-family:'Fraunces', serif;
+    font-weight: 400;
+    font-size: 18px;
+    color: var(--text);
+    margin: 0 0 6px;
+  }
+  .mx-cell p{
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.45;
+    margin: 0;
+  }
+  .mx-axis-h{
+    grid-column: 2 / 4;
+    text-align: center;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--mint);
+    margin-top: 8px;
+  }
+  .mx-axis-v{
+    grid-row: 2 / 4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--amber);
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+  }
+
+  /* CRITERIA */
+  .crit-split{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+    margin: 24px 0;
+  }
+  @media (max-width: 820px){ .crit-split{ grid-template-columns: 1fr; } }
+  .crit-col{
+    padding: 24px 26px 26px;
+    border-radius: 4px;
+    border: 1px solid var(--line-2);
+    background: var(--panel);
+  }
+  .crit-col .cc-tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--mint);
+    margin-bottom: 6px;
+  }
+  .crit-col.amber-c .cc-tag{ color: var(--amber); }
+  .crit-col h4{
+    font-family:'Fraunces', serif;
+    font-weight: 400;
+    font-size: 22px;
+    color: var(--text);
+    margin: 0 0 18px;
+    letter-spacing: -.01em;
+  }
+  .crit-list{
+    list-style: none;
+    padding: 0; margin: 0;
+  }
+  .crit-list li{
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .crit-list li:last-child{ border-bottom: none; }
+  .crit-list .cl-name{
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13.5px;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .crit-list .cl-q{
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+    font-style: italic;
+    font-family: 'Fraunces', serif;
+  }
+
+  /* CHECKLIST */
+  .check-grid{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    margin: 24px 0;
+  }
+  @media (max-width: 820px){ .check-grid{ grid-template-columns: 1fr; } }
+  .check-card{
+    padding: 22px 24px 24px;
+    border: 1px solid var(--line-2);
+    border-radius: 4px;
+    background: var(--panel);
+    transition: border-color .2s ease;
+  }
+  .check-card:hover{ border-color: var(--mint-strong); }
+  .check-card .ck-tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--mint);
+    margin-bottom: 4px;
+  }
+  .check-card h4{
+    font-family:'Fraunces', serif;
+    font-weight: 400;
+    font-size: 19px;
+    color: var(--text);
+    margin: 0 0 14px;
+    letter-spacing: -.01em;
+  }
+  .check-card ul{
+    list-style: none;
+    padding: 0; margin: 0;
+  }
+  .check-card ul li{
+    font-size: 13.5px;
+    color: var(--text-2);
+    padding: 6px 0 6px 24px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .check-card ul li::before{
+    content:'☐';
+    position: absolute;
+    left: 0;
+    color: var(--dim);
+    font-size: 14px;
+  }
+
+  /* EXAMPLES */
+  .ex-list{ margin: 28px 0; }
+  .ex-item{
+    padding: 28px 30px 30px;
+    border-radius: 6px;
+    border: 1px solid var(--line-2);
+    background: var(--panel);
+    margin-bottom: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .ex-item.low{
+    background:
+      radial-gradient(600px 200px at 100% 0%, var(--rose-soft), transparent 70%),
+      var(--panel);
+  }
+  .ex-item.mid{
+    background:
+      radial-gradient(600px 200px at 100% 0%, var(--gold-soft), transparent 70%),
+      var(--panel);
+  }
+  .ex-item.high{
+    background:
+      radial-gradient(600px 200px at 100% 0%, var(--mint-soft), transparent 70%),
+      var(--panel);
+  }
+  .ex-head{
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .ex-badge{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 999px;
+  }
+  .ex-item.low .ex-badge{ background: var(--rose-soft); color: var(--rose); }
+  .ex-item.mid .ex-badge{ background: var(--gold-soft); color: var(--gold); }
+  .ex-item.high .ex-badge{ background: var(--mint-soft); color: var(--mint); }
+  .ex-item h3{
+    font-family:'Fraunces', serif;
+    font-weight: 400;
+    font-size: 24px;
+    color: var(--text);
+    margin: 0;
+    letter-spacing: -.01em;
+    flex: 1;
+    min-width: 200px;
+  }
+  .ex-body{ color: var(--text-2); font-size: 14.5px; line-height: 1.6; }
+  .ex-body p{ margin: 0 0 12px; }
+  .ex-body p:last-child{ margin-bottom: 0; }
+  .ex-body strong{ color: var(--text); font-weight: 600; }
+  .ex-body .label{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-right: 8px;
+  }
+  .ex-body ul{ margin: 6px 0 12px; padding-left: 22px; }
+  .ex-body ul li{ padding: 3px 0; }
+
+  /* CANVAS */
+  .canvas{
+    margin: 28px 0;
+    padding: 36px;
+    border-radius: 8px;
+    border: 1px solid var(--line-2);
+    background:
+      radial-gradient(800px 400px at 80% 20%, rgba(94,234,212,.06), transparent 60%),
+      linear-gradient(135deg, var(--panel-2) 0%, var(--panel) 100%);
+  }
+  .canvas-head{
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--line);
+  }
+  .canvas-head .ch-eb{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--mint);
+    margin-bottom: 10px;
+  }
+  .canvas-head h3{
+    font-family:'Fraunces', serif;
+    font-weight: 300;
+    font-size: 32px;
+    color: var(--text);
+    margin: 0;
+    letter-spacing: -.015em;
+  }
+  .canvas-grid{
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 12px;
+  }
+  .canvas-block{
+    background: rgba(255,255,255,0.025);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 16px 18px 18px;
+  }
+  .cb-tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--mint);
+    margin-bottom: 8px;
+  }
+  .cb-title{
+    font-family:'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .cb-line{
+    height: 1px;
+    background: var(--line);
+    margin: 6px 0;
+  }
+  .cb-hint{
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.45;
+    font-style: italic;
+    font-family: 'Fraunces', serif;
+  }
+  .cb-12{ grid-column: span 12; }
+  .cb-6{ grid-column: span 6; }
+  .cb-4{ grid-column: span 4; }
+  .cb-3{ grid-column: span 3; }
+  .cb-8{ grid-column: span 8; }
+  @media (max-width: 820px){
+    .cb-12, .cb-8, .cb-6, .cb-4, .cb-3{ grid-column: span 12; }
+  }
+
+  /* WORKSHOP TIMELINE */
+  .ws-tl{ margin: 24px 0; border-top: 1px solid var(--line); }
+  .ws-row{
+    display: grid;
+    grid-template-columns: 80px 200px 1fr;
+    gap: 24px;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--line);
+    align-items: baseline;
+  }
+  @media (max-width: 820px){ .ws-row{ grid-template-columns: 1fr; gap: 6px; padding: 18px 0; } }
+  .ws-time{
+    font-family:'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 28px;
+    color: var(--mint);
+    line-height: 1;
+  }
+  .ws-act{
+    font-family:'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text);
+  }
+  .ws-desc{
+    font-size: 14px;
+    color: var(--text-2);
+    line-height: 1.55;
+  }
+
+  /* CLOSING */
+  .closing{
+    margin: 60px 0 0;
+    padding: 56px 48px;
+    border-radius: 6px;
+    background:
+      radial-gradient(800px 400px at 80% 20%, rgba(94,234,212,.08), transparent 60%),
+      linear-gradient(135deg, var(--panel-3) 0%, var(--panel) 100%);
+    border: 1px solid var(--line-2);
+    position: relative;
+    overflow: hidden;
+  }
+  .closing::before{
+    content:'!';
+    position: absolute;
+    top: -30px; right: 30px;
+    font-family:'Fraunces', serif;
+    font-style: italic;
+    font-size: 280px;
+    color: var(--mint-soft);
+    line-height: 1;
+    pointer-events: none;
+  }
+  .closing .cl-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--mint);
+    margin-bottom: 22px;
+    position: relative;
+    z-index: 1;
+  }
+  .closing .cl-text{
+    font-family:'Fraunces', serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(22px, 2.6vw, 30px);
+    line-height: 1.35;
+    color: var(--text);
+    margin: 0;
+    max-width: 800px;
+    letter-spacing: -.01em;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* FOOTER */
+  .doc-footer{
+    margin-top: 80px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .doc-footer .ft-right b{ color: var(--text-2); font-weight: 500; }
+
+
+  /* FACILITATOR QUESTION */
+  .fq{
+    font-family:'Fraunces', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--gold);
+    line-height: 1.5;
+    margin: 0 0 14px;
+    padding-left: 16px;
+    border-left: 2px solid var(--gold);
+  }
+  .qblock-body p.fq-note{
+    font-size: 13.5px;
+    color: var(--muted);
+    margin: 0;
+    line-height: 1.55;
+  }
+  /* TREE LAYERS */
+  .tree-layers{
+    margin: 26px 0;
+    border: 1px solid var(--line-2);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .tree-layer{
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-left: 3px solid var(--mint);
+    background: var(--panel);
+  }
+  .tree-layer:last-child{ border-bottom: none; }
+  .tree-layer.l0{ border-left-color: var(--text); }
+  .tree-layer.l1{ border-left-color: var(--gold); }
+  .tree-layer.l2{ border-left-color: var(--violet); }
+  .tree-layer.l3{ border-left-color: var(--mint); }
+  .tree-layer.lh{ border-left-color: var(--rose); background: var(--rose-soft); }
+  .tl-tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--dim);
+    min-width: 130px;
+    flex-shrink: 0;
+  }
+  .tl-body h5{
+    font-family:'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14.5px;
+    color: var(--text);
+    margin: 0 0 3px;
+  }
+  .tl-body p{
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.5;
+    margin: 0;
+  }
+  @media (max-width: 720px){
+    .tree-layer{ flex-direction: column; align-items: flex-start; gap: 6px; }
+    .tl-tag{ min-width: 0; }
+  }
+
+
+  /* REFERENCIAS */
+  .refs{ margin-top: 8px; }
+  .ref-group{ margin-bottom: 30px; }
+  .ref-group h4{ font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--mint); margin:0 0 14px; padding-bottom:8px; border-bottom:1px solid var(--line-2); }
+  .ref-list{ list-style:none; padding:0; margin:0; }
+  .ref-list li{ padding:14px 0; border-bottom:1px solid var(--line); }
+  .ref-list li:last-child{ border-bottom:none; }
+  .ref-src{ font-family:'Inter',sans-serif; font-weight:600; font-size:13.5px; color:var(--text); }
+  .ref-title{ font-size:13.5px; color:var(--text-2); }
+  .ref-list a{ display:inline-block; margin-top:5px; color:var(--blue); text-decoration:none; font-size:12px; word-break:break-all; font-family:'JetBrains Mono',monospace; }
+  .ref-list a:hover{ color:var(--mint); text-decoration:underline; }
+</style>
+</head>
+<body>
+<div class="doc">
+  <div class="meta-bar">
+    <div class="left"><span class="dot"></span><span>El marco común</span></div>
+    <div class="right">Serie Agentes de IA · <b>Introducción</b></div>
+  </div>
+  <div class="cover">
+    <span class="eyebrow">Serie Agentes de IA · Introducción</span>
+    <h1 class="cover-title">El marco común: <em>por qué</em> y <em>cómo</em><span class="punct">.</span></h1>
+    <p class="cover-deck">El enfoque que sostiene la serie: por qué no conviene arrancar automatizando lo obvio, las cuatro fases de adopción, los conceptos base para distinguir dónde la IA aporta valor real, y las referencias.</p>
+    <div class="cover-byline">
+      <div class="byline-item"><span class="lbl">Audiencia</span><span class="val">Equipo de fyoCapital — todas las áreas</span></div>
+      <div class="byline-item"><span class="lbl">Para qué</span><span class="val">Alinear el enfoque antes de las guías 1, 2 y 3</span></div>
+      <div class="byline-item"><span class="lbl">Contenido</span><span class="val">Premisa, fases, conceptos y fuentes</span></div>
+    </div>
+  </div>
+  <nav class="toc"><div class="toc-title">Contenido</div><ul class="toc-list">
+      <li><span class="num">01</span><a href="#premisa">Premisa: el sesgo de automatizar lo obvio</a></li>
+      <li><span class="num">02</span><a href="#fases">El mapa: cuatro fases de adopción</a></li>
+      <li><span class="num">03</span><a href="#framework">El test del valor agéntico</a></li>
+      <li><span class="num">04</span><a href="#referencias">Referencias y lecturas</a></li>
+    </ul></nav>
+
+<!-- 00 PREMISA -->
+  <section class="chapter" id="premisa">
+    <div class="ch-head">
+      <span class="ch-num">01 · Premisa</span>
+      <h2 class="ch-title">El sesgo más caro es <em>automatizar lo obvio</em></h2>
+      <p class="ch-lede">
+        El instinto inicial frente a la IA es buscar tareas manuales, repetitivas
+        o tediosas para automatizar. Muchas de esas tareas, sin embargo, se resuelven
+        igual o mejor con automatizaciones tradicionales, dashboards o reglas
+        de negocio. El verdadero valor de la IA está donde hace falta criterio:
+        interpretar, razonar, priorizar, recomendar y coordinar.
+      </p>
+    </div>
+
+    <div class="prose">
+      <p>
+        Esta serie existe para evitar tres errores comunes en empresas que arrancan
+        con IA: <strong>empezar por lo técnico</strong> antes de entender el
+        negocio, <strong>elegir el caso más fácil</strong> en vez del más
+        valioso, y <strong>confundir un agente con una automatización</strong>
+        más sofisticada.
+      </p>
+      <p class="pull">
+        No buscamos automatizar tareas. Buscamos automatizar criterio.
+      </p>
+      <p>
+        Esta serie está organizada en tres guías, más esta introducción. La <em>Guía 1</em> ayuda a mapear el negocio e identificar oportunidades; la <em>Guía 2</em> releva el detalle de cada una; la <em>Guía 3</em> define qué construir. Esta introducción reúne el porqué, el marco común y las referencias.
+      </p>
+    </div>
+  </section>
+
+  
+  <!-- FASES -->
+  <section class="chapter" id="fases">
+    <div class="ch-head">
+      <span class="ch-num">02 · El mapa</span>
+      <h2 class="ch-title">Cuatro fases: dónde encaja <em>cada guía</em></h2>
+      <p class="ch-lede">
+        Un encuadre útil antes de entrar en materia. Los marcos de adopción de agentes
+        más maduros —el de Microsoft entre ellos— ordenan el trabajo en cuatro fases.
+        Esta serie cubre las primeras en profundidad y abre las demás.
+      </p>
+    </div>
+    <div class="ws-tl">
+      <div class="ws-row"><div class="ws-time">1</div><div class="ws-act">Planificar</div><div class="ws-desc">Entender el negocio, identificar y priorizar oportunidades. <strong>Guía 1.</strong></div></div>
+      <div class="ws-row"><div class="ws-time">2</div><div class="ws-act">Gobernar y asegurar</div><div class="ws-desc">Definir identidad, guardrails, riesgos y cumplimiento — temprano, aunque se ejecute en producción. <strong>Guía 3 (AgentOps).</strong></div></div>
+      <div class="ws-row"><div class="ws-time">3</div><div class="ws-act">Construir</div><div class="ws-desc">Relevar el detalle y producir los outputs del agente. <strong>Guías 2 y 3.</strong></div></div>
+      <div class="ws-row"><div class="ws-time">4</div><div class="ws-act">Administrar</div><div class="ws-desc">Operar en producción, medir y mejorar. El "día después", que excede estas guías pero conviene tener en el radar.</div></div>
+    </div>
+    <div class="callout violet">
+      <span class="callout-lbl">Por qué importa el encuadre</span>
+      <p>
+        La mayoría de los proyectos de IA no fallan por mala tecnología sino por
+        saltearse fases: construir sin haber planificado, o desplegar sin gobernar.
+        Tener el mapa completo a la vista evita ese error desde el primer día.
+      </p>
+    </div>
+  </section>
+
+<!-- 01 FRAMEWORK -->
+  <section class="chapter" id="framework">
+    <div class="ch-head">
+      <span class="ch-num">03 · Framework conceptual</span>
+      <h2 class="ch-title">El <em>test</em> del valor agéntico</h2>
+      <p class="ch-lede">
+        Antes de evaluar un caso, alinear al equipo en una idea simple:
+        un agente de IA no se justifica por hacer algo más rápido, sino por
+        hacer algo que hoy no se hace o no se hace bien — porque requiere
+        criterio, contexto y juicio.
+      </p>
+    </div>
+
+    <div class="prose">
+      <p>
+        Frente a cualquier candidato a "caso de IA", responder estas preguntas
+        filtro. Si la mayoría apunta al lado izquierdo, no es agéntico.
+        Si la mayoría apunta al lado derecho, es candidato a profundizar.
+      </p>
+
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th style="width:50%">Pregunta filtro</th>
+              <th>Si la respuesta es…</th>
+              <th>Entonces…</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>¿La tarea requiere interpretar contexto cambiante?</td>
+              <td class="rose-cell">No</td>
+              <td>Regla, script o RPA</td>
+            </tr>
+            <tr>
+              <td>¿Requiere combinar info de múltiples fuentes para decidir?</td>
+              <td class="rose-cell">No</td>
+              <td>Probablemente un dashboard o un report</td>
+            </tr>
+            <tr>
+              <td>¿La respuesta correcta cambia según el caso?</td>
+              <td class="rose-cell">No</td>
+              <td>Automatización determinística</td>
+            </tr>
+            <tr>
+              <td>¿Hoy lo hace una persona aplicando criterio, y a veces se equivoca o no llega?</td>
+              <td class="green-cell">Sí</td>
+              <td><strong>Candidato a agente</strong></td>
+            </tr>
+            <tr>
+              <td>¿El valor está en detectar, recomendar o coordinar (no en ejecutar)?</td>
+              <td class="green-cell">Sí</td>
+              <td><strong>Candidato a agente</strong></td>
+            </tr>
+            <tr>
+              <td>¿Existe un costo de oportunidad invisible (cosas que no se hacen por falta de tiempo)?</td>
+              <td class="green-cell">Sí</td>
+              <td><strong>Candidato fuerte a agente</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Las 7 capacidades agénticas</h3>
+      <p>
+        Son las capacidades que justifican usar IA en lugar de automatización
+        tradicional. Si una oportunidad no toca <strong>al menos 3 de estas 7</strong>,
+        probablemente no necesita un agente — necesita un dashboard, una integración
+        o una regla.
+      </p>
+    </div>
+
+    <div class="caps-grid">
+      <div class="cap-cell">
+        <div class="cn">1</div>
+        <h5>Interpretar</h5>
+        <p>Leer una situación con variables ambiguas o mixtas</p>
+      </div>
+      <div class="cap-cell">
+        <div class="cn">2</div>
+        <h5>Razonar</h5>
+        <p>Derivar conclusiones no obvias a partir del contexto</p>
+      </div>
+      <div class="cap-cell">
+        <div class="cn">3</div>
+        <h5>Detectar</h5>
+        <p>Encontrar señales en ruido: oportunidades, riesgos, anomalías</p>
+      </div>
+      <div class="cap-cell">
+        <div class="cn">4</div>
+        <h5>Priorizar</h5>
+        <p>Ordenar entre muchas opciones bajo criterios complejos</p>
+      </div>
+      <div class="cap-cell">
+        <div class="cn">5</div>
+        <h5>Recomendar</h5>
+        <p>Proponer cursos de acción con justificación</p>
+      </div>
+      <div class="cap-cell">
+        <div class="cn">6</div>
+        <h5>Coordinar</h5>
+        <p>Orquestar trabajo entre personas, áreas o sistemas</p>
+      </div>
+      <div class="cap-cell">
+        <div class="cn">7</div>
+        <h5>Actuar</h5>
+        <p>Ejecutar sobre sistemas con autonomía controlada</p>
+      </div>
+      <div class="cap-cell" style="background: linear-gradient(135deg, var(--panel-3), var(--panel)); border-color: var(--mint-strong);">
+        <div class="cn" style="color: var(--gold);">★</div>
+        <h5>Regla de oro</h5>
+        <p>Mínimo 3 de 7 capacidades activadas para ser agéntico</p>
+      </div>
+    </div>
+
+    <div class="callout mint">
+      <span class="callout-lbl">Heurística rápida</span>
+      <p>
+        Si un junior puede aprenderlo leyendo un manual, es automatización.
+        Si requiere dos años de oficio, es candidato a agente.
+      </p>
+    </div>
+  </section>
+
+  
+  <!-- REFERENCIAS -->
+  <section class="chapter" id="referencias">
+    <div class="ch-head">
+      <span class="ch-num">04 · Referencias</span>
+      <h2 class="ch-title">Fuentes y <em>lecturas</em></h2>
+      <p class="ch-lede">
+        Las referencias públicas en las que se apoya esta serie, agrupadas por tema.
+        Las primarias —Anthropic, OpenAI, Google y Microsoft— son las más recomendables
+        para profundizar.
+      </p>
+    </div>
+    <div class="refs">
+      <div class="ref-group">
+        <h4>Diseño y construcción de agentes</h4>
+        <ul class="ref-list">
+          <li><span class="ref-src">Anthropic</span> — <span class="ref-title">Building Effective Agents (workflows vs. agentes, patrones, empezar simple)</span><br><a href="https://www.anthropic.com/engineering/building-effective-agents">anthropic.com/engineering/building-effective-agents</a></li>
+          <li><span class="ref-src">OpenAI</span> — <span class="ref-title">A Practical Guide to Building Agents (componentes, tipos de tools, guardrails)</span><br><a href="https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf">cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf</a></li>
+          <li><span class="ref-src">Google Cloud</span> — <span class="ref-title">The AI Agent Handbook</span><br><a href="https://cloud.google.com/resources/content/ai-agent-handbook">cloud.google.com/resources/content/ai-agent-handbook</a></li>
+          <li><span class="ref-src">Google Cloud</span> — <span class="ref-title">Design patterns for scalable agents (Agent Engine)</span><br><a href="https://cloud.google.com/blog/topics/partners/building-scalable-ai-agents-design-patterns-with-agent-engine-on-google-cloud">cloud.google.com/blog/topics/partners/building-scalable-ai-agents-design-patterns-with-agent-engine-on-google-cloud</a></li>
+        </ul>
+      </div>
+      <div class="ref-group">
+        <h4>Governance, identidad, seguridad y operación</h4>
+        <ul class="ref-list">
+          <li><span class="ref-src">Microsoft</span> — <span class="ref-title">AI Agent Adoption Guidance (Cloud Adoption Framework, 4 fases)</span><br><a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ai-agents/">learn.microsoft.com/en-us/azure/cloud-adoption-framework/ai-agents/</a></li>
+          <li><span class="ref-src">Microsoft</span> — <span class="ref-title">Governance and security for AI agents across the organization</span><br><a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ai-agents/governance-security-across-organization">learn.microsoft.com/en-us/azure/cloud-adoption-framework/ai-agents/governance-security-across-organization</a></li>
+          <li><span class="ref-src">Microsoft</span> — <span class="ref-title">Building Secure, Governable AI Agents with Foundry (Agent Identity)</span><br><a href="https://techcommunity.microsoft.com/blog/azure-ai-foundry-blog/building-secure-governable-ai-agents-with-microsoft-foundry/4472736">techcommunity.microsoft.com/blog/azure-ai-foundry-blog/building-secure-governable-ai-agents-with-microsoft-foundry/4472736</a></li>
+          <li><span class="ref-src">Microsoft</span> — <span class="ref-title">Agent Governance Toolkit (referencia al OWASP Top 10 agéntico)</span><br><a href="https://opensource.microsoft.com/blog/2026/04/02/introducing-the-agent-governance-toolkit-open-source-runtime-security-for-ai-agents/">opensource.microsoft.com/blog/2026/04/02/introducing-the-agent-governance-toolkit-open-source-runtime-security-for-ai-agents/</a></li>
+        </ul>
+      </div>
+      <div class="ref-group">
+        <h4>Identificación y priorización de casos (negocio)</h4>
+        <ul class="ref-list">
+          <li><span class="ref-src">Enterprise AI Executive</span> — <span class="ref-title">12 AI use case prioritization frameworks (Gartner, BCG, Deloitte, etc.)</span><br><a href="https://enterpriseaiexecutive.ai/p/12-ai-use-case-prioritization-frameworks">enterpriseaiexecutive.ai/p/12-ai-use-case-prioritization-frameworks</a></li>
+          <li><span class="ref-src">Fountain City</span> — <span class="ref-title">How to Prioritize AI Projects: A Scoring Framework (crítica al 2×2)</span><br><a href="https://fountaincity.tech/resources/blog/a-strategic-framework-for-how-to-prioritize-ai-projects/">fountaincity.tech/resources/blog/a-strategic-framework-for-how-to-prioritize-ai-projects/</a></li>
+          <li><span class="ref-src">Initialize AI</span> — <span class="ref-title">How to Prioritize AI Use Cases That Drive Business Value</span><br><a href="https://initializeai.com/blog/how-to-prioritize-ai-use-cases-that-drive-business-value">initializeai.com/blog/how-to-prioritize-ai-use-cases-that-drive-business-value</a></li>
+          <li><span class="ref-src">CIGen</span> — <span class="ref-title">AI Use Case Prioritization: Practical Framework &amp; Template</span><br><a href="https://www.cigen.io/insights/ai-use-case-prioritization-the-critical-step-in-a-practical-ai-adoption-journey">cigen.io/insights/ai-use-case-prioritization-the-critical-step-in-a-practical-ai-adoption-journey</a></li>
+        </ul>
+      </div>
+      <div class="ref-group">
+        <h4>Evaluación de agentes (evals)</h4>
+        <ul class="ref-list">
+          <li><span class="ref-src">Confident AI</span> — <span class="ref-title">LLM-as-a-Judge: guía completa para correr evals a escala</span><br><a href="https://www.confident-ai.com/blog/why-llm-as-a-judge-is-the-best-llm-evaluation-method">confident-ai.com/blog/why-llm-as-a-judge-is-the-best-llm-evaluation-method</a></li>
+          <li><span class="ref-src">Augment Code</span> — <span class="ref-title">Best AI Agent Evaluation Tools (métricas agénticas y secuencia de evals)</span><br><a href="https://www.augmentcode.com/tools/best-ai-agent-evaluation-tools">augmentcode.com/tools/best-ai-agent-evaluation-tools</a></li>
+          <li><span class="ref-src">QuarkAndCode</span> — <span class="ref-title">LLM Evaluation in 2025: Metrics, RAG, LLM-as-Judge &amp; Best Practices</span><br><a href="https://medium.com/@QuarkAndCode/llm-evaluation-in-2025-metrics-rag-llm-as-judge-best-practices-ad2872cfa7cb">medium.com/@QuarkAndCode/llm-evaluation-in-2025</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING -->
+  <div class="closing"><div class="cl-label">Arranca la serie</div><p class="cl-text">Con el marco claro, la <em>Guía 1</em> baja a la cancha: cómo conocer el negocio e identificar oportunidades en las primeras conversaciones con cada líder.</p></div>
+  <div class="doc-footer"><div class="ft-left">Guía 0 · Introducción</div><div class="ft-right"><b>fyoCapital + IA</b> · Introducción</div></div>
+</div>
+
+<script src="https://docs.alganaras.com.ar/_editor.js"></script>
+</body>
+</html>

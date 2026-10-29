@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Un agente por cliente · FYO-06</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f3f2ee;
+    --paper-2:#eceae4;
+    --card:#ffffff;
+    --ink:#111110;
+    --ink-2:#2c2b27;
+    --muted:#56544f;
+    --faint:#78756f;
+    --rule:#d6d4ce;
+    --rule-2:#cbc8c0;
+    --accent:#e22b16; --accent-soft:#e22b160e; --accent-line:#e22b1642; --accent-deep:#c0220f;
+    --disp:'Space Grotesk', system-ui, sans-serif;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--paper);
+    color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--accent); color:#fff; }
+  .lbl{ font-family:var(--mono); font-size:11px; font-weight:500; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--muted); }
+
+  .doc{ max-width:1120px; margin:0 auto; padding:0 0 130px; }
+  .sheet{ background:var(--paper); padding:0 52px; position:relative; }
+  @media (max-width:760px){ .sheet{ padding:0 20px; } }
+
+  .titleblock{ display:grid; grid-template-columns:1fr auto; align-items:stretch;
+    border-bottom:1px solid var(--ink); }
+  .titleblock .tb-l{ padding:16px 0; font-family:var(--mono); font-size:11px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--ink-2); display:flex; align-items:center; gap:14px; }
+  .titleblock .tb-l .sq{ width:8px; height:8px; background:var(--accent); }
+  .titleblock .tb-r{ font-family:var(--mono); font-size:11px; letter-spacing:.06em; color:var(--muted);
+    text-transform:uppercase; display:flex; align-items:center; padding:16px 0 16px 22px;
+    border-left:1px solid var(--rule); }
+  .titleblock .tb-r b{ color:var(--accent-deep); font-weight:600; }
+
+  .cover{ padding:70px 0 0; }
+  .cover .ref{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); margin-bottom:30px; display:flex; gap:18px; }
+  .cover .ref span{ position:relative; padding-left:16px; }
+  .cover .ref span::before{ content:''; position:absolute; left:0; top:50%; width:8px; height:8px;
+    border:1px solid var(--accent); transform:translateY(-50%); }
+  h1.title{ font-family:var(--disp); font-weight:600; font-size:clamp(40px,6.4vw,82px);
+    line-height:1.0; letter-spacing:-.03em; margin:0; max-width:15ch; color:var(--ink); }
+  h1.title .hl{ color:var(--accent); }
+  .lede{ font-size:clamp(17px,1.8vw,21px); line-height:1.55; color:var(--ink-2); max-width:62ch;
+    margin:30px 0 0; }
+  .specsheet{ margin-top:48px; border:1px solid var(--rule-2); background:var(--card);
+    display:grid; grid-template-columns:repeat(3,1fr); }
+  @media (max-width:680px){ .specsheet{ grid-template-columns:1fr; } }
+  .specsheet .sc{ padding:18px 20px; border-right:1px solid var(--rule); }
+  .specsheet .sc:last-child{ border-right:none; }
+  .specsheet .sc .k{ display:block; margin-bottom:8px; }
+  .specsheet .sc .v{ font-family:var(--disp); font-weight:500; font-size:16px; color:var(--ink);
+    line-height:1.35; }
+
+  .contents{ margin:72px 0 0; border-top:1px solid var(--ink); padding-top:26px; }
+  .contents .ct{ color:var(--accent); margin-bottom:18px; }
+  .toc{ list-style:none; margin:0; padding:0; }
+  .toc li{ display:grid; grid-template-columns:70px 1fr auto; align-items:center; gap:18px;
+    padding:15px 0; border-bottom:1px solid var(--rule); }
+  .toc .n{ font-family:var(--mono); font-size:12px; color:var(--accent); }
+  .toc a{ color:var(--ink); text-decoration:none; font-family:var(--disp); font-weight:500;
+    font-size:19px; letter-spacing:-.01em; }
+  .toc li:hover a{ color:var(--accent); }
+  .toc .ar{ font-family:var(--mono); color:var(--faint); font-size:12px; }
+
+  .chapter{ margin-top:96px; scroll-margin-top:24px; }
+  .ch-head{ border-bottom:1px solid var(--ink); padding-bottom:26px; }
+  .ch-marker{ display:flex; align-items:center; gap:14px; margin-bottom:20px; }
+  .ch-marker .mn{ font-family:var(--mono); font-size:12px; color:#fff; background:var(--accent);
+    padding:4px 9px; font-weight:600; letter-spacing:.06em; }
+  h2.ch-title{ font-family:var(--disp); font-weight:600; font-size:clamp(28px,4.2vw,52px);
+    line-height:1.02; letter-spacing:-.03em; margin:0; max-width:18ch; }
+  h2.ch-title .hl{ color:var(--accent); }
+  .ch-lede{ font-size:19px; line-height:1.5; color:var(--ink-2); margin:20px 0 0; max-width:64ch; }
+
+  .prose{ max-width:70ch; margin-top:32px; font-size:16.5px; line-height:1.62; color:var(--ink-2); }
+  .prose p{ margin:0 0 18px; }
+  .prose strong{ color:var(--ink); font-weight:600; }
+  .prose em{ font-style:normal; color:var(--accent); font-weight:500; }
+
+  .note{ margin:32px 0; border:1px solid var(--rule-2); border-left:3px solid var(--accent);
+    background:var(--card); padding:22px 26px; max-width:78ch; position:relative; }
+  .note .lbl{ color:var(--accent); display:block; margin-bottom:11px; }
+  .note p{ margin:0; font-size:15.5px; line-height:1.58; color:var(--ink-2); }
+  .note strong{ color:var(--ink); font-weight:600; }
+  .note.warn{ border-left-color:var(--accent-deep); }
+
+  .stack{ margin:36px 0 8px; border:1px solid var(--ink); background:var(--card); }
+  .tier{ display:grid; grid-template-columns:158px 1fr; border-bottom:1px solid var(--rule); }
+  .tier:last-child{ border-bottom:none; }
+  @media (max-width:680px){ .tier{ grid-template-columns:1fr; } }
+  .tier .t-lbl{ padding:18px 20px; border-right:1px solid var(--rule); display:flex; align-items:center;
+    background:var(--paper-2); }
+  .tier .t-items{ display:flex; }
+  @media (max-width:560px){ .tier .t-items{ flex-direction:column; } }
+  .cell{ flex:1; padding:18px 20px; border-left:1px solid var(--rule); }
+  .cell:first-child{ border-left:none; }
+  .cell .cn{ font-family:var(--disp); font-weight:600; font-size:18px; color:var(--ink); display:block;
+    letter-spacing:-.01em; }
+  .cell .cs{ font-family:var(--mono); font-size:11px; color:var(--muted); display:block; margin-top:7px;
+    line-height:1.45; }
+  .cell.x .cn{ color:var(--accent); }
+  .flowmark{ font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; color:var(--faint);
+    text-transform:uppercase; padding:7px 20px; text-align:center; border-bottom:1px solid var(--rule);
+    background:var(--paper-2); }
+
+  .entity{ margin:38px 0; border:1px solid var(--ink); background:var(--card); }
+  .entity-head{ padding:26px 30px 22px; border-bottom:1px solid var(--rule); border-top:3px solid var(--accent); }
+  .entity-head .lbl{ color:var(--accent); display:block; margin-bottom:12px; }
+  .entity-name{ font-family:var(--disp); font-weight:600; font-size:28px; line-height:1.05;
+    letter-spacing:-.02em; margin:0 0 11px; }
+  .entity-name .hl{ color:var(--accent); }
+  .entity-purpose{ font-size:16px; line-height:1.55; color:var(--ink-2); margin:0; max-width:72ch; }
+  .entity-purpose strong{ color:var(--ink); font-weight:600; }
+  .entity-body{ padding:4px 30px; }
+  .fn{ display:grid; grid-template-columns:36px 1fr; gap:18px; padding:16px 0; border-bottom:1px solid var(--rule); }
+  .fn:last-child{ border-bottom:none; }
+  .fn .fi{ font-family:var(--mono); font-size:12px; color:var(--accent); border:1px solid var(--accent-line);
+    width:30px; height:30px; display:flex; align-items:center; justify-content:center; }
+  .fn .ft strong{ color:var(--ink); font-weight:600; }
+  .fn .ft .d{ color:var(--ink-2); }
+  .fn .ft .sub{ display:block; margin-top:6px; font-size:14px; color:var(--muted); line-height:1.5;
+    padding-left:12px; border-left:2px solid var(--rule-2); }
+  .entity-foot{ display:flex; flex-wrap:wrap; gap:9px; padding:18px 30px 22px; border-top:1px solid var(--rule);
+    background:var(--paper-2); }
+  .tag{ font-family:var(--mono); font-size:11px; color:var(--ink-2); padding:7px 12px; border:1px solid var(--rule-2);
+    background:var(--card); }
+  .tag strong{ color:var(--ink); font-weight:600; }
+  .tag.key{ border-color:var(--accent-line); color:var(--accent); background:var(--accent-soft); }
+  .tag.key strong{ color:var(--accent-deep); }
+  .tag.lnk{ border-color:var(--accent); color:var(--accent); }
+  .tag.lnk strong{ color:var(--accent-deep); }
+
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; margin-top:36px; border:1px solid var(--ink);
+    background:var(--card); }
+  @media (max-width:680px){ .grid2{ grid-template-columns:1fr; } }
+  .card{ padding:26px 28px 28px; border-bottom:1px solid var(--rule); }
+  .card:nth-child(odd){ border-right:1px solid var(--rule); }
+  @media (max-width:680px){ .card:nth-child(odd){ border-right:none; } }
+  .card:nth-last-child(-n+2){ border-bottom:none; }
+  @media (max-width:680px){ .card:nth-last-child(-n+2){ border-bottom:1px solid var(--rule); } .card:last-child{ border-bottom:none; } }
+  .card .cnum{ font-family:var(--mono); font-size:11px; color:var(--accent); display:block; margin-bottom:14px; }
+  .card h4{ font-family:var(--disp); font-weight:600; font-size:21px; letter-spacing:-.015em; margin:0 0 9px; color:var(--ink); }
+  .card p{ font-size:15px; line-height:1.55; color:var(--ink-2); margin:0; }
+
+  .statement{ margin:88px 0 0; padding:56px 44px; border:1px solid var(--ink); background:var(--card);
+    position:relative; }
+  .statement::before{ content:''; position:absolute; top:0; left:0; width:6px; height:100%; background:var(--accent); }
+  .statement .lbl{ color:var(--accent); margin-bottom:22px; display:block; }
+  .statement p{ font-family:var(--disp); font-weight:500; font-size:clamp(24px,3.4vw,42px); line-height:1.18;
+    letter-spacing:-.025em; margin:0; max-width:22ch; color:var(--ink); }
+  .statement .hl{ color:var(--accent); }
+
+  .colophon{ margin-top:50px; padding-top:18px; border-top:1px solid var(--ink); display:flex;
+    justify-content:space-between; flex-wrap:wrap; gap:12px; font-family:var(--mono); font-size:11px;
+    color:var(--muted); letter-spacing:.05em; text-transform:uppercase; }
+
+  .matrix{ margin:36px 0 8px; border:1px solid var(--ink); background:var(--card); overflow-x:auto; }
+  .matrix table{ border-collapse:collapse; width:100%; min-width:640px; }
+  .matrix th, .matrix td{ text-align:left; padding:15px 18px; border-bottom:1px solid var(--rule);
+    border-right:1px solid var(--rule); vertical-align:top; font-size:14.5px; line-height:1.5; color:var(--ink-2); }
+  .matrix th:last-child, .matrix td:last-child{ border-right:none; }
+  .matrix thead th{ background:var(--paper-2); font-family:var(--mono); font-size:11px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--muted); font-weight:500; }
+  .matrix thead th.win{ color:var(--accent); }
+  .matrix tbody th{ font-family:var(--disp); font-weight:600; font-size:15px; color:var(--ink); width:22%; }
+  .matrix td.win{ background:var(--accent-soft); color:var(--ink); }
+  .matrix tbody tr:last-child td, .matrix tbody tr:last-child th{ border-bottom:none; }
+
+  
+  .specsheet.four{ grid-template-columns:repeat(4,1fr); }
+  @media (max-width:760px){ .specsheet.four{ grid-template-columns:1fr 1fr; } .specsheet.four .sc{ border-bottom:1px solid var(--rule); } }
+  @media (max-width:480px){ .specsheet.four{ grid-template-columns:1fr; } }
+  .h3sub{ font-family:var(--disp); font-weight:600; font-size:24px; letter-spacing:-.02em; margin:56px 0 0; color:var(--ink); }
+  .h3sub .hl{ color:var(--accent); }
+  .refs{ list-style:none; margin:28px 0 0; padding:0; border-top:1px solid var(--rule); max-width:90ch; }
+  .refs li{ display:grid; grid-template-columns:44px 1fr; gap:14px; padding:12px 0; border-bottom:1px solid var(--rule);
+    font-size:14.5px; line-height:1.5; color:var(--ink-2); }
+  .refs li .rn{ font-family:var(--mono); font-size:11px; color:var(--accent); padding-top:3px; }
+  .refs a{ color:var(--ink); text-decoration:none; border-bottom:1px solid var(--accent-line); word-break:break-word; }
+  .refs a:hover{ color:var(--accent); }
+
+</style>
+</head>
+<body>
+<div class="doc"><div class="sheet">
+
+  <div class="titleblock">
+    <div class="tb-l"><span class="sq"></span>Iñaki · Consultoría<span style="color:var(--muted)">inaki@alganaras.com.ar</span></div>
+    <div class="tb-r">DOC. <b>FYO-06</b> · REV. <b>v1</b> · IA APLICADA</div>
+  </div>
+
+  <header class="cover">
+    <div class="ref"><span>fyo · Transformación</span><span>Arquitectura de agentes</span></div>
+    <h1 class="title">Un agente por <span class="hl">cliente</span></h1>
+    <p class="lede">Una propuesta para que fyo pueda ofrecer sus servicios de forma integrada: un agente persistente por cliente que sostiene su plan de largo plazo y coordina, alrededor de ese plan, a las unidades de fyo, a su gente y a terceros. Toma como referencia principal a Kavak y lo adapta a un grupo agro-financiero con una ALyC adentro.</p>
+    <div class="specsheet">
+      <div class="sc"><span class="lbl k">Alcance</span><span class="v" data-editable>Todo el grupo · Granos, Insumos, Capital</span></div>
+      <div class="sc"><span class="lbl k">Estado</span><span class="v" data-editable>v1 · para discutir con Facu y Ale</span></div>
+      <div class="sc"><span class="lbl k">Objetivo del agente</span><span class="v" data-editable>Cumplir el plan del cliente</span></div>
+    </div>
+  </header>
+
+  <nav class="contents">
+    <div class="lbl ct">Índice del documento</div>
+    <ol class="toc">
+      <li><span class="n">00</span><a href="#s0">La promesa integrada y lo que le falta</a><span class="ar">[↗]</span></li>
+      <li><span class="n">01</span><a href="#s1">Kavak y otros casos de referencia</a><span class="ar">[↗]</span></li>
+      <li><span class="n">02</span><a href="#s2">El plan del cliente como objetivo del agente</a><span class="ar">[↗]</span></li>
+      <li><span class="n">03</span><a href="#s3">Contexto, fyoCortex y el agente</a><span class="ar">[↗]</span></li>
+      <li><span class="n">04</span><a href="#s4">Tres superficies de acción</a><span class="ar">[↗]</span></li>
+      <li><span class="n">05</span><a href="#s5">Seis reglas de diseño</a><span class="ar">[↗]</span></li>
+      <li><span class="n">06</span><a href="#s6">Lo que tienen que decidir Facu y Ale</a><span class="ar">[↗]</span></li>
+      <li><span class="n">07</span><a href="#s7">Por dónde empezar</a><span class="ar">[↗]</span></li>
+      <li><span class="n">—</span><a href="#fuentes">Fuentes</a><span class="ar">[↗]</span></li>
+    </ol>
+  </nav>
+
+  <!-- 00 -->
+  <section class="chapter" id="s0">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">00</span><span class="lbl">Punto de partida</span></div>
+      <h2 class="ch-title">La promesa integrada y lo que le <span class="hl">falta</span></h2>
+      <p class="ch-lede">fyo tiene los servicios que necesita un productor a lo largo de toda su campaña. Hoy cada unidad atiende su parte y nadie sostiene el plan completo del cliente.</p>
+    </div>
+    <div class="prose">
+      <p>fyo puede ofrecer algo que pocos ofrecen en el agro argentino: comercializar la cosecha, proveer los insumos, financiar la campaña, cubrir el precio y administrar el excedente financiero en un mismo lugar. En la práctica, cada unidad ve al cliente desde su ventana. Granos ve entregas y contratos, Insumos ve pedidos, Capital ve posiciones. Cada una tiene su comercial, sus sistemas y su calendario.</p>
+      <p>La coordinación entre esas partes hoy la hace el propio productor, que arma su campaña hablando con cada unidad por separado, o algún comercial excepcional que conoce al cliente entero y lo deriva. Ninguna de las dos escala. Los momentos de mayor valor <strong>—el cobro de la cosecha con caja sin destino, la necesidad de capital de trabajo antes de la siembra, la cobertura que conviene tomar cuando se fija el precio de los insumos—</strong> dependen de que alguien cruce la información a tiempo.</p>
+      <p>Lo que falta es una función: alguien que sostenga el plan del cliente a través de las unidades y mueva a fyo para cumplirlo. Este documento propone que esa función la cumpla <strong>un agente por cliente, con un responsable humano detrás</strong>.</p>
+    </div>
+    <div class="note">
+      <span class="lbl">Relación con documentos anteriores</span>
+      <p>Toma la arquitectura de <strong>FYO-04</strong> (cuatro agentes de fyoCapital) y la extiende a todo el grupo. Se apoya en <strong>fyoCortex (FYO-05)</strong> y en el motor de contexto de clientes que se está explorando con Ale. El cambio central: la unidad de diseño pasa a ser el cliente y el alcance pasa a ser fyo completo.</p>
+    </div>
+  </section>
+
+  <!-- 01 -->
+  <section class="chapter" id="s1">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">01</span><span class="lbl">Referencias</span></div>
+      <h2 class="ch-title">Kavak y otros casos de <span class="hl">referencia</span></h2>
+      <p class="ch-lede">El agente persistente por cliente ya opera a escala en una empresa latinoamericana. Plataformas agro y bancos van en la misma dirección, y aparecen estándares para que los agentes actúen sobre personas y terceros.</p>
+    </div>
+
+    <div class="entity">
+      <div class="entity-head">
+        <span class="lbl">Referencia principal · Kavak · México</span>
+        <h3 class="entity-name">Kavak: un agente <span class="hl">por cliente</span></h3>
+        <p class="entity-purpose">Marketplace de autos usados que además financia y asegura. Según su head of AI en un podcast de a16z, rediseñaron la compañía alrededor de <strong>agentes persistentes, uno por cliente, con un objetivo de largo plazo</strong>.</p>
+      </div>
+      <div class="entity-body">
+        <div class="fn"><div class="fi">01</div><div class="ft"><strong>Instancia dedicada.</strong> <span class="d">Cuando un cliente interactúa se levanta un agente propio, en su propia máquina virtual. Entre 100.000 y 200.000 instancias por día; algunas trabajan minutos, otras días, y se programan su próxima tarea.</span></div></div>
+        <div class="fn"><div class="fi">02</div><div class="ft"><strong>Memoria de años.</strong> <span class="d">El agente recuerda el historial completo del cliente con Kavak, incluidas visitas a la web y llamadas de años anteriores.</span></div></div>
+        <div class="fn"><div class="fi">03</div><div class="ft"><strong>Objetivo de largo plazo.</strong> <span class="d">Maximizar el valor de vida del cliente, llevándolo a los distintos productos: auto, crédito, seguro, toma del usado.</span></div></div>
+        <div class="fn"><div class="fi">04</div><div class="ft"><strong>Un agente con todas las herramientas.</strong> <span class="d">Tenían miles de sistemas multiagente organizados por función. Los desarmaron cuando los modelos nuevos rindieron más con un solo agente experto en todo y acceso a todas las APIs de la compañía.</span></div></div>
+        <div class="fn"><div class="fi">05</div><div class="ft"><strong>Humanos detrás del agente.</strong> <span class="d">Cuando el agente no puede resolver algo, llama a una API de ayuda y del otro lado hay un equipo humano. La resolución vuelve al agente y queda como dato para mejorarlo.</span></div></div>
+        <div class="fn"><div class="fi">06</div><div class="ft"><strong>Evals al mismo nivel que el agente.</strong> <span class="d">Invierten en evaluación tanto como en construcción, y miden resultado de negocio (conversión, recompra), no actividad.</span></div></div>
+      </div>
+      <div class="entity-foot">
+        <span class="tag key"><strong>96%</strong> de interacciones sin humano</span>
+        <span class="tag"><strong>95%</strong> de transacciones</span>
+        <span class="tag">Conversión <strong>2,1×</strong> vs. equipo humano</span>
+        <span class="tag">NPS <strong>×3</strong></span>
+      </div>
+    </div>
+
+    <div class="note warn">
+      <span class="lbl">Lo que no se traslada directo</span>
+      <p>Kavak es una sola empresa, con un P&amp;L y clientes que compran un ticket alto cada varios años. fyo es un grupo de unidades con dueños distintos del cliente, una ALyC regulada por CNV y miles de clientes con relación continua. <strong>El objetivo (LTV), el nivel de autonomía y el 96% sin humano necesitan adaptación.</strong> La arquitectura, la memoria, el acceso por herramientas y el circuito con humanos se pueden tomar casi tal cual. Las cifras son de la propia compañía.</p>
+    </div>
+
+    <h3 class="h3sub">Otras <span class="hl">referencias</span></h3>
+    <div class="matrix">
+      <table>
+        <thead><tr><th>Referencia</th><th>Qué es</th><th class="win">Qué toma fyo</th></tr></thead>
+        <tbody>
+          <tr><th>FBN + Google · Context Engine (agro, EE.UU.)</th><td>Una plataforma agro arma una visión 360 de cada campo (suelos, cultivos, equipos, finanzas, clima y mercado) sobre la que operan agentes con acciones comerciales ejecutables. Arriba pusieron varias "personas" especializadas (agrónomo, veterinario, mecánico, trader de granos, meteorólogo) que comparten esa data.</td><td class="win">Es el motor de contexto de clientes que se está pensando para fyo, ya en marcha. Le falta lo que agrega Kavak: un agente por cliente con objetivo propio encima del contexto. Las "personas" pueden ser caras distintas de un mismo agente.</td></tr>
+          <tr><th>BBVA · Blue y "The Eight"</th><td>El asistente Blue evoluciona para acompañar a cada cliente a lo largo de su vida financiera y anticipar necesidades; deriva a un asesor humano cuando hace falta. En paralelo, cada empleado tiene un agente personal.</td><td class="win">La combinación de agente del cliente y agente del empleado, y la derivación al humano como parte del diseño.</td></tr>
+          <tr><th>Nubank · AI Private Banker</th><td>Llevar a todos los clientes, a costo casi cero, el tipo de acompañamiento que hoy paga solo quien tiene patrimonio.</td><td class="win">El agente por cliente permite dar atención de cliente grande a clientes medianos que hoy fyo no puede atender con esa profundidad.</td></tr>
+          <tr><th>Doc Searls · The Intention Economy</th><td>Plantea "cuartas partes": actores alineados con el cliente que actúan como su agente frente a los proveedores. Hoy distingue la IA personal, que trabaja para la persona, de la IA personalizada, afinada para la empresa.</td><td class="win">El marco para decidir de qué lado juega el agente (capítulos 05 y 06).</td></tr>
+          <tr><th>Patrón de arquitectura por cliente</th><td>Un gestor que crea y enruta instancias, una instancia con memoria propia por cliente y una capa de conocimiento compartida que todas leen.</td><td class="win">En fyo, la capa compartida es fyoCortex.</td></tr>
+          <tr><th>Pera · agentes persistentes (paper, 2026)</th><td>Separa tareas episódicas de tareas de ciclo de vida, que sostienen el servicio en el tiempo y anticipan necesidades antes de que el usuario las pida.</td><td class="win">En fyo, el ciclo de vida natural es la campaña agrícola.</td></tr>
+          <tr><th>HumanLayer · humano como herramienta</th><td>Kit para que el agente inicie el contacto con personas y les pida respuestas o aprobaciones, en flujos que pueden esperar horas o días.</td><td class="win">La base técnica del encargo a personas de fyo (capítulo 04).</td></tr>
+          <tr><th>A2A · Agent2Agent (Linux Foundation)</th><td>Estándar abierto para que agentes de distintas organizaciones se descubran y se deleguen tareas. Versión 1.0 en 2026, más de 150 organizaciones. MCP conecta agentes con herramientas; A2A conecta agentes entre sí.</td><td class="win">El canal futuro con terceros: banco, aseguradora y el agente del propio productor.</td></tr>
+          <tr><th>Gartner · machine customers</th><td>Clientes no humanos que compran o gestionan en nombre de personas u organizaciones, en fases de menor a mayor autonomía.</td><td class="win">En unos años algunos productores van a llegar con su propio agente. El agente de fyo tiene que poder hablar con él.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="chapter" id="s2">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">02</span><span class="lbl">Concepto</span></div>
+      <h2 class="ch-title">El plan del cliente como objetivo del <span class="hl">agente</span></h2>
+      <p class="ch-lede">Un agente persistente por cliente que conoce su historia en todo fyo, sostiene su plan de largo plazo y coordina a las unidades, a la gente y a terceros para cumplirlo.</p>
+    </div>
+
+    <div class="entity">
+      <div class="entity-head">
+        <span class="lbl">Definición · uno por cliente · todo el grupo</span>
+        <h3 class="entity-name">El agente del <span class="hl">cliente</span></h3>
+        <p class="entity-purpose">Para que cada cliente de fyo tenga quien sostenga su plan completo —la campaña, la caja, el riesgo, el crecimiento— y <strong>coordine los servicios de fyo y de terceros para cumplirlo</strong>, con un responsable humano que lo supervise.</p>
+      </div>
+      <div class="entity-body">
+        <div class="fn"><div class="fi">01</div><div class="ft"><strong>Sostiene el plan.</strong> <span class="d">Mantiene el plan del cliente: objetivos, restricciones y calendario. Propone un borrador a partir de lo que sabe y lo valida con el cliente y su responsable.</span></div></div>
+        <div class="fn"><div class="fi">02</div><div class="ft"><strong>Detecta momentos.</strong> <span class="d">Vigila desvíos y ventanas: se acerca el cobro y la caja no tiene destino, el precio del insumo se fijó y la cobertura no, vence una línea de crédito, cambió el escenario de mercado.</span></div></div>
+        <div class="fn"><div class="fi">03</div><div class="ft"><strong>Propone la acción integrada.</strong> <span class="d">Arma la respuesta combinando las unidades, en lugar de sumar la mejor respuesta de cada una por separado.</span></div></div>
+        <div class="fn"><div class="fi">04</div><div class="ft"><strong>Mueve a fyo.</strong> <span class="d">Usa lo que está automatizado y, lo que no, lo encarga a la persona que corresponde, con seguimiento.</span></div></div>
+        <div class="fn"><div class="fi">05</div><div class="ft"><strong>Gestiona terceros.</strong> <span class="d">Prepara, pide y coordina con banco, agrónomo, aseguradora u otros, con mandato del cliente.</span></div></div>
+        <div class="fn"><div class="fi">06</div><div class="ft"><strong>Aprende.</strong> <span class="d">Registra qué propuso, qué se hizo y qué resultó, en la memoria del cliente y en las evals del sistema.</span></div></div>
+      </div>
+      <div class="entity-foot">
+        <span class="tag key"><strong>Objetivo</strong> · el plan del cliente</span>
+        <span class="tag"><strong>Supervisión</strong> · responsable de cuenta</span>
+        <span class="tag"><strong>Memoria</strong> · fyoCortex</span>
+        <span class="tag"><strong>Autonomía</strong> · se gana con historial</span>
+      </div>
+    </div>
+
+    <h3 class="h3sub">Qué contiene el <span class="hl">plan</span></h3>
+    <div class="stack">
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Plan del cliente</span></div>
+        <div class="t-items">
+          <div class="cell x"><span class="cn" data-editable>Objetivos</span><span class="cs" data-editable>margen · liquidez · riesgo · crecimiento en hectáreas · sucesión</span></div>
+          <div class="cell"><span class="cn" data-editable>Restricciones</span><span class="cs" data-editable>endeudamiento máximo · arrendamientos · tolerancia al riesgo</span></div>
+          <div class="cell"><span class="cn" data-editable>Calendario</span><span class="cs" data-editable>campaña · vencimientos · cobros</span></div>
+          <div class="cell"><span class="cn" data-editable>Preferencias</span><span class="cs" data-editable>con quién habla · por qué canal · cómo decide</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="prose">
+      <p>El plan lo escribe el cliente con su responsable de cuenta; el agente propone el borrador y lo mantiene actualizado. Queda versionado en fyoCortex, así que siempre se puede ver qué se acordó, cuándo y por qué cambió.</p>
+    </div>
+
+    <h3 class="h3sub">La campaña vista desde el <span class="hl">agente</span></h3>
+    <div class="matrix">
+      <table>
+        <thead><tr><th>Momento</th><th>Qué mira el agente</th><th>Quién actúa</th></tr></thead>
+        <tbody>
+          <tr><th>Planificación</th><td>Rotación, hectáreas y margen esperado contra los objetivos del plan.</td><td>Cliente · responsable de cuenta · agrónomo (tercero)</td></tr>
+          <tr><th>Insumos</th><td>Necesidades, precio y forma de pago; cuándo conviene fijar.</td><td>Insumos · financiamiento</td></tr>
+          <tr><th>Financiamiento</th><td>Capital de trabajo contra caja proyectada; alternativas disponibles.</td><td>Capital · financiamiento · banco (tercero)</td></tr>
+          <tr><th>Cobertura</th><td>Precio de venta contra costos ya fijados; exposición abierta.</td><td>Granos · Capital</td></tr>
+          <tr><th>Cosecha y venta</th><td>Ritmo de venta contra el plan de liquidez.</td><td>Granos</td></tr>
+          <tr><th>Cobro y excedente</th><td>Caja sin destino y plazo hasta la próxima necesidad.</td><td>Capital</td></tr>
+          <tr><th>Cierre</th><td>Resultado contra plan; insumos para el plan de la próxima campaña.</td><td>Responsable de cuenta · cliente</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note">
+      <span class="lbl">Por qué el plan del cliente y no el LTV</span>
+      <p>Kavak le da a cada agente el objetivo de maximizar el valor del cliente para Kavak. En una ALyC, un agente con ese objetivo tiene un <strong>conflicto de interés incorporado</strong>: frente a una decisión de inversión, su incentivo puede no coincidir con lo mejor para el cliente. Con el plan como objetivo, la función la escribe el cliente con su responsable y el valor para fyo pasa a ser la métrica de resultado. También deja definido qué hace el agente cuando lo mejor para el cliente es no operar.</p>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section class="chapter" id="s3">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">03</span><span class="lbl">Arquitectura</span></div>
+      <h2 class="ch-title">Contexto, fyoCortex y el <span class="hl">agente</span></h2>
+      <p class="ch-lede">Tres capas. Las dos de abajo ya están en discusión; el agente por cliente es la tercera y la que les da uso.</p>
+    </div>
+
+    <div class="stack">
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Fuentes</span></div>
+        <div class="t-items">
+          <div class="cell"><span class="cn" data-editable>fyoDigital y CRM</span><span class="cs" data-editable>la relación comercial</span></div>
+          <div class="cell"><span class="cn" data-editable>Unidades</span><span class="cs" data-editable>contratos · pedidos · créditos · posiciones</span></div>
+          <div class="cell"><span class="cn" data-editable>Conversaciones</span><span class="cs" data-editable>WhatsApp · minutas · llamadas</span></div>
+          <div class="cell"><span class="cn" data-editable>Terceros</span><span class="cs" data-editable>lo que devuelven banco, agrónomo</span></div>
+        </div>
+      </div>
+      <div class="flowmark">▼ se consolidan por cliente</div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Contexto</span></div>
+        <div class="t-items">
+          <div class="cell"><span class="cn" data-editable>Motor de contexto del cliente</span><span class="cs" data-editable>qué tiene y qué hizo con todo fyo</span></div>
+        </div>
+      </div>
+      <div class="flowmark">▼ se interpreta y se recuerda</div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Conocimiento</span></div>
+        <div class="t-items">
+          <div class="cell"><span class="cn" data-editable>fyoCortex · research</span><span class="cs" data-editable>qué piensa fyo del mercado</span></div>
+          <div class="cell"><span class="cn" data-editable>fyoCortex · relacional</span><span class="cs" data-editable>la memoria de la relación, con fuente y fecha</span></div>
+        </div>
+      </div>
+      <div class="flowmark">▼ lo usan y lo alimentan</div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Agentes</span></div>
+        <div class="t-items">
+          <div class="cell x"><span class="cn" data-editable>Agente del cliente</span><span class="cs" data-editable>uno por cliente · sostiene el plan</span></div>
+          <div class="cell"><span class="cn" data-editable>Agente Comercial</span><span class="cs" data-editable>uno por comercial · prioriza su cartera</span></div>
+        </div>
+      </div>
+      <div class="flowmark">▼ actúan sobre</div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Acción</span></div>
+        <div class="t-items">
+          <div class="cell"><span class="cn" data-editable>Sistemas de fyo</span><span class="cs" data-editable>MCP por unidad vía gateway</span></div>
+          <div class="cell"><span class="cn" data-editable>Personas de fyo</span><span class="cs" data-editable>encargos</span></div>
+          <div class="cell"><span class="cn" data-editable>Terceros</span><span class="cs" data-editable>con mandato · A2A</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p><strong>Contexto.</strong> El motor de contexto de clientes que se está explorando con Ale, inspirado en el de FBN, consolida lo que el grupo sabe de cada cliente: lotes, entregas, contratos, insumos, créditos, posiciones. Responde qué tiene el cliente y qué hizo con fyo. Depende de que los datos del grupo estén accesibles.</p>
+      <p><strong>Conocimiento.</strong> fyoCortex aporta dos cosas. El lóbulo de research responde qué piensa fyo del mercado, con fuente. El lóbulo relacional guarda la memoria de la relación: interacciones, necesidades y compromisos, cada afirmación con fuente, fecha y autor.</p>
+      <p><strong>Agente.</strong> El agente del cliente lee de las dos capas y escribe de vuelta en el lóbulo relacional cada intención que detecta, cada encargo que emite y cada resultado. Sin un consumidor así, el motor de contexto y fyoCortex dependen de que alguien se acuerde de consultarlos.</p>
+    </div>
+
+    <h3 class="h3sub">Entidades que se suman al lóbulo <span class="hl">relacional</span></h3>
+    <div class="grid2">
+      <div class="card"><span class="cnum">Nueva</span><h4>Plan</h4><p>Objetivos, restricciones y calendario del cliente, versionado. Es la función objetivo del agente.</p></div>
+      <div class="card"><span class="cnum">Nueva</span><h4>Objetivo</h4><p>Cada meta del plan con su métrica y su horizonte. Permite medir avance.</p></div>
+      <div class="card"><span class="cnum">Tipo de Compromiso</span><h4>Encargo</h4><p>Pedido a una persona de fyo o a un tercero, con destinatario, plazo y resultado. Extiende la entidad Compromiso que ya está en el modelo.</p></div>
+      <div class="card"><span class="cnum">Nueva</span><h4>Mandato</h4><p>Qué autorizó el cliente que el agente haga en su nombre y con qué datos. La base del consentimiento.</p></div>
+    </div>
+
+    <h3 class="h3sub">Qué cambia respecto de <span class="hl">FYO-04</span></h3>
+    <div class="matrix">
+      <table>
+        <thead><tr><th>Pieza en FYO-04</th><th class="win">Dónde queda en este modelo</th></tr></thead>
+        <tbody>
+          <tr><th>Agente de Research</th><td class="win">fyoCortex, lóbulo de research. Es conocimiento compartido que no pertenece a ningún cliente.</td></tr>
+          <tr><th>Agente Comercial</th><td class="win">Se mantiene. Trabaja sobre la cartera de un comercial y prioriza entre clientes.</td></tr>
+          <tr><th>Agente de Portafolio</th><td class="win">Capacidad del agente del cliente: la parte Capital del plan.</td></tr>
+          <tr><th>Orquestador del briefing (faltante)</th><td class="win">Lo resuelve el agente del cliente: el briefing sale de su memoria.</td></tr>
+          <tr><th>fyoCapital AI</th><td class="win">La cara del agente del cliente cuando habla con él. Los cuatro modos de FYO-04 aplican a la capacidad de Capital.</td></tr>
+          <tr><th>Contrato entre agentes (faltante)</th><td class="win">Pasa a ser un contrato de herramientas: un MCP por unidad, detrás del gateway.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note">
+      <span class="lbl">La lección técnica de Kavak, aplicada</span>
+      <p>Kavak desarmó sus sistemas multiagente porque los modelos actuales rinden más con un solo agente y todas las herramientas a mano. En fyo, las capacidades de cada unidad se implementan como <strong>herramientas gobernadas</strong>: un MCP por unidad, detrás del gateway con RLS, cada uno con sus permisos y su frontera regulatoria. Cada instancia corre con una <strong>credencial delegada del cliente</strong>, así que por construcción solo ve los datos de ese cliente. Esto responde además la pregunta abierta sobre identidad en flujos automatizados.</p>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="chapter" id="s4">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">04</span><span class="lbl">Acción</span></div>
+      <h2 class="ch-title">Tres superficies de <span class="hl">acción</span></h2>
+      <p class="ch-lede">Para ser útil, el agente tiene que poder mover cosas aunque no estén automatizadas: lo que está en sistemas, lo que hace la gente de fyo y lo que hacen terceros.</p>
+    </div>
+
+    <h3 class="h3sub">A · Sistemas de <span class="hl">fyo</span></h3>
+    <div class="prose">
+      <p>Lo que ya está automatizado se usa directo, a través de los MCP de fyoDigital y de cada unidad. Aplica la regla de FYO-02: lectura amplia con la identidad que corresponde y escritura con aprobación explícita.</p>
+    </div>
+
+    <h3 class="h3sub">B · Personas de fyo: el <span class="hl">encargo</span></h3>
+    <div class="entity">
+      <div class="entity-head">
+        <span class="lbl">Superficie B · procesos no automatizados</span>
+        <h3 class="entity-name">El <span class="hl">encargo</span></h3>
+        <p class="entity-purpose">La pieza que permite que el agente mueva procesos que no están automatizados: le pide algo a una persona de fyo, con todo armado, y <strong>hace el seguimiento hasta que vuelve el resultado</strong>.</p>
+      </div>
+      <div class="entity-body">
+        <div class="fn"><div class="fi">01</div><div class="ft"><strong>Destinatario con nombre.</strong> <span class="d">Un comercial de Granos, un administrativo de Insumos, un analista de Riesgos. Siempre una persona, nunca "el área".</span></div></div>
+        <div class="fn"><div class="fi">02</div><div class="ft"><strong>Contexto armado.</strong> <span class="d">Quién es el cliente, qué parte del plan está en juego, qué se necesita y por qué.</span></div></div>
+        <div class="fn"><div class="fi">03</div><div class="ft"><strong>Resultado esperado y plazo.</strong> <span class="d">Qué tiene que volver y para cuándo. Si no vuelve, el agente insiste y después escala al responsable de cuenta.</span></div></div>
+        <div class="fn"><div class="fi">04</div><div class="ft"><strong>El canal de la persona.</strong> <span class="d">Teams, WhatsApp o una tarea en el CRM: donde la persona ya trabaja.</span></div></div>
+        <div class="fn"><div class="fi">05</div><div class="ft"><strong>La respuesta vuelve a la memoria.</strong> <span class="d">Queda en fyoCortex con fuente y fecha y alimenta el próximo paso del plan.</span></div></div>
+      </div>
+      <div class="entity-foot">
+        <span class="tag">Se puede arrancar sin APIs nuevas</span>
+        <span class="tag key"><strong>Registro de encargos</strong> = backlog de automatización</span>
+      </div>
+    </div>
+    <div class="prose">
+      <p>El efecto lateral más valioso: el registro de encargos muestra qué se pide seguido y siempre igual, con datos reales de frecuencia y demora. Es un <strong>backlog de automatización priorizado por uso</strong> que le dice a las duplas qué construir primero. Kavak reconstruyó sus APIs antes de soltar los agentes. fyo puede arrancar con las personas como herramientas y automatizar por frecuencia.</p>
+    </div>
+
+    <h3 class="h3sub">C · <span class="hl">Terceros</span></h3>
+    <div class="matrix">
+      <table>
+        <thead><tr><th>Nivel</th><th>Qué hace el agente</th><th>Qué requiere</th><th>Ejemplo</th></tr></thead>
+        <tbody>
+          <tr><th>1 · Prepara</th><td>Arma lo que el tercero necesita; el cliente lo entrega.</td><td>El plan y los datos del cliente.</td><td>Carpeta para pedir un crédito bancario; resumen de lotes y rindes para el agrónomo.</td></tr>
+          <tr><th>2 · Gestiona con mandato</th><td>Contacta al tercero en nombre del cliente por mail o WhatsApp y trae la respuesta.</td><td>Mandato explícito del cliente, registrado.</td><td>Pedir cotización de un seguro agrícola; pedir la recomendación de fertilización al agrónomo.</td></tr>
+          <tr><th>3 · Agente a agente</th><td>Habla con el agente del tercero por un protocolo estándar (A2A).</td><td>Que el tercero tenga agente; identidad verificada de los dos lados.</td><td>Consultar condiciones a un banco; coordinar con el agente del propio productor.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note">
+      <span class="lbl">Cómo entra lo que devuelve un tercero</span>
+      <p>Entra al contexto con su fuente, como cualquier otra afirmación. La recomendación del agrónomo es una opinión de un autor externo y se modela así en fyoCortex, sin mezclarse con la visión de fyo.</p>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="chapter" id="s5">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">05</span><span class="lbl">Reglas</span></div>
+      <h2 class="ch-title">Seis reglas de <span class="hl">diseño</span></h2>
+      <p class="ch-lede">Se escriben antes de construir porque definen si el agente gana la confianza del cliente, de los comerciales y de Riesgos.</p>
+    </div>
+    <div class="grid2">
+      <div class="card"><span class="cnum">01</span><h4>El consentimiento del cliente abre los silos</h4><p>Si el productor autoriza a su agente a usar la información de todas las unidades para cumplir su plan, el flujo de datos entre Granos y Capital pasa a ser una decisión del cliente. Ordena también el cumplimiento de datos personales. Las reglas de CNV siguen aplicando dentro de Capital.</p></div>
+      <div class="card"><span class="cnum">02</span><h4>Un agente, reglas por capacidad</h4><p>Lo que toca Capital corre con las reglas de la ALyC: informar vs. asesorar, perfil del inversor, suitability. El resto, con las reglas de cada negocio. La frontera se codifica en la herramienta y no queda librada al criterio del modelo.</p></div>
+      <div class="card"><span class="cnum">03</span><h4>Del lado del cliente</h4><p>El agente trabaja para cumplir el plan del cliente. Si el plan se cumple mejor con un servicio de un tercero, lo muestra. Es la condición para que el cliente le confíe su plan.</p></div>
+      <div class="card"><span class="cnum">04</span><h4>Un responsable humano por cliente</h4><p>Cada agente tiene un responsable de cuenta que aprueba, corrige y responde por él. El agente como producto tiene además su Agent Manager en el modelo de duplas.</p></div>
+      <div class="card"><span class="cnum">05</span><h4>La autonomía se gana</h4><p>Primero informa y propone al responsable. Después emite encargos internos solo. Después actúa frente al cliente. Al final gestiona terceros con mandato. Cada escalón se habilita con historial y evals.</p></div>
+      <div class="card"><span class="cnum">06</span><h4>Evaluar tanto como construir</h4><p>Siguiendo a Kavak, el mismo esfuerzo en evals que en el agente. Se mide avance contra el plan del cliente y momentos capturados, no cantidad de interacciones.</p></div>
+    </div>
+  </section>
+
+  <!-- 06 -->
+  <section class="chapter" id="s6">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">06</span><span class="lbl">Decisiones</span></div>
+      <h2 class="ch-title">Lo que tienen que decidir Facu y <span class="hl">Ale</span></h2>
+      <p class="ch-lede">Las preguntas que más pesan son de negocio y de organización. La arquitectura las hace visibles; resolverlas es una decisión de la dirección.</p>
+    </div>
+    <div class="matrix">
+      <table>
+        <thead><tr><th>Decisión</th><th>Opciones</th><th class="win">Recomendación</th><th>Quién</th></tr></thead>
+        <tbody>
+          <tr><th>Quién es dueño del cliente y de su agente</th><td>(a) la unidad con mayor relación · (b) un responsable de cuenta transversal · (c) un agente por unidad</td><td class="win">(b) para los clientes multiunidad, aunque formalmente el cliente siga asignado a una unidad. Con (c) se reproduce el problema actual con más tecnología.</td><td>Ale · comité</td></tr>
+          <tr><th>Neutralidad frente a terceros</th><td>(a) solo servicios de fyo · (b) muestra alternativas de terceros cuando convienen · (c) recomienda terceros abiertamente</td><td class="win">(b). El corretaje de granos de fyo ya representa al productor frente al comprador. Extender esa lógica es coherente con la empresa y es lo que vuelve creíble al agente.</td><td>Ale</td></tr>
+          <tr><th>Cómo se reconoce el valor entre unidades</th><td>(a) a la unidad que vende · (b) atribución compartida por cliente · (c) métrica de grupo</td><td class="win">(b) o (c). Si la detección ocurre en Granos y la venta en Capital sin reconocimiento, Granos no va a abrir la puerta.</td><td>Ale · Lucho</td></tr>
+          <tr><th>Qué datos del grupo están disponibles</th><td>Qué hay en el data warehouse o los lakes, con qué calidad y con qué permisos</td><td class="win">Relevarlo sobre 5 clientes reales antes de diseñar el motor de contexto completo.</td><td>Facu · Pablo</td></tr>
+          <tr><th>Quién lo construye</th><td>(a) la dupla de Capital como primer caso · (b) un equipo de Transformación</td><td class="win">(a), con alcance de grupo desde el diseño. Capital ya tiene el caso más trabajado y la dupla funcionando.</td><td>Facu · Chris</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 07 -->
+  <section class="chapter" id="s7">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">07</span><span class="lbl">Secuencia</span></div>
+      <h2 class="ch-title">Por dónde <span class="hl">empezar</span></h2>
+      <p class="ch-lede">De lo barato y verificable a lo ambicioso. Las dos primeras fases no necesitan APIs nuevas ni hablar con el cliente.</p>
+    </div>
+    <div class="stack">
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Fase 0 · Validar</span></div>
+        <div class="t-items"><div class="cell x"><span class="cn" data-editable>Backtest de momentos perdidos</span><span class="cs" data-editable>5 clientes multiunidad · se reconstruye a mano su historia cruzada de la última campaña · qué habría detectado el agente, qué encargos habría emitido y a quién, cuánta plata había atrás</span></div></div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Fase 1 · Piloto interno</span></div>
+        <div class="t-items"><div class="cell"><span class="cn" data-editable>20 a 30 clientes multiunidad</span><span class="cs" data-editable>un responsable de cuenta por cliente · el agente arma el plan, detecta momentos y emite encargos a personas · no habla con el cliente · usa los MCP que ya existen</span></div></div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Fase 2 · Automatizar</span></div>
+        <div class="t-items"><div class="cell"><span class="cn" data-editable>Los encargos más repetidos pasan a herramientas</span><span class="cs" data-editable>MCP por unidad vía gateway · archivo de WhatsApp y Debrief como fuentes de la memoria</span></div></div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Fase 3 · Cara al cliente</span></div>
+        <div class="t-items"><div class="cell"><span class="cn" data-editable>El cliente ve su plan y conversa con su agente</span><span class="cs" data-editable>modos de fyoCapital AI dentro de la capacidad de Capital · terceros niveles 1 y 2 con mandato</span></div></div>
+      </div>
+      <div class="tier">
+        <div class="t-lbl"><span class="lbl">Fase 4 · Ecosistema</span></div>
+        <div class="t-items"><div class="cell"><span class="cn" data-editable>Agente a agente</span><span class="cs" data-editable>terceros y agentes de productores vía A2A</span></div></div>
+      </div>
+    </div>
+
+    <div class="note">
+      <span class="lbl">Dependencias que ya están en otras líneas</span>
+      <p>Gateway con RLS (FYO-02), archivo de WhatsApp, Debrief, relevamiento de datos del grupo para el motor de contexto y lóbulo relacional de fyoCortex. <strong>Ninguna bloquea las fases 0 y 1.</strong></p>
+    </div>
+
+    <h3 class="h3sub">Cómo se <span class="hl">mide</span></h3>
+    <div class="specsheet four">
+      <div class="sc"><span class="lbl k">Plan</span><span class="v" data-editable>Avance contra los objetivos del cliente</span></div>
+      <div class="sc"><span class="lbl k">Integración</span><span class="v" data-editable>Unidades activas por cliente</span></div>
+      <div class="sc"><span class="lbl k">Momentos</span><span class="v" data-editable>Capturados vs. perdidos</span></div>
+      <div class="sc"><span class="lbl k">Operación</span><span class="v" data-editable>Demora de los encargos</span></div>
+    </div>
+
+    <div class="statement">
+      <span class="lbl">La propuesta, en una frase</span>
+      <p>Que cada cliente de fyo tenga un agente que sostenga su <span class="hl">plan</span> y coordine a todo fyo para cumplirlo, con una persona responsable detrás.</p>
+    </div>
+  </section>
+
+  <!-- FUENTES -->
+  <section class="chapter" id="fuentes">
+    <div class="ch-head">
+      <div class="ch-marker"><span class="mn">—</span><span class="lbl">Fuentes</span></div>
+      <h2 class="ch-title">Fuentes</h2>
+    </div>
+    <ul class="refs">
+      <li><span class="rn">01</span><span>Kavak · entrevista a su head of AI, podcast de a16z. <a href="https://youtu.be/n34CIw3gk1k">youtu.be/n34CIw3gk1k</a> · resumen en <a href="https://www.wisdomai.com/insights/a16z%20Podcast/kavak-ai-agents-customer-lifetime-value-agent-architecture-b7b2fa95">WisdomAI</a></span></li>
+      <li><span class="rn">02</span><span>FBN y Google AI Futures Fund, AI Context Engine. <a href="https://www.agweb.com/news/business/fbn-and-google-build-ai-context-engine-farms">AgWeb</a> · <a href="https://www.feedstuffs.com/agribusiness-news/fbn-and-google-partner-to-improve-ai-performance-in-ag-applications">Feedstuffs</a> · personas de FBN: <a href="https://ruralradio.com/rrn/news/fbn-unveils-ai-team-to-help-farmers-make-smarter-decisions/">Rural Radio Network</a></span></li>
+      <li><span class="rn">03</span><span>BBVA, estrategia "The Eight" y asistente Blue. <a href="https://www.bbva.com/en/innovation/bbva-deploys-the-eight-its-strategy-to-transform-the-financial-experience-with-ai/">bbva.com</a></span></li>
+      <li><span class="rn">04</span><span>Nubank, del banco al banquero en el bolsillo. <a href="https://ecosistemastartup.com/david-velez-la-ia-pone-un-banquero-en-tu-bolsillo-con-nubank/">Ecosistema Startup</a></span></li>
+      <li><span class="rn">05</span><span>Doc Searls, The Intention Economy y Project VRM. <a href="https://blog.p2pfoundation.net/book-of-the-day-the-intention-economy/">P2P Foundation</a> · <a href="https://projectvrm.org/2025/05/16/how-do-we-get-to-the-intention-economy/">Project VRM</a></span></li>
+      <li><span class="rn">06</span><span>Arquitectura de un agente por cliente. <a href="https://www.channel.tel/blog/one-agent-per-customer-cx-architecture">Channel</a></span></li>
+      <li><span class="rn">07</span><span>Pera, Perception-Centered Architecture for Persistent Agents (2026). <a href="https://arxiv.org/pdf/2608.30478">arXiv 2608.30478</a></span></li>
+      <li><span class="rn">08</span><span>HumanLayer, humano como herramienta. <a href="https://pypi.org/project/humanlayer">pypi.org/project/humanlayer</a></span></li>
+      <li><span class="rn">09</span><span>A2A Protocol, primer año. <a href="https://www.linuxfoundation.org/press/a2a-protocol-surpasses-150-organizations-lands-in-major-cloud-platforms-and-sees-enterprise-production-use-in-first-year?hsLang=en">Linux Foundation</a></span></li>
+      <li><span class="rn">10</span><span>Gartner, machine customers. <a href="https://www.cxtoday.com/contact-centre/gartner-urges-businesses-to-join-the-machine-customer-megatrend">CX Today</a></span></li>
+    </ul>
+  </section>
+
+  <div class="colophon">
+    <span>Iñaki · Consultoría · inaki@alganaras.com.ar</span>
+    <span>FYO-06 · v1 · Octubre 2026</span>
+    <span>estilo «Plano»</span>
+  </div>
+
+</div></div>
+
+<script src="https://docs.alganaras.com.ar/_editor.js"></script>
+</body></html>

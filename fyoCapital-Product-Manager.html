@@ -1,0 +1,428 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Product Manager para fyoCapital</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap">
+<style>
+/* Documento de lectura con la identidad fyo: portada en degradado institucional, cuerpo en blanco, acento celeste. Escala de lámina dividida a la mitad. */
+:root {
+  --celeste: #008EAA;
+  --celeste-tenue: #E4F1F4;
+  --verde: #6CC24A;
+  --tinta: #333333;
+  --gris-logo: #737373;
+  --gris: #97999B;
+  --superficie: #F0F1F1;
+  --borde: #DCDEDF;
+  --blanco: #FFFFFF;
+  --sans: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --space-1: 8px; --space-2: 16px; --space-3: 24px; --space-4: 32px; --space-6: 48px; --space-8: 64px;
+  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --radius-pill: 999px;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body { background: var(--blanco); color: var(--tinta); font-family: var(--sans); font-size: 16px; line-height: 1.65; font-weight: 400; -webkit-font-smoothing: antialiased; }
+a { color: var(--celeste); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+a:hover { text-decoration-thickness: 2px; }
+a:focus-visible { outline: 2px solid var(--celeste); outline-offset: 2px; border-radius: 4px; }
+
+.wrap { max-width: 1040px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* Portada */
+.cover { background: linear-gradient(115deg, var(--celeste) 0%, var(--celeste) 45%, var(--verde) 135%); color: var(--blanco); }
+.cover .wrap { padding-block: var(--space-6) var(--space-8); display: grid; gap: var(--space-4); }
+.cover-top { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+.cover-top img { height: 40px; width: auto; display: block; }
+.cover-tag { font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; opacity: .95; }
+.cover h1 { font-size: clamp(32px, 6vw, 48px); line-height: 1.08; font-weight: 600; letter-spacing: -0.5px; margin: 0; max-width: 18ch; text-wrap: balance; }
+.cover .lede { font-size: clamp(16px, 2.2vw, 19px); font-weight: 300; max-width: 46ch; margin: 0; line-height: 1.55; }
+.cover .meta { font-size: 14px; font-weight: 500; display: flex; gap: var(--space-1) var(--space-3); flex-wrap: wrap; }
+
+/* Índice */
+.toc { border-bottom: 1px solid var(--borde); background: var(--blanco); }
+.toc .wrap { padding-block: var(--space-2); }
+.toc ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-1); }
+.toc a { display: inline-block; text-decoration: none; color: var(--tinta); font-size: 13px; font-weight: 500; padding: 6px 14px; border: 1px solid var(--borde); border-radius: var(--radius-pill); }
+.toc a:hover { border-color: var(--celeste); color: var(--celeste); }
+
+/* Secciones */
+main .wrap { padding-block: var(--space-6) var(--space-8); }
+section { display: grid; gap: var(--space-2); padding-block: var(--space-6); border-top: 1px solid var(--borde); scroll-margin-top: 16px; }
+section:first-child { border-top: 0; padding-top: 0; }
+.volanta { font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--celeste); margin: 0; }
+h2 { font-size: clamp(24px, 3.6vw, 32px); line-height: 1.15; font-weight: 600; margin: 0; max-width: 24ch; text-wrap: balance; }
+h3 { font-size: 18px; line-height: 1.3; font-weight: 600; margin: var(--space-2) 0 0; }
+p { margin: 0; max-width: 68ch; }
+.prose { display: grid; gap: var(--space-2); }
+.lead { font-size: 18px; line-height: 1.6; max-width: 62ch; }
+.note { font-size: 14px; color: var(--gris-logo); }
+strong { font-weight: 600; }
+
+ul.plain, ol.plain { margin: 0; padding-left: 1.2em; display: grid; gap: var(--space-1); max-width: 68ch; }
+ul.plain li::marker { color: var(--celeste); }
+ol.plain li::marker { color: var(--celeste); font-weight: 600; }
+
+/* Razones del resumen */
+.reasons { list-style: none; margin: var(--space-1) 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--space-3); counter-reset: r; }
+.reasons li { counter-increment: r; background: var(--blanco); border: 1px solid var(--borde); border-radius: var(--radius-lg); padding: var(--space-3); display: grid; gap: var(--space-1); align-content: start; min-width: 0; }
+.reasons li::before { content: counter(r); font-size: 28px; font-weight: 600; line-height: 1; color: var(--celeste); font-variant-numeric: tabular-nums; }
+.reasons h4 { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.35; }
+.reasons p { font-size: 15px; line-height: 1.6; }
+
+.callout { background: var(--celeste-tenue); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-4); display: grid; gap: var(--space-1); }
+.callout .volanta { color: var(--celeste); }
+.callout p { max-width: 70ch; }
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-3); margin-top: var(--space-1); }
+.stat { border-top: 3px solid var(--celeste); padding-top: var(--space-2); display: grid; gap: 4px; }
+.stat b { font-size: 36px; font-weight: 600; line-height: 1; color: var(--celeste); font-variant-numeric: tabular-nums; }
+.stat span { font-size: 14px; color: var(--gris-logo); line-height: 1.45; }
+
+/* Tablas */
+.tbl { overflow-x: auto; border: 1px solid var(--borde); border-radius: var(--radius-lg); margin-top: var(--space-1); }
+table { width: 100%; border-collapse: collapse; font-size: 14.5px; line-height: 1.55; min-width: 560px; }
+th, td { text-align: left; vertical-align: top; padding: 14px 18px; border-bottom: 1px solid var(--borde); }
+tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
+thead th { background: var(--superficie); font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--tinta); }
+tbody th { font-weight: 600; width: 26%; }
+td.pm, th.pm { background: var(--celeste-tenue); }
+thead th.pm { background: var(--celeste); color: var(--blanco); }
+tr.key th, tr.key td { background: var(--celeste-tenue); }
+
+/* Comparación PO vs PM, dos tarjetas */
+.duo { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-3); }
+.duo > div { border: 1px solid var(--borde); border-radius: var(--radius-lg); padding: var(--space-3); display: grid; gap: var(--space-1); align-content: start; min-width: 0; }
+.duo > div.on { border-color: var(--celeste); background: var(--celeste-tenue); }
+.duo h4 { margin: 0; font-size: 17px; font-weight: 600; }
+.duo p { font-size: 15px; }
+
+.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-1); max-width: 70ch; }
+.checks li { display: grid; grid-template-columns: 20px 1fr; gap: 12px; align-items: start; }
+.checks li::before { content: ""; width: 16px; height: 16px; margin-top: 5px; border: 2px solid var(--celeste); border-radius: 4px; }
+
+.sources { font-size: 14px; }
+footer { border-top: 1px solid var(--borde); }
+footer .wrap { padding-block: var(--space-4); display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); flex-wrap: wrap; font-size: 13px; color: var(--gris-logo); }
+footer img { height: 22px; width: auto; display: block; }
+
+@media (max-width: 560px) {
+  .callout { padding: var(--space-3); }
+  th, td { padding: 12px 14px; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+@page { size: A4; margin: 12mm 0; }
+@page :first { margin-top: 0; }
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  html { scroll-behavior: auto; }
+  body { font-size: 13px; }
+  .wrap { max-width: none; padding-left: 14mm; padding-right: 14mm; }
+  .cover .wrap { padding-block: 14mm 12mm; }
+  main .wrap { padding-block: 8mm 0; }
+  section { padding-block: 8mm; display: block; }
+  section > * + *, .prose > * + * { margin-top: 10px; }
+  .prose, .callout { display: block; }
+  .callout > * + * { margin-top: 6px; }
+  .tbl { overflow: visible; }
+  table { min-width: 0; font-size: 12px; }
+  th, td { padding: 8px 10px; }
+  tr, .reasons li, .duo > div, .callout, .stat { break-inside: avoid; }
+  h2, h3, .volanta { break-after: avoid; }
+  .reasons { grid-template-columns: repeat(3, 1fr); }
+  .duo { grid-template-columns: 1fr 1fr; }
+  a { text-decoration: none; }
+}
+html { scroll-behavior: smooth; }
+</style>
+
+<header class="cover">
+  <div class="wrap">
+    <div class="cover-top">
+      <img src="data:image/png;base64,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" alt="fyo">
+      <span class="cover-tag">fyoCapital · Propuesta</span>
+    </div>
+    <h1>Por qué fyoCapital necesita un muy buen Product Manager</h1>
+    <p class="lede">El rol que complementa el liderazgo comercial de Christian.</p>
+    <div class="meta"><span>29 de octubre de 2026</span><span>Iñaki Algañaras</span><span>Para Lucho</span></div>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+
+<section id="resumen">
+  <p class="volanta">Resumen</p>
+  <h2>La versión corta</h2>
+  <div class="prose">
+    <p class="lead">Lucho, acá va ordenado lo que charlamos. Capital necesita un Product Manager muy bueno al lado de Christian. Christian pone el conocimiento del negocio, los clientes y el empuje comercial, y eso no se toca. Lo que le falta a la unidad es alguien que arme la visión de producto digital, decida qué se construye y en qué orden, y lo lleve a la cancha con los equipos técnicos. Hoy esa posición no existe.</p>
+  </div>
+  <h3>Por qué lo veo así</h3>
+  <ol class="reasons">
+    <li><h4>En un broker, el producto es digital</h4><p>Research, plataforma, información de cartera, onboarding, asesoramiento. La consultora ya marcaba que Capital está atrás de otras ALyCs en procesos, producto, seniority y research.</p></li>
+    <li><h4>La ventaja de Granos se juega en producto</h4><p>Pasar del acceso a la cartera de fyoGranos a una relación financiera es un problema de producto, y sumando comerciales solos no se resuelve.</p></li>
+    <li><h4>Hoy esa posición no existe</h4><p>Nadie en Capital tiene como trabajo decidir qué se construye, en qué orden y para qué. Lo digital avanza por iniciativas sueltas, sin un dueño que responda por el resultado.</p></li>
+    <li><h4>La IA resolvió el cuello de botella</h4><p>Construir es cada vez más barato. Lo difícil pasó a ser elegir qué construir, enchufarlo a los datos y procesos reales y lograr que la gente lo use.</p></li>
+    <li><h4>Hay evidencia</h4><p>McKinsey estudió más de 400 empresas: las de modelo de producto más maduro tienen 60 % más retorno total al accionista y 16 % más margen operativo.</p></li>
+  </ol>
+  <div class="callout">
+    <p class="volanta">La propuesta</p>
+    <p>Sumar un Product Manager senior en Capital, que reporte al negocio y no a Tech, que haga dupla de liderazgo con Christian y trabaje con los FDEs. Más adelante puede tener Product Owners por producto debajo.</p>
+  </div>
+</section>
+
+<section id="capital">
+  <p class="volanta">El diagnóstico</p>
+  <h2>Las decisiones de producto que hoy nadie toma</h2>
+  <p>Las ventajas de Capital las conocés mejor que nadie. Lo que veo es que aprovecharlas depende de decisiones de producto que hoy no tienen dueño. La consultora ya nos lo había anotado: estamos un paso atrás de otras ALyCs en procesos, producto, seniority y research, y el «Producto Digital» aparece como palanca en productores, individuos, dueños de empresas cliente y canal indirecto.</p>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Frente</th><th>La decisión de producto</th></tr></thead>
+      <tbody>
+        <tr><th>La cartera de fyoGranos</th><td>Una vista única del cliente entre unidades y una oferta que aparezca en el momento justo: liquidez post cosecha, cobertura, financiamiento de campaña. Hay que decidir qué datos de Granos se usan, cómo y con qué acuerdo entre unidades.</td></tr>
+        <tr><th>ALyCs con más producto y nuevos jugadores en coberturas</th><td>La diferenciación tiene que salir de lo que solo fyo sabe del agro: research propio, datos de mercado de granos, inteligencia sobre el cliente. Eso se construye como producto.</td></tr>
+        <tr><th>Comisiones a la baja</th><td>Servir más clientes y segmentos (PyMEs, individuos) sin sumar comerciales en la misma proporción. Eso requiere canales digitales y agentes que escalen la atención.</td></tr>
+        <tr><th>Capital Agro y Capital Financiero</th><td>Un producto que sirva a ambos sin duplicar herramientas ni equipos, y un criterio claro para priorizar entre ellos.</td></tr>
+        <tr><th>CNV</th><td>Requisitos como perfil de inversor o preservación de comunicaciones (RG 1048/2025) tienen que entrar en el diseño desde el día uno.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Cada fila cruza negocio, datos, tecnología y regulación, y ninguna se destraba poniendo más horas comerciales. Ahí entra el PM.</p>
+</section>
+
+<section id="competencia">
+  <p class="volanta">La competencia</p>
+  <h2>Qué hacen los brokers con los que competimos</h2>
+  <p>Los competidores digitales con más presencia pública tienen producto como área propia, con líderes en la mesa ejecutiva y equipos dedicados. En IOL, la persona que lideraba producto terminó dirigiendo la compañía.</p>
+  <div class="tbl">
+    <table class="sources">
+      <thead><tr><th>Competidor</th><th>Cómo tiene organizado producto</th><th>LinkedIn</th></tr></thead>
+      <tbody>
+        <tr><th>IOL invertironline (Grupo Supervielle)</th><td>Tiene Chief Product Officer al menos desde 2020. Christel Sasse asumió como CPO en julio de 2020, con pasado de producto en Mercado Pago y Eventbrite, y en abril de 2021 pasó a ser CEO. La reemplazó Juan Pablo Carrano (agosto de 2021), ex Product Manager de Ripio, con el mandato de liderar la innovación y la experiencia de usuario de la plataforma de trading. Desde julio de 2022 el CEO es Diego Pizzulli, cofundador del broker digital Alta. Hoy busca Product Owners, incluido uno regional.</td><td><a href="https://www.linkedin.com/in/christel-sasse-14750bb/">Christel Sasse</a><br><a href="https://www.linkedin.com/in/juanpablocarrano/">Juan Pablo Carrano</a><br><a href="https://www.linkedin.com/in/diego-pizzulli-83aa1613/">Diego Pizzulli</a></td></tr>
+        <tr><th>Cocos Capital</th><td>Producto figura como un área propia en su portal de empleos. Tiene Product Manager a cargo del reporting y los KPIs de la compañía, y un Chief Innovation Officer en la mesa directiva. En septiembre de 2026 buscaba un Product Owner para su banca mayorista Pyme, un Product Designer Expert y un Product Operations Analyst. Se presenta así: «tomamos decisiones rápido, lanzamos productos en tiempo récord».</td><td><a href="https://theorg.com/org/cocos-capital/org-chart/david-ganopolsky">David Ganopolsky</a> (perfil en The Org)</td></tr>
+        <tr><th>Ualá</th><td>La Chief Product Officer forma parte del equipo ejecutivo. En abril de 2024 incorporó a Mayra Sciarrillo, que venía de dirigir desarrollo de producto en Nubank y Mercado Pago, para liderar Producto y Experiencia de Usuario en Argentina, México y Colombia.</td><td><a href="https://www.linkedin.com/in/mayrasciarrillo/">Mayra Sciarrillo</a></td></tr>
+        <tr><th>PPI (Portfolio Personal Inversiones)</th><td>Publicó al menos una búsqueda de Product Owner. No encontré información pública sobre quién lidera producto.</td><td><a href="https://ar.linkedin.com/jobs/view/product-owner-at-ppi-portfolio-personal-inversiones-2908322064">Búsqueda de Product Owner</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Los cargos y fechas salen de notas de prensa, organigramas públicos y búsquedas laborales. Algunas de estas personas ya pasaron a otras empresas.</p>
+</section>
+
+<section id="pm-po">
+  <p class="volanta">La diferencia</p>
+  <h2>Product Manager o Product Owner</h2>
+  <p>La diferencia está en quién decide qué se construye. El Product Owner recibe una dirección y la baja a backlog; el Product Manager arma esa dirección. Qué rol necesita una unidad depende de si esa dirección ya existe.</p>
+  <div class="tbl">
+    <table>
+      <thead><tr><th></th><th>Product Owner</th><th class="pm">Product Manager</th></tr></thead>
+      <tbody>
+        <tr><th>Pregunta que responde</th><td>¿Cómo y en qué orden construimos esto?</td><td class="pm">¿Qué tenemos que construir y por qué?</td></tr>
+        <tr><th>De dónde sale la visión</th><td>Del líder del negocio</td><td class="pm">La arma él, con el líder del negocio</td></tr>
+        <tr><th>Horizonte</th><td>Sprint y trimestre</td><td class="pm">Uno a tres años</td></tr>
+        <tr><th>Entregable</th><td>Backlog priorizado, historias, aceptación</td><td class="pm">Visión, estrategia y roadmap de producto, con métricas de resultado</td></tr>
+        <tr><th>Relación con el mercado</th><td>Indirecta, a través del negocio</td><td class="pm">Directa: clientes, competencia, regulación, tecnología</td></tr>
+        <tr><th>Se lo mide por</th><td>Entregas a tiempo y con calidad</td><td class="pm">Métricas de negocio que se movieron</td></tr>
+        <tr><th>Seniority típica</th><td>Semi senior a senior</td><td class="pm">Senior, con producto digital propio en su historia</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="duo">
+    <div>
+      <p class="volanta">Cuándo alcanza con un PO</p>
+      <p>Cuando el líder de la unidad tiene una mirada amplia que incluye lo digital, o cuando lo digital acompaña un negocio que se define en otro lado. Ahí el líder pone el qué y el PO lo convierte en ejecución. Para varias unidades de fyo es la solución correcta, y encima más barata.</p>
+    </div>
+    <div class="on">
+      <p class="volanta">Por qué en Capital no alcanza</p>
+      <ol class="plain">
+        <li>Lo digital es parte de lo que el cliente compra. En un broker, la experiencia, el research y la información de cartera son el producto.</li>
+        <li>Christian está, con razón, volcado a lo comercial: ahí es fuerte y ahí lo necesitamos. La visión de producto digital no es su foco, y un PO no tendría de dónde agarrar la dirección. Vos lo conocés más que yo, pero creo que en esto coincidimos.</li>
+        <li>Las decisiones cruzan unidades. Usar la cartera y los datos de fyoGranos implica negociar con otras unidades, con Riesgos y con Tech, y para eso hace falta seniority y cintura.</li>
+        <li>El mercado se mueve rápido: competidores con más producto, jugadores nuevos en coberturas y la IA cambiando cómo se hace research y asesoramiento. Alguien tiene que estar mirando para afuera, además del backlog.</li>
+      </ol>
+    </div>
+  </div>
+  <p>Si ponemos un PO en Capital sin un PM arriba, en seis meses lo tenemos ordenando los pedidos de quien grita más fuerte.</p>
+</section>
+
+<section id="dupla">
+  <p class="volanta">El liderazgo</p>
+  <h2>Christian y el Product Manager como dupla</h2>
+  <p>La idea es completar el liderazgo de la unidad, más que sumar un rol técnico abajo. Es el mismo principio de las duplas que estamos probando en Capital, llevado un escalón más arriba: negocio y producto comparten el resultado.</p>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Tema</th><th>Christian</th><th>Product Manager</th><th>Lo deciden juntos</th></tr></thead>
+      <tbody>
+        <tr><th>Estrategia de la unidad</th><td>Dueño: mercados, segmentos, metas comerciales</td><td>Aporta lo que el producto habilita o limita</td><td>Las apuestas del año</td></tr>
+        <tr><th>Clientes</th><td>Relación, venta, equipo comercial</td><td>Necesidades, experiencia, datos de uso</td><td>Qué problema del cliente se ataca primero</td></tr>
+        <tr><th>Producto digital</th><td>Valida que sirva al negocio</td><td>Dueño: visión, roadmap, priorización</td><td>Qué entra y qué no en cada trimestre</td></tr>
+        <tr><th>Agentes de IA</th><td>Usuario y sponsor</td><td>Dueño de la cartera, con los FDEs</td><td>Niveles de autonomía y métricas de éxito</td></tr>
+        <tr><th>Relación con Granos, Tech, Riesgos y Transformación</th><td>Interlocutor de negocio</td><td>Interlocutor de producto y datos</td><td>Acuerdos entre unidades sobre clientes y datos</td></tr>
+        <tr><th>Métricas</th><td>Volumen, comisiones, clientes, share of wallet</td><td>Uso, adopción, tiempo de respuesta, costo de servir</td><td>Un tablero común</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3>Quiénes más hacen falta</h3>
+  <p>El PM no trabaja solo. A medida que crezca el portafolio, alrededor van a estar:</p>
+  <ul class="plain">
+    <li>Los Forward Deployed Engineers, que construyen y despliegan agentes y herramientas. Capital ya tiene uno; el PM les da dirección y prioridades.</li>
+    <li>Product Owners por producto, cuando haya varios en paralelo (por ejemplo, Terminal y agentes), cada uno con su backlog bajo la visión del PM.</li>
+    <li>Diseño y datos, seguramente compartidos con Transformación o Tech al principio.</li>
+    <li>Tech, que estabiliza e industrializa lo que se prueba en la unidad.</li>
+  </ul>
+  <div class="callout">
+    <p class="volanta">El orden importa</p>
+    <p>Primero el PM, que define qué se hace. Si sumamos POs o más FDEs antes, agregamos capacidad de ejecución sin saber para dónde.</p>
+  </div>
+</section>
+
+<section id="origen">
+  <p class="volanta">El rol</p>
+  <h2>De dónde viene el rol</h2>
+  <div class="prose">
+    <p>Buscamos una persona que convierta problemas del negocio en producto digital que se usa. Descubre qué vale la pena resolver, prioriza por impacto, trabaja pegada a quien construye y responde por el resultado de negocio.</p>
+    <p>La referencia más citada es Palantir. Para clientes cuyos problemas no se podían especificar de antemano, en vez de relevar desde afuera metió equipos adentro de la operación, con dos roles:</p>
+  </div>
+  <div class="duo">
+    <div class="on">
+      <p class="volanta">Echo</p>
+      <h4>Deployment Strategist</h4>
+      <p>Palantir dice que su misión es «sintetizar líneas de pensamiento desconectadas en un entendimiento de cuál es el problema más importante». Se mete en los flujos de trabajo del cliente, encuentra los datos que sirven, presenta resultados desde analistas hasta el C-suite y es dueño de la relación y del plan. La propia empresa lo resume así: «los Echos son más product managers y los Deltas más técnicos».</p>
+    </div>
+    <div>
+      <p class="volanta">Delta</p>
+      <h4>Forward Deployed Engineer</h4>
+      <p>El ingeniero que construye rápido con datos y requisitos imperfectos. Su foco es «un cliente, muchas capacidades», y se lo mide por los resultados del cliente.</p>
+    </div>
+  </div>
+  <p>Bob McGrew (ex Palantir, después Chief Research Officer de OpenAI) dice que el par sirve para «llenar la brecha entre lo que el producto hace y lo que el cliente necesita». Lo que se resuelve a medida para un caso después se generaliza en plataforma. Si ese segundo paso no ocurre, el equipo termina funcionando como una consultora interna.</p>
+  <h3>Cómo se diferencia de roles parecidos</h3>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Rol</th><th>Quién define el problema</th><th>Qué entrega</th><th>Cómo se lo mide</th></tr></thead>
+      <tbody>
+        <tr class="key"><th>Product Manager / Echo / FDS</th><td>Lo descubre él, adentro del negocio</td><td>Un problema resuelto y adoptado</td><td>Movió la métrica de negocio</td></tr>
+        <tr><th>Forward Deployed Engineer (Delta)</th><td>Lo resuelve mientras se descubre</td><td>Una solución desplegada y en uso</td><td>Velocidad de problema a solución en uso</td></tr>
+        <tr><th>Product Owner (como se practica en Argentina)</th><td>Se lo da el negocio</td><td>Un backlog ordenado</td><td>Historias entregadas</td></tr>
+        <tr><th>Project Manager</th><td>Se lo dan cerrado</td><td>El alcance comprometido</td><td>Plazo, costo y alcance</td></tr>
+        <tr><th>Analista funcional</th><td>Se lo dan cerrado, a veces con la solución</td><td>Una especificación</td><td>Fidelidad entre lo pedido y lo construido</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>En muchas empresas argentinas el «Product Owner» terminó siendo un analista funcional con backlog. Lo que necesita Capital es un Product Manager hecho y derecho, que según Marty Cagan responde por que lo que se construye sea «valioso para los clientes y viable para el negocio».</p>
+</section>
+
+<section id="ordena">
+  <p class="volanta">El impacto</p>
+  <h2>Qué ordenaría en Capital</h2>
+  <p>Casi todo lo que en Capital no es la venta en sí tiene hoy una parte digital, y ninguna tiene un dueño claro. Este rol se lo da.</p>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Tema</th><th>Hoy</th><th class="pm">Con un dueño de producto</th></tr></thead>
+      <tbody>
+        <tr><th>Visión de producto digital</th><td>Iniciativas valiosas en paralelo (Terminal, agentes, fyoCapital AI) sin un mapa que las ordene</td><td class="pm">Una visión y un roadmap únicos para Capital, conectados al árbol de valor de la unidad</td></tr>
+        <tr><th>Priorización</th><td>Por urgencia, por quien pide más fuerte o por lo que Tech puede hacer</td><td class="pm">Por impacto en métricas de negocio, con criterio explícito para decir que no</td></tr>
+        <tr><th>Terminal de cotizaciones</th><td>Avanza por iniciativa individual</td><td class="pm">Producto con roadmap, usuarios definidos y métricas de uso</td></tr>
+        <tr><th>Cartera de agentes (Research, Comercial, Portafolio, Riesgo)</th><td>Casos identificados, sin dueño de largo plazo una vez construidos</td><td class="pm">Cada agente con objetivo, nivel de autonomía, evals y métricas de adopción</td></tr>
+        <tr><th>Datos y regulación (acceso gobernado, archivo de WhatsApp bajo CNV)</th><td>Se discute en varios frentes a la vez</td><td class="pm">Un interlocutor que traduce requisitos de Riesgos y Compliance a decisiones de producto</td></tr>
+        <tr><th>Relación con Tech, Transformación y proveedores</th><td>Varios interlocutores; el roadmap tiende a definirlo la capacidad del proveedor</td><td class="pm">Un único dueño del pedido, que negocia alcance y prioridades</td></tr>
+        <tr><th>Adopción</th><td>Se asume que si la herramienta existe, se usa</td><td class="pm">Se mide y se gestiona: capacitación, ajustes, retiro de lo que no se usa</td></tr>
+        <tr><th>Escalar a todo fyo</th><td>Lo aprendido en Capital queda en Capital</td><td class="pm">Lo que funciona se documenta como patrón para otras unidades</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Para Christian también es un alivio: se puede concentrar en lo comercial y en el equipo, y tiene con quién decidir lo digital sin cargarlo solo.</p>
+</section>
+
+<section id="perfil">
+  <p class="volanta">La búsqueda</p>
+  <h2>Perfil y lugar en la organización</h2>
+  <p>Reporta al negocio de Capital, no a Tech, y trabaja en dupla con los FDEs de la unidad. Con Transformación tiene una línea matricial, para compartir prácticas y llevar lo que funcione al resto de fyo.</p>
+  <div class="duo">
+    <div>
+      <p class="volanta">Qué buscar</p>
+      <ol class="plain">
+        <li>Criterio de negocio financiero y agro. Entiende cómo gana plata un broker, cómo decide el cliente agro y qué pide la CNV. Idealmente viene de fintech, broker o banca digital.</li>
+        <li>Experiencia real en producto digital: llevó productos de la idea al uso, con métricas. Haber gestionado proyectos no alcanza.</li>
+        <li>Suficiente fluidez técnica para leer datos, prototipar y entender qué puede y qué no puede hacer un agente. Palantir le pide a sus Deployment Strategists Python, SQL o similares.</li>
+        <li>Capacidad de decir que no: prioriza con criterio propio y banca conversaciones con intereses cruzados.</li>
+        <li>Poco ego. La descripción de Palantir lo dice así: «el resultado importa más que quién se lleva el crédito».</li>
+      </ol>
+    </div>
+    <div>
+      <p class="volanta">Qué no es</p>
+      <ul class="plain">
+        <li>Un analista funcional o un Project Manager con otro título. Si lo medimos por plazo y alcance, en seis meses tenemos un Project Manager con otro nombre.</li>
+        <li>Un consultor. Está adentro, responde por el resultado y se queda cuando el proyecto termina.</li>
+        <li>Un reemplazo de Christian. Es su contraparte en lo digital, y Christian sigue siendo el dueño del negocio.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout">
+    <p class="volanta">Lo que tenemos que definir</p>
+    <ul class="checks">
+      <li>Seniority y banda: el rol pide un perfil senior, claramente por encima de un Product Owner.</li>
+      <li>A quién reporta dentro de Capital, y quién lo sponsorea arriba para que la agenda de producto no quede siempre detrás de la urgencia comercial.</li>
+      <li>Si lo cubrimos con un perfil fraccional mientras hacemos la búsqueda.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="mi-rol">
+  <p class="volanta">Mi rol</p>
+  <h2>¿Y no es lo que hago yo?</h2>
+  <div class="prose">
+    <p>En parte sí, y por eso lo veo tan claro. Desde que llegué vengo empujando cosas de producto y de plataforma: la Terminal, los agentes orquestados con contexto, fyoCortex, el stack de IA, el modelo de FDEs para desarrollar desde el negocio y las guías de relevamiento. Que dependan de mí es justamente el problema: avanzan por iniciativa individual, sin alguien adentro que las sostenga todos los días.</p>
+    <p>El PM que necesita Capital está en la unidad todos los días, al lado de Christian y del equipo, y responde por el resultado. Yo estoy afuera, a tiempo parcial, y cada vez más metido en la transformación de todo fyo con Facu. Si me ponen de PM, Capital termina con un PM part-time, que es lo que este documento dice que no hay que hacer, y se frena el trabajo transversal.</p>
+  </div>
+  <div class="duo">
+    <div class="on">
+      <p class="volanta">Lo que me toca</p>
+      <p>Seguir levantando la mirada y corriendo la frontera. Aportar mi visión y mi experiencia, con la alineación de un cofundador, para desafiar al negocio entero con la ambición de transformarlo.</p>
+      <p>Eso incluye pruebas con riesgo, que no necesariamente tienen retorno inmediato y de las que a veces ni siquiera sabemos todavía cómo van a impactar. Un PM no puede trabajar así, porque responde por las métricas de su unidad. Por eso los dos roles se necesitan.</p>
+    </div>
+    <div>
+      <p class="volanta">Lo que me comprometo a hacer con el PM</p>
+      <ul class="plain">
+        <li>Definir el perfil con ustedes.</li>
+        <li>Validar al candidato antes de la decisión final.</li>
+        <li>Acompañar sus primeros 90 días.</li>
+        <li>Seguir siendo el sparring de estrategia e IA del PM y de Christian.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="lecturas">
+  <p class="volanta">Para profundizar</p>
+  <h2>Lecturas recomendadas</h2>
+  <p>Te las ordené de la más corta a la más larga, por si querés picar algo. Todas en inglés.</p>
+  <div class="tbl">
+    <table class="sources">
+      <thead><tr><th>Lectura</th><th>Qué aporta</th><th>Tiempo aprox.</th></tr></thead>
+      <tbody>
+        <tr><th><a href="https://jobs.lever.co/palantir/e0ab8226-b928-4e3a-bf87-08fe7b1ea595">Descripción del puesto Deployment Strategist</a> (Palantir)</th><td>La definición oficial: responsabilidades y perfil</td><td>5 min</td></tr>
+        <tr><th><a href="https://www.pymnts.com/artificial-intelligence-2/2026/forward-deployed-engineers-emerge-as-one-of-ais-fastest-growing-jobs/">Forward-Deployed Engineers Emerge as One of AI's Fastest-Growing Jobs</a> (PYMNTS, mar. 2026)</th><td>Datos de demanda y por qué crece</td><td>5 min</td></tr>
+        <tr><th><a href="https://blog.palantir.com/a-day-in-the-life-of-a-palantir-deployment-strategist-951cb59a5a96">A Day in the Life of a Palantir Deployment Strategist</a> (Palantir)</th><td>Cómo es el día a día del rol, contado por quienes lo hacen</td><td>8 min</td></tr>
+        <tr><th><a href="https://blog.palantir.com/dev-versus-delta-demystifying-engineering-roles-at-palantir-ad44c2a6e87">Dev versus Delta</a> (Palantir)</th><td>La diferencia entre construir plataforma y desplegarla en un cliente</td><td>10 min</td></tr>
+        <tr><th><a href="https://itrevolution.com/articles/project-to-product-mik-kersten/">Project to Product</a> (Mik Kersten, IT Revolution)</th><td>Por qué gestionar tecnología como proyectos frena la innovación</td><td>10 min</td></tr>
+        <tr><th><a href="https://www.mckinsey.com/capabilities/tech-and-ai/our-insights/the-bottom-line-benefit-of-the-product-operating-model">The bottom-line benefit of the product operating model</a> (McKinsey, dic. 2023)</th><td>La evidencia cuantitativa</td><td>12 min</td></tr>
+        <tr><th><a href="https://www.mckinsey.com/industries/financial-services/our-insights/platform-operating-model-for-the-ai-bank-of-the-future">Platform operating model for the AI bank of the future</a> (McKinsey, may. 2021)</th><td>El modelo aplicado a bancos</td><td>15 min</td></tr>
+        <tr><th><a href="https://pocketcasts.com/podcast/lightcone-podcast/5cbd37c0-eac7-013c-5d37-0acc26574db2/the-fde-playbook-for-ai-startups-with-bob-mcgrew/caab43dd-9f53-4556-83b8-4cab7b966ff6">The FDE Playbook for AI Startups with Bob McGrew</a> (Lightcone, Y Combinator, sep. 2025)</th><td>El origen del modelo Echo/Delta y sus errores frecuentes</td><td>Podcast</td></tr>
+        <tr><th>Marty Cagan, <em>Transformed</em> (SVPG, 2024) e <em>Inspired</em></th><td>El modelo operativo de producto completo y el rol del Product Manager</td><td>Libros</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>También tenemos dos documentos internos, uno sobre roles tech y otro sobre el modelo de duplas, que bajan estas ideas a fyo. Si te sirven, te los paso.</p>
+</section>
+
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>fyoCapital · Propuesta de rol · octubre de 2026</span>
+    <img src="data:image/png;base64,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" alt="fyo">
+  </div>
+</footer>
+
+</body></html>
